@@ -1,0 +1,1102 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Provide standard Talend Security Groups and QuickstartS3URL",
+    "Parameters": {
+        "VpcId": {
+            "Description": "VPC to which security groups belong",
+            "Type": "String"
+        },
+        "RemoteAccessCIDR": {
+            "Description": "The IP address range that can be used to access the Talend servers using SSH.",
+            "Type": "String",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "0.0.0.0/0",
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+        }
+    },
+    "Mappings": {
+    },
+    "Conditions": {
+    },
+    "Resources": {
+        "BastionSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to Bastion Server from selected external IP using ssh.",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "DatabaseSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to Database from TAC and bastion server on 3306.",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "3306",
+                        "ToPort": "3306",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "DatabaseSecurityGroupIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DatabaseSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "3306",
+                "ToPort": "3306",
+                "SourceSecurityGroupId": {
+                    "Ref": "DatabaseSecurityGroup"
+                }
+            }
+        },
+        "DatabaseSecurityGroupBastionIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DatabaseSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "3306",
+                "ToPort": "3306",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "DatabaseSecurityGroupTacIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DatabaseSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "3306",
+                "ToPort": "3306",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "DatabaseSecurityGroupStudioIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DatabaseSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "3306",
+                "ToPort": "3306",
+                "SourceSecurityGroupId": {
+                    "Ref": "StudioSecurityGroup"
+                }
+            }
+        },
+        "TacSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to TAC using 8080 and SSH from Bastion and selected external IP addresses, 8080 from Jobservers for self-registration",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8080",
+                        "ToPort": "8080",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8081",
+                        "ToPort": "8081",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "9200",
+                        "ToPort": "9200",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "5601",
+                        "ToPort": "5601",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8085",
+                        "ToPort": "8085",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "TacSecurityGroupIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "TacSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "TacSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "0",
+                "ToPort": "65535",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "TacSecurityGroupBastionSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "TacSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "TacSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "TacSecurityGroupBastionIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "TacSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "TacSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8080",
+                "ToPort": "8080",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "TacSecurityGroupJobserverIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "TacSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "TacSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8080",
+                "ToPort": "8080",
+                "SourceSecurityGroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                }
+            }
+        },
+        "TacSecurityGroupDistantRunIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "TacSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "TacSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8080",
+                "ToPort": "8080",
+                "SourceSecurityGroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                }
+            }
+        },
+        "TacSecurityGroupIngressICMP": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "TacSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "TacSecurityGroup"
+                },
+                "IpProtocol": "icmp",
+                "FromPort": "-1",
+                "ToPort": "-1",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "JobserverSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to Jobserver from TAC on 8000 (command), 8001 (file), and 8888 (monitoring), and from Bastion servers on SSH",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "JobserverSecurityGroupIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "JobserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "0",
+                "ToPort": "65535",
+                "SourceSecurityGroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                }
+            }
+        },
+        "JobserverSecurityGroupTacCommandFileIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "JobserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8000",
+                "ToPort": "8001",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "JobserverSecurityGroupTacMonitoringIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "JobserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8888",
+                "ToPort": "8888",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "JobserverSecurityGroupTacSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "JobserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "JobserverSecurityGroupBastionSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "JobserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "JobserverSecurityGroupIngressICMP": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "JobserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                },
+                "IpProtocol": "icmp",
+                "FromPort": "-1",
+                "ToPort": "-1",
+                "SourceSecurityGroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                }
+            }
+        },
+        "DistantRunSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to DistantRun from TAC on 8000 (command), 8001 (file), and 8888 (monitoring), and from Bastion servers on SSH",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8000",
+                        "ToPort": "8000",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8001",
+                        "ToPort": "8001",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8888",
+                        "ToPort": "8888",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "DistantRunSecurityGroupIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "DistantRunSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "0",
+                "ToPort": "65535",
+                "SourceSecurityGroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                }
+            }
+        },
+        "DistantRunSecurityGroupStudioCommandFileIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "DistantRunSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8000",
+                "ToPort": "8001",
+                "SourceSecurityGroupId": {
+                    "Ref": "StudioSecurityGroup"
+                }
+            }
+        },
+        "DistantRunSecurityGroupStudioMonitoringIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "DistantRunSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8888",
+                "ToPort": "8888",
+                "SourceSecurityGroupId": {
+                    "Ref": "StudioSecurityGroup"
+                }
+            }
+        },
+        "DistantRunSecurityGroupStudioSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "DistantRunSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "StudioSecurityGroup"
+                }
+            }
+        },
+        "DistantRunSecurityGroupBastionSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "DistantRunSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "DistantRunSecurityGroupIngressICMP": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "DistantRunSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                },
+                "IpProtocol": "icmp",
+                "FromPort": "-1",
+                "ToPort": "-1",
+                "SourceSecurityGroupId": {
+                    "Ref": "DistantRunSecurityGroup"
+                }
+            }
+        },
+        "NexusSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to Nexus using HTTP on 8081 and SSH from selected external IP addresses and Bastion servers, 8081 from  TAC and Jobserver",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8081",
+                        "ToPort": "8081",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "NexusSecurityGroupBastionSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "NexusSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "NexusSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "NexusSecurityGroupBastionIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "NexusSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "NexusSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8081",
+                "ToPort": "8081",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "NexusSecurityGroupTacIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "NexusSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "NexusSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8081",
+                "ToPort": "8081",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "NexusSecurityGroupJobserverIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "NexusSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "NexusSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8081",
+                "ToPort": "8081",
+                "SourceSecurityGroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                }
+            }
+        },
+        "NexusSecurityGroupStudioIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "NexusSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "NexusSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8081",
+                "ToPort": "8081",
+                "SourceSecurityGroupId": {
+                    "Ref": "StudioSecurityGroup"
+                }
+            }
+        },
+        "LogserverSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to Logserver on 9200 (elastic search), 5601 (Kibana), and SSH from selected external IP addresses and Bastion servers, server access from 8050(TAC), 8055 (jobserver), 8056 (cmdline)",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "9200",
+                        "ToPort": "9200",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "5601",
+                        "ToPort": "5601",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "LogserverSecurityGroupBastionSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "LogserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "LogserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "LogserverSecurityGroupBastionElasticIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "LogserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "LogserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "9200",
+                "ToPort": "9200",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "LogserverSecurityGroupBastionKibanaIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "LogserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "LogserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "5601",
+                "ToPort": "5601",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "LogserverSecurityGroupStudioElasticIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "LogserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "LogserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "9200",
+                "ToPort": "9200",
+                "SourceSecurityGroupId": {
+                    "Ref": "StudioSecurityGroup"
+                }
+            }
+        },
+        "LogserverSecurityGroupStudioKibanaIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "LogserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "LogserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "5601",
+                "ToPort": "5601",
+                "SourceSecurityGroupId": {
+                    "Ref": "StudioSecurityGroup"
+                }
+            }
+        },
+        "LogserverSecurityGroupTacIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "LogserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "LogserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8050",
+                "ToPort": "8050",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "LogserverSecurityGroupJobserverIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "LogserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "LogserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8055",
+                "ToPort": "8055",
+                "SourceSecurityGroupId": {
+                    "Ref": "JobserverSecurityGroup"
+                }
+            }
+        },
+        "LogserverSecurityGroupCommandlineIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "LogserverSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "LogserverSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8056",
+                "ToPort": "8056",
+                "SourceSecurityGroupId": {
+                    "Ref": "CommandlineSecurityGroup"
+                }
+            }
+        },
+        "CommandlineSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to Commandline on 8002 from TAC and Bastion, SSH from Bastion",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "8002",
+                        "ToPort": "8002",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "CommandlineSecurityGroupIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "CommandlineSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "CommandlineSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "0",
+                "ToPort": "65535",
+                "SourceSecurityGroupId": {
+                    "Ref": "CommandlineSecurityGroup"
+                }
+            }
+        },
+        "CommandlineSecurityGroupBastionSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "CommandlineSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "CommandlineSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "CommandlineSecurityGroupBastionCmdShellIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "CommandlineSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "CommandlineSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8002",
+                "ToPort": "8002",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        },
+        "CommandlineSecurityGroupCmdShellIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "CommandlineSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "CommandlineSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "8002",
+                "ToPort": "8002",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "CommandlineSecurityGroupStatisticsIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "CommandlineSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "CommandlineSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "3334",
+                "ToPort": "4333",
+                "SourceSecurityGroupId": {
+                    "Ref": "TacSecurityGroup"
+                }
+            }
+        },
+        "CommandlineSecurityGroupTraceIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "CommandlineSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "CommandlineSecurityGroup" },
+                "IpProtocol": "tcp",
+                "FromPort": "4334",
+                "ToPort": "5333",
+                "SourceSecurityGroupId": { "Ref": "TacSecurityGroup" }
+            }
+        },
+        "CommandlineSecurityGroupIngressICMP": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "CommandlineSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "CommandlineSecurityGroup" },
+                "IpProtocol": "icmp",
+                "FromPort": "-1",
+                "ToPort": "-1",
+                "SourceSecurityGroupId": { "Ref": "CommandlineSecurityGroup" }
+            }
+        },
+        "GitSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Ports needed for GitLab CE",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" },
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22"
+                    },
+                    {
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" },
+                        "IpProtocol": "tcp",
+                        "FromPort": "443",
+                        "ToPort": "443"
+                    },
+                    {
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" },
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80"
+                    },
+                    {
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" },
+                        "IpProtocol": "tcp",
+                        "FromPort": "8080",
+                        "ToPort": "8080"
+                    },
+                    {
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" },
+                        "IpProtocol": "tcp",
+                        "FromPort": "9418",
+                        "ToPort": "9418"
+                    },
+                    {
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" },
+                        "IpProtocol": "tcp",
+                        "FromPort": "25",
+                        "ToPort": "25"
+                    },
+                    {
+                        "CidrIp": { "Ref": "RemoteAccessCIDR" },
+                        "IpProtocol": "tcp",
+                        "FromPort": "8443",
+                        "ToPort": "8443"
+                    }
+                ]
+            }
+        },
+        "GitSecurityGroupIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "GitSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "GitSecurityGroup" },
+                "IpProtocol": "tcp",
+                "FromPort": "0",
+                "ToPort": "65535",
+                "SourceSecurityGroupId": { "Ref": "GitSecurityGroup" }
+            }
+        },
+        "GitSecurityGroupBastionSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "GitSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "GitSecurityGroup" },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": { "Ref": "BastionSecurityGroup" }
+            }
+        },
+        "GitSecurityGroupTacHttpIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "GitSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "GitSecurityGroup" },
+                "IpProtocol": "tcp",
+                "FromPort": "80",
+                "ToPort": "80",
+                "SourceSecurityGroupId": { "Ref": "TacSecurityGroup" }
+            }
+        },
+        "GitSecurityGroupTacHttpsIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "GitSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "GitSecurityGroup" },
+                "IpProtocol": "tcp",
+                "FromPort": "443",
+                "ToPort": "443",
+                "SourceSecurityGroupId": { "Ref": "TacSecurityGroup" }
+            }
+        },
+        "GitSecurityGroupTacSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "GitSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "GitSecurityGroup" },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": { "Ref": "TacSecurityGroup" }
+            }
+        },
+        "GitSecurityGroupStudioHttpIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "GitSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "GitSecurityGroup" },
+                "IpProtocol": "tcp",
+                "FromPort": "80",
+                "ToPort": "80",
+                "SourceSecurityGroupId": { "Ref": "StudioSecurityGroup" }
+            }
+        },
+        "GitSecurityGroupStudioHttpsIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "GitSecurityGroup",
+            "Properties": {
+                "GroupId": { "Ref": "GitSecurityGroup" },
+                "IpProtocol": "tcp",
+                "FromPort": "443",
+                "ToPort": "443",
+                "SourceSecurityGroupId": { "Ref": "StudioSecurityGroup" }
+            }
+        },
+        "StudioSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to Studio using X2Go with SSH",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
+        "StudioSecurityGroupIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "StudioSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "StudioSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "0",
+                "ToPort": "65535",
+                "SourceSecurityGroupId": {
+                    "Ref": "StudioSecurityGroup"
+                }
+            }
+        },
+        "StudioSecurityGroupBastionSshIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "DependsOn": "StudioSecurityGroup",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "StudioSecurityGroup"
+                },
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "SourceSecurityGroupId": {
+                    "Ref": "BastionSecurityGroup"
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "BastionSecurityGroup": {
+            "Description": "Bastion server security group.",
+            "Value": { "Ref": "BastionSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:BastionSecurityGroup" } }
+        },
+        "DatabaseSecurityGroup": {
+            "Description": "Database server security group.",
+            "Value": { "Ref": "DatabaseSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:DatabaseSecurityGroup" } }
+        },
+        "TacSecurityGroup": {
+            "Description": "TAC security group.",
+            "Value": { "Ref": "TacSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:TacSecurityGroup" } }
+        },
+        "JobserverSecurityGroup": {
+            "Description": "Jobserver security group.",
+            "Value": { "Ref": "JobserverSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:JobserverSecurityGroup" } }
+        },
+        "DistantRunSecurityGroup": {
+            "Description": "DistantRun security group.",
+            "Value": { "Ref": "DistantRunSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:DistantRunSecurityGroup" } }
+        },
+        "NexusSecurityGroup": {
+            "Description": "Nexus security group.",
+            "Value": { "Ref": "NexusSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:NexusSecurityGroup" } }
+        },
+        "LogserverSecurityGroup": {
+            "Description": "Logserver security group.",
+            "Value": { "Ref": "LogserverSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:LogserverSecurityGroup" } }
+        },
+        "CommandlineSecurityGroup": {
+            "Description": "Commandline security group.",
+            "Value": { "Ref": "CommandlineSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:CommandlineSecurityGroup" } }
+        },
+        "GitSecurityGroup": {
+            "Description": "Gitlab security group.",
+            "Value": { "Ref": "GitSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:GitSecurityGroup" } }
+        },
+        "StudioSecurityGroup": {
+            "Description": "Studio security group.",
+            "Value": { "Ref": "StudioSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:StudioSecurityGroup" } }
+        }
+    }
+}

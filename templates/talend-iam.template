@@ -1,0 +1,98 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "This template will deploy a Nexus instance into an existing VPC subnet.  **WARNING** This template creates Amazon EC2 instance and related resources. You will be billed for the AWS resources used if you create a stack from this template. QS(9999)",
+    "Parameters": {
+        "QSS3BucketName": {
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Default": "baseline.quickstart.talend",
+            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Type": "String"
+        },
+        "QSS3KeyPrefix": {
+            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
+            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
+            "Default": "",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
+            "Type": "String"
+        }
+	},
+    "Mappings": {
+        "Talend": {
+            "tui": {
+				"talendRepoDir": "/opt/repo"
+            }
+        }
+    },
+	"Conditions": {
+	},
+    "Resources": {
+        "InstanceRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [ "sts:AssumeRole" ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [ "ec2.amazonaws.com" ]
+                            }
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess" ],
+                "Path": "/talend/"
+            }
+        },
+        "RolePolicies":{
+            "Type":"AWS::IAM::Policy",
+            "Properties":{
+                "PolicyName":"S3Download",
+                "Roles":[ { "Ref":"InstanceRole" } ],
+                "PolicyDocument":{
+                    "Statement":[
+                        {
+                          "Effect": "Allow",
+                          "Action": ["s3:ListBucket"],
+                          "Resource": [ { "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}" } ]
+                        },
+                        {
+                            "Action": [ "s3:GetObject" ],
+                            "Effect": "Allow",
+                            "Resource": [ { "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}scripts/*" } ]
+                        }
+                    ]
+                }
+            }
+        },
+        "InstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Path": "/talend/",
+                "Roles": [ { "Ref": "InstanceRole" } ]
+            }
+        }
+    },
+    "Outputs": {
+        "InstanceRole": {
+            "Value": { "Ref": "InstanceRole" },
+            "Description": "IAM Role for Talend EC2 instances",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:InstanceRole" 
+				}
+			}
+        },
+        "InstanceProfile": {
+            "Value": { "Ref": "InstanceProfile" },
+            "Description": "Talend Instance Profile",
+			"Export": {
+				"Name": {
+                    "Fn::Sub": "${AWS::StackName}:InstanceProfile"
+				}
+			}
+        }
+    }
+}

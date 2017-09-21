@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+#set -x
+set -u
+
+quickstart_policy_script_path=$(readlink -e "${BASH_SOURCE[0]}")
+quickstart_policy_script_dir="${quickstart_policy_script_path%/*}"
+
+source "${quickstart_policy_script_dir}/policy.sh"
+
+declare quickstart_policy
+policy_public_read quickstart.aws.talend.com quickstart_policy
+echo "${quickstart_policy}" > quickstart.aws.talend.com.policy
+aws s3api put-bucket-policy --bucket quickstart.aws.talend.com --policy "file://${quickstart_policy_script_dir}/quickstart.aws.talend.com.policy"

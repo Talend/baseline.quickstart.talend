@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+
+talend_repo_policy_script_path=$(readlink -e "${BASH_SOURCE[0]}")
+talend_repo_policy_script_dir="${talend_repo_policy_script_path%/*}"
+
+#source
+source "${talend_repo_policy_script_dir}/policy.sh"
+
+declare repo_policy
+policy_public_read talend-quickstart-repo repo_policy
+echo "${repo_policy}" > talend-quickstart-repo.policy
+aws s3api put-bucket-policy --bucket talend-quickstart-repo --policy "file://${talend_repo_policy_script_dir}/talend-quickstart-repo.policy"
+

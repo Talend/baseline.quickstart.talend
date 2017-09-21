@@ -1,0 +1,29 @@
+create-tac-project-users Readme
+
+1.  For User creation below minimum inputs will be accepted to create user.
+
+USER_FNAME
+USER_LNAME
+USER_LOGIN
+USER_PASSWD
+USER_TYPE - API accepts 1 of 3 types. [DI|DQ|MDM]  This should be DI and should match the project type.
+USER_ROLE- This should include "Administrator", "Operator", and "Designer" for one user.  Developers need the "Designer" role. System administrators need the Operator role to schedule jobs and the Administrator role to administer users.
+
+2. For Project creation below minimum inputs will be accepted to create project
+
+PROJECT
+PROJ_TYPE - API accepts 1 of 3 types. [DI|DQ|MDM] and should match the types of users.
+
+3.  Sample File
+
+A sample metadata file is used to load projects and users using the Metaservlet API.
+The file format is shown below along with sample data.
+
+USER details format :  USER,<first_name>,<last_name>,<login_id>,<passwd>,<USER_TYPE>
+PROJECT details format :  PROJECT,<project_name>,<project_type>
+
+USER,abhishek,guha,abhishek.guha@cognizant.com,abhishek,DI
+USER,nayan,wasnik,nayan.wasnik@cognizant.com,nayan,DI
+PROJECT,oodle_proj_Rel1,DI
+PROJECT,oodle_proj_rel2,DI
+ 
