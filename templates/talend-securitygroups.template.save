@@ -6,11 +6,6 @@
             "Description": "VPC to which security groups belong",
             "Type": "String"
         },
-		"BastionSecurityGroup": {
-            "Description": "Talend Server Security Group.",
-            "Type": "String",
-            "Default": ""
-		},
         "RemoteAccessCIDR": {
             "Description": "The IP address range that can be used to access the Talend servers using SSH.",
             "Type": "String",
@@ -24,13 +19,25 @@
     "Mappings": {
     },
     "Conditions": {
-        "BastionSecurityGroupCondition": {
-            "Fn::Not": [
-                { "Fn::Equals": [ "", { "Ref": "BastionSecurityGroup" } ] }
-            ]
-        }
     },
     "Resources": {
+        "BastionSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "VpcId": { "Ref": "VpcId" },
+                "GroupDescription": "Allow access to Bastion Server from selected external IP using ssh.",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "RemoteAccessCIDR"
+                        }
+                    }
+                ]
+            }
+        },
         "DatabaseSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
@@ -64,7 +71,6 @@
         },
         "DatabaseSecurityGroupBastionIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "Properties": {
                 "GroupId": {
                     "Ref": "DatabaseSecurityGroup"
@@ -187,7 +193,6 @@
         },
         "TacSecurityGroupBastionSshIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "TacSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -203,7 +208,6 @@
         },
         "TacSecurityGroupBastionIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "TacSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -341,7 +345,6 @@
         },
         "JobserverSecurityGroupBastionSshIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "JobserverSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -473,7 +476,6 @@
         },
         "DistantRunSecurityGroupBastionSshIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "DistantRunSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -529,7 +531,6 @@
         },
         "NexusSecurityGroupBastionSshIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "NexusSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -545,7 +546,6 @@
         },
         "NexusSecurityGroupBastionIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "NexusSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -639,7 +639,6 @@
         },
         "LogserverSecurityGroupBastionSshIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "LogserverSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -655,7 +654,6 @@
         },
         "LogserverSecurityGroupBastionElasticIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "LogserverSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -671,7 +669,6 @@
         },
         "LogserverSecurityGroupBastionKibanaIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "LogserverSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -794,7 +791,6 @@
         },
         "CommandlineSecurityGroupBastionSshIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "CommandlineSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -810,7 +806,6 @@
         },
         "CommandlineSecurityGroupBastionCmdShellIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "CommandlineSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -940,7 +935,6 @@
         },
         "GitSecurityGroupBastionSshIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "GitSecurityGroup",
             "Properties": {
                 "GroupId": { "Ref": "GitSecurityGroup" },
@@ -1039,7 +1033,6 @@
         },
         "StudioSecurityGroupBastionSshIngress": {
             "Type": "AWS::EC2::SecurityGroupIngress",
-            "Condition": "BastionSecurityGroupCondition",
             "DependsOn": "StudioSecurityGroup",
             "Properties": {
                 "GroupId": {
@@ -1055,6 +1048,11 @@
         }
     },
     "Outputs": {
+        "BastionSecurityGroup": {
+            "Description": "Bastion server security group.",
+            "Value": { "Ref": "BastionSecurityGroup" },
+            "Export": { "Name": { "Fn::Sub": "${AWS::StackName}:BastionSecurityGroup" } }
+        },
         "DatabaseSecurityGroup": {
             "Description": "Database server security group.",
             "Value": { "Ref": "DatabaseSecurityGroup" },
