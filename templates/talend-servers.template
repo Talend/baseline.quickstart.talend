@@ -428,6 +428,16 @@
             "Type": "String",
             "NoEcho": "true"
         },
+        "AmcDbUser": {
+            "Description": "AMC database user.",
+            "Type": "String",
+            "Default": "amc"
+        },
+        "AmcDbPassword": {
+            "Description": "AMC database password.",
+            "Type": "String",
+            "NoEcho": "true"
+        },
         "GitProtocol": {
             "Description": "Git protocol.",
             "Type": "String",
@@ -635,6 +645,8 @@
                     "TacDbSchema": { "Ref": "TacDbSchema" },
                     "TacDbUser": { "Ref": "TacDbUser" },
                     "TacDbPassword": { "Ref": "TacDbPassword" },
+                    "AmcDbUser": { "Ref": "AmcDbUser" },
+                    "AmcDbPassword": { "Ref": "AmcDbPassword" },
                     "CreateTacDatabase": { "Ref": "CreateTacDatabase" },
                     "CreateAmcDatabase": { "Ref": "CreateAmcDatabase" },
                     "NexusHost": { "Fn::GetAtt": [ "NexusStack", "Outputs.privateDnsName" ] },
