@@ -7,7 +7,7 @@
             "Type": "String"
         },
 		"BastionSecurityGroup": {
-            "Description": "Talend Server Security Group.",
+            "Description": "Bastion Server Security Group.",
             "Type": "String",
             "Default": ""
 		},
@@ -16,7 +16,6 @@
             "Type": "String",
             "MinLength": "9",
             "MaxLength": "18",
-            "Default": "0.0.0.0/0",
             "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
             "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
         }
@@ -35,7 +34,7 @@
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
                 "VpcId": { "Ref": "VpcId" },
-                "GroupDescription": "Allow access to Database from TAC and bastion server on 3306.",
+                "GroupDescription": "Allow access to Database from TAC, Studio, Bastion, and external CIDR on 3306.",
                 "SecurityGroupIngress": [
                     {
                         "IpProtocol": "tcp",
