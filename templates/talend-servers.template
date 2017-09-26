@@ -384,7 +384,6 @@
         "NexusAdminPassword": {
             "Description": "Nexus password.",
             "Type": "String",
-            "Default": "Talend123",
             "NoEcho": "true"
         },
         "TacDbHost": {
@@ -412,7 +411,6 @@
         "MasterDbPassword": {
             "Description": "Master user database password.  Only needed if creating the TAC or AMC databases.",
             "Type": "String",
-            "Default": "",
             "NoEcho": "true"
         },
         "TacDbSchema": {
@@ -428,7 +426,6 @@
         "TacDbPassword": {
             "Description": "TAC database password.",
             "Type": "String",
-            "Default": "tac_adminTalend123",
             "NoEcho": "true"
         },
         "GitProtocol": {
@@ -461,8 +458,7 @@
         "GitAdminPassword": {
             "Description": "Git password.",
             "Type": "String",
-            "NoEcho": "true",
-            "Default": "tadm1nPassw0rd"
+            "NoEcho": "true"
         },
         "CreateNexusStack": {
             "Description": "Create Nexus stack.",

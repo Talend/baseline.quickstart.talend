@@ -137,7 +137,6 @@
         "MasterDbPassword": {
             "Description": "Master user database password.  Only needed if creating the TAC or AMC databases.",
             "Type": "String",
-            "Default": "",
             "NoEcho": "true"
         },
         "TacDbHost": {
@@ -165,7 +164,6 @@
         "TacDbPassword": {
             "Description": "TAC database password.",
             "Type": "String",
-            "Default": "tacPassw0rd",
             "NoEcho": "true"
         },
         "AmcDbHost": {
@@ -193,7 +191,6 @@
         "AmcDbPassword": {
             "Description": "AMC database password.",
             "Type": "String",
-            "Default": "amcPassw0rd",
             "NoEcho": "true"
         },
         "NexusHost": {
@@ -216,7 +213,6 @@
         "NexusAdminPassword": {
             "Description": "Nexus password.",
             "Type": "String",
-            "Default": "Talend123",
             "NoEcho": "true"
         },
         "LoggingHost": {
@@ -268,7 +264,6 @@
         "GitAdminPassword": {
             "Description": "Git password.",
             "Type": "String",
-            "Default": "tadminPassw0rd",
             "NoEcho": "true"
         }
 	},

@@ -132,7 +132,6 @@
         "NexusAdminPassword": {
             "Description": "Nexus password.",
             "Type": "String",
-            "Default": "Talend123",
             "NoEcho": "true"
         }
 	},
