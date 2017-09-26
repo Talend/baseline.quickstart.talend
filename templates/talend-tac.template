@@ -1249,7 +1249,8 @@
                                                     "baselineTarget"
                                                 ]
                                             },
-                                            "/tac/create-tac-project-users.sh"
+                                            "/tac/create-tac-project-users.sh ",
+                                            { "Ref": "TacPassword" }
                                         ]
                                     ]
                                 }

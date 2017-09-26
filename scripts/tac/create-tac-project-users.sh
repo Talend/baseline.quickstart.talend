@@ -6,20 +6,38 @@ set -x
 script_path=$(readlink -e "${BASH_SOURCE[0]}")
 script_dir="${script_path%/*}"
 
-declare project_users_file="${1:-${script_dir}/project-users.data}"
+declare tac_password="${1:-}"
+declare project_users_file="${2:-${script_dir}/project-users.data}"
 
 declare usage="create-tac-project-users.sh <project_users_file>"
 
-[ -z "${project_users_file}" ] && echo "project users data file argument required: usage: ${usage}" && exit
+[ -z "${tac_password}" ] && echo "tac_password required: usage: ${usage}" && exit 1
 
-[ ! -f "${project_users_file}" ] && echo "project users data file argument '${projects_users_file}' does not exist" && exit
+[ -z "${project_users_file}" ] && echo "project users data file argument required: usage: ${usage}" && exit 1
+
+[ ! -f "${project_users_file}" ] && echo "project users data file argument '${projects_users_file}' does not exist" && exit 1
 
 declare tac_url="http://localhost:8080/tac"
 declare metaservlet_path="/opt/talend/6.3.1/tac/webapps/tac/WEB-INF/classes/MetaServletCaller.sh"
 chmod 750 "${metaservlet_path}"
 
-while read line
-do
+# create tadmin with password from environment
+
+# todo: refactor to function
+
+USER_FNAME="Talend"
+USER_LNAME="Administrator"
+USER_LOGIN="tadmin@talend.com"
+USER_PASSWD="${tac_password}"
+USER_TYPE="DI"
+JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
+${metaservlet_path} --tac-url "${tac_url}" --json-params="${JSON}"
+echo "tadmin added: result $?"
+
+
+# process project_users_file
+
+while read line; do
     REQ_TYPE=`echo $line | awk -F "," '{print $1}'`
     if [ $REQ_TYPE == USER ]
     then
@@ -30,13 +48,13 @@ do
         USER_TYPE=`echo $line | awk -F "," '{print $6}'`
         JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
         ${metaservlet_path} --tac-url "${tac_url}" --json-params="${JSON}"
-        echo "result $?"
+        echo "${USER_LOGIN} added: result $?"
     elif [ $REQ_TYPE == PROJECT ]
     then
         PROJ=`echo $line | awk -F "," '{print $2}'`
         PROJ_TYPE=`echo $line | awk -F "," '{print $3}'`
         JSON={"actionName":"createProject","addTechNameAtURL":true,"authPass":"admin","authUser":"admin@company.com","projectName":"$PROJ","projectType":"$PROJ_TYPE"}
         ${metaservlet_path} --tac-url="${tac_url}" --json-params="${JSON}"
-        echo "result $?"
+        echo "${PROJ} added: result $?"
     fi
 done < "${project_users_file}"

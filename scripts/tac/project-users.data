@@ -1,3 +1,3 @@
 REC_TYPE,USER_FNAME,USER_LNAME,USER_LOGIN,USER_PASSWD,USER_TYPE,USER_ROLE
-USER,Talend,Administrator,tadmin@talend.com,tadmin,DI
+USER,Talend,Developer,dev@talend.com,devPassw0rd,DI
 PROJECT,oodle_admin,DI

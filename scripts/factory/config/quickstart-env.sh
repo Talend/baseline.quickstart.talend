@@ -15,7 +15,7 @@ function quickstart_env() {
     local bucket="${quickstart_bucket}"
     local region="${quickstart_region}"
 
-    local quickstart_git_url="https://github.com/EdwardOst"
+    local quickstart_git_url="https://github.com/Talend"
     local quickstart_git_repo="quickstart-datalake-cognizant-talend"
     local quickstart_git_target="develop"
 
