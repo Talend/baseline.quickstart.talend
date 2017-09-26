@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Provide standard Talend Security Groups and QuickstartS3URL",
+    "Description": "Create Talend Security Groups",
     "Parameters": {
         "VpcId": {
             "Description": "VPC to which security groups belong",
