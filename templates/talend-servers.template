@@ -363,11 +363,6 @@
             "Description": "Talend S3 resources bucket.",
             "Type": "String",
             "Default": "repo-quickstart-talend"
-        },  
-        "TalendResourceBucketRepoPath": {
-            "Description": "Path to binary repository in Talend S3 resources bucket.",
-            "Type": "String",
-            "Default": "/"
         },
         "NexusPort": {
             "Description": "Nexus port.",
@@ -591,8 +586,7 @@
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
                     "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
 					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
-                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
-                    "TalendResourceBucketRepoPath": { "Ref": "TalendResourceBucketRepoPath" }
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
 				},
 				"TimeoutInMinutes" : "10"
 			}
@@ -613,8 +607,7 @@
                     "PrivateSubnet": { "Ref": "PrivateLogserver" },
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" },
 					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
-                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
-                    "TalendResourceBucketRepoPath": { "Ref": "TalendResourceBucketRepoPath" }
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
 				},
 				"TimeoutInMinutes" : "10"
 			}
@@ -637,7 +630,6 @@
 					"SecurityGroupIds": { "Ref": "TacSecurityGroup" },
 					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
-                    "TalendResourceBucketRepoPath": { "Ref": "TalendResourceBucketRepoPath" },
                     "TacDbHost": { "Ref": "TacDbHost" },
                     "AmcDbHost": { "Ref": "TacDbHost" },
                     "MasterDbUser": { "Ref": "MasterDbUser" },
