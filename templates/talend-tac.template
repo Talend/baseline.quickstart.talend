@@ -115,7 +115,7 @@
         "TalendResourceBucketRepoPath": {
             "Description": "Path to binary repository in Talend S3 resources bucket.",
             "Type": "String",
-            "Default": "/repo"
+            "Default": "/"
         },
         "CreateTacDatabase": {
             "Description": "Create TAC Database (true) or use an existing TAC database (false)",
