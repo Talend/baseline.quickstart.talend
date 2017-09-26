@@ -1,5 +1,3 @@
 REC_TYPE,USER_FNAME,USER_LNAME,USER_LOGIN,USER_PASSWD,USER_TYPE,USER_ROLE
-USER,first1,last1,user1@talend.com,password1,DI
-USER,first2,last2,user2@talend.com,password2,DI
-PROJECT,project1,DI
-PROJECT,project2,DI
+USER,Talend,Administrator,tadmin@talend.com,tadmin,DI
+PROJECT,oodle_admin,DI

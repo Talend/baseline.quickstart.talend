@@ -129,6 +129,11 @@
             "AllowedValues": [ "true", "false" ],
             "Default": "true"
         },
+        "TacPassword": {
+            "Description": "TAC application password for tadmin account.",
+            "Type": "String",
+            "NoEcho": "true"
+        },
         "MasterDbUser": {
             "Description": "The master or root user used to create TAC and AMC databases and the TAC user.  Only needed if creating the TAC or AMC databases.",
             "Type": "String",
