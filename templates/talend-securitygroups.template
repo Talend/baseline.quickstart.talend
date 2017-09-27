@@ -4,7 +4,7 @@
     "Parameters": {
         "VpcId": {
             "Description": "VPC to which security groups belong",
-            "Type": "String"
+            "Type": "AWS::EC2::VPC::Id"
         },
 		"BastionSecurityGroup": {
             "Description": "Bastion Server Security Group.",
