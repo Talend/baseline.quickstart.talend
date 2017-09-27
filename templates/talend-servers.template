@@ -581,6 +581,8 @@
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "InstanceRole": { "Ref": "InstanceRole" },
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "NexusInstanceType" },
@@ -590,8 +592,7 @@
 					"SecurityGroupIds": { "Ref": "NexusSecurityGroup" },
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
-                    "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
-                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
+                    "NexusAdminPassword": { "Ref": "NexusAdminPassword" }
 				},
 				"TimeoutInMinutes" : "10"
 			}
@@ -604,14 +605,15 @@
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "InstanceRole": { "Ref": "InstanceRole" },
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "LogserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
 					"SubnetId": { "Fn::If": [ "isLogserverPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
                     "PrivateSubnet": { "Ref": "PrivateLogserver" },
-					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" },
-                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
+					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" }
 				},
 				"TimeoutInMinutes" : "10"
 			}
@@ -625,6 +627,8 @@
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "InstanceRole": { "Ref": "InstanceRole" },
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "TacInstanceType" },
@@ -632,8 +636,6 @@
 					"SubnetId": { "Fn::If": [ "isTacPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
                     "PrivateSubnet": { "Ref": "PrivateTac" },
 					"SecurityGroupIds": { "Ref": "TacSecurityGroup" },
-					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
-                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "TacDbHost": { "Ref": "TacDbHost" },
                     "AmcDbHost": { "Ref": "TacDbHost" },
                     "TacPassword": { "Ref": "TacPassword" },
@@ -678,6 +680,8 @@
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "InstanceRole": { "Ref": "InstanceRole" },
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "JobserverInstanceType" },
@@ -701,6 +705,8 @@
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "InstanceRole": { "Ref": "InstanceRole" },
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "JobserverInstanceType" },
@@ -727,6 +733,8 @@
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "InstanceRole": { "Ref": "InstanceRole" },
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "JobserverInstanceType" },
