@@ -590,7 +590,8 @@
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Ref": "QSS3KeyPrefix" },
-                    "TalendLicenseBucket": { "Ref": "TalendLicenseBucket" }
+                    "TalendLicenseBucket": { "Ref": "TalendLicenseBucket" },
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
                 }
             }
         },

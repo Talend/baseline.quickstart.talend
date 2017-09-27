@@ -21,6 +21,11 @@
             "Type": "String",
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-) or period (.)."
+        },
+        "TalendResourceBucket": {
+            "Description": "Talend S3 resources bucket.",
+            "Type": "String",
+            "Default": "repo-quickstart-talend"
         }
 	},
     "Mappings": {
@@ -84,6 +89,24 @@
                             "Effect": "Allow",
                             "Resource": [
                                 { "Fn::Sub": "arn:aws:s3:::${TalendLicenseBucket}/*" }
+                            ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Resource": [
+                                { "Fn::Sub": "arn:aws:s3:::${TalendResourceBucket}" }
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                { "Fn::Sub": "arn:aws:s3:::${TalendResourceBucket}/*" }
                             ]
                         }
                     ]
