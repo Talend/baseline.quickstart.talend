@@ -159,6 +159,9 @@
 	},
     "Mappings": {
         "Talend": {
+            "license": {
+                "licenseTarget": "/home/ubuntu/TUI-4.5.2/licenses/6.3.1"
+            },
             "baseline": {
                 "baselineTarget": "/home/ec2-user/baseline",
                 "generatedTarget": "/home/ec2-user/generated"
