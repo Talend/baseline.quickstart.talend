@@ -22,6 +22,12 @@
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
             "Type": "String"
         },
+        "TalendLicenseBucket": {
+            "Description": "Bucket holding Talend license",
+            "Type": "String",
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-) or period (.)."
+        },
         "InstanceRole": {
             "Description": "Talend Server EC2 IAM Role",
             "Type": "String"
@@ -487,6 +493,13 @@
                                 "owner": "ec2-user",
                                 "group": "ec2-user",
                                 "mode": "000400"
+                            },
+                            "/home/ubuntu/generated/licenses/license": {
+                                "source": { "Fn::Sub": "https://s3.amazonaws.com/${TalendLicenseBucket}/license" },
+                                "authentication": "S3AccessCreds",
+                                "owner": "ubuntu",
+                                "group": "ubuntu",
+                                "mode": "000400"
                             }
                         },
                         "commands": {
@@ -631,6 +644,31 @@
                                                 ]
                                             },
 											"/"
+                                        ]
+                                    ]
+                                }
+                            },
+                            "02-load-license": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "cp ",
+                                            {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "baseline",
+                                                    "generatedTarget"
+                                                ]
+                                            },
+											"/licenses/* ",
+                                            {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "license",
+                                                    "licenseTarget"
+                                                ]
+                                            }
                                         ]
                                     ]
                                 }

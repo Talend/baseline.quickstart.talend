@@ -22,6 +22,12 @@
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
             "Type": "String"
         },
+        "TalendLicenseBucket": {
+            "Description": "Bucket holding Talend license",
+            "Type": "String",
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-) or period (.)."
+        },
         "InstanceRole": {
             "Description": "Talend Server EC2 IAM Role",
             "Type": "String"
@@ -103,12 +109,6 @@
             "Description": "Talend Server Security Group.",
             "Type": "CommaDelimitedList"
 		},
-        "TalendLicenseBucket": {
-            "Description": "Bucket holding Talend license",
-            "Type": "String",
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
-            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-) or period (.)."
-        },
         "TalendResourceBucket": {
             "Description": "Talend S3 resources bucket.",
             "Type": "String",
