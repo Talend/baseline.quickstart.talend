@@ -158,7 +158,7 @@
     "Mappings": {
         "Talend": {
             "license": {
-                "licenseTarget": "/home/ubuntu/TUI-4.5.2/licenses/6.3.1"
+                "licenseTarget": "/home/ec2-user/TUI-4.5.2/licenses/6.3.1"
             },
             "baseline": {
                 "baselineTarget": "/home/ec2-user/baseline",
@@ -497,11 +497,11 @@
                                 "group": "ec2-user",
                                 "mode": "000400"
                             },
-                            "/home/ubuntu/generated/licenses/license": {
+                            "/home/ec2-user/generated/licenses/license": {
                                 "source": { "Fn::Sub": "https://s3.amazonaws.com/${TalendLicenseBucket}/license" },
                                 "authentication": "S3AccessCreds",
-                                "owner": "ubuntu",
-                                "group": "ubuntu",
+                                "owner": "ec2-user",
+                                "group": "ec2-user",
                                 "mode": "000400"
                             }
                         },
