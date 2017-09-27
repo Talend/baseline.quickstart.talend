@@ -365,11 +365,6 @@
             "Description": "Talend S3 resources bucket.",
             "Type": "String",
             "Default": "repo-quickstart-talend"
-        },  
-        "TalendResourceBucketRepoPath": {
-            "Description": "Path to binary repository in Talend S3 resources bucket.",
-            "Type": "String",
-            "Default": "/"
         },
         "NexusAdminUserid": {
             "Description": "Nexus administrator userid.",
@@ -754,7 +749,6 @@
 
                     "TalendLicenseBucket": { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
-                    "TalendResourceBucketRepoPath": { "Ref": "TalendResourceBucketRepoPath" },
 
                     "NexusPort": "8081",
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
@@ -816,8 +810,7 @@
                     "PrivateSubnet": "public",
                     "SecurityGroupIds": { "Fn::GetAtt": [ "SecurityGroupsStack", "Outputs.StudioSecurityGroup" ] },
 					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
-                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
-                    "TalendResourceBucketRepoPath": { "Ref": "TalendResourceBucketRepoPath" }
+                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
 				},
 				"TimeoutInMinutes" : "10"
 			}
