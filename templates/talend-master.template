@@ -355,10 +355,11 @@
             "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
             "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
         },
-        "TalendLicenseUrl": {
-            "Description": "Url to license file received in email.",
+        "TalendLicenseBucket": {
+            "Description": "Bucket holding Talend license",
             "Type": "String",
-            "Default": "https://s3.amazonaws.com/license.quickstart.talend/license"
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-) or period (.)."
         },
         "TalendResourceBucket": {
             "Description": "Talend S3 resources bucket.",
@@ -567,7 +568,8 @@
                 "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-iam.template" },
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
-                    "QSS3KeyPrefix": { "Ref": "QSS3KeyPrefix" }
+                    "QSS3KeyPrefix": { "Ref": "QSS3KeyPrefix" },
+                    "TalendLicenseBucket": { "Ref": "TalendLicenseBucket" }
                 }
             }
         },
@@ -724,8 +726,7 @@
                     
                     "KeyName": { "Ref": "KeyName" },
 
-                    "TalendLicenseUrl": { "Ref": "TalendLicenseUrl" },
-
+                    "TalendLicenseBucket": { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "TalendResourceBucketRepoPath": { "Ref": "TalendResourceBucketRepoPath" },
 
@@ -780,7 +781,7 @@
                     },
                     "PrivateSubnet": "public",
                     "SecurityGroupIds": { "Fn::GetAtt": [ "SecurityGroupsStack", "Outputs.StudioSecurityGroup" ] },
-					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "TalendResourceBucketRepoPath": { "Ref": "TalendResourceBucketRepoPath" }
 				},

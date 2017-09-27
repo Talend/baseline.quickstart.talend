@@ -354,10 +354,11 @@
             "ConstraintDescription": "must be the name of an existing EC2 KeyPair.",
             "Default": "eost-aws-quickstart"
         },
-        "TalendLicenseUrl": {
-            "Description": "Url to license file received in email.",
+        "TalendLicenseBucket": {
+            "Description": "Bucket holding Talend license",
             "Type": "String",
-            "Default": "https://s3.amazonaws.com/license.quickstart.talend/license"
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-) or period (.)."
         },
         "TalendResourceBucket": {
             "Description": "Talend S3 resources bucket.",
@@ -590,7 +591,7 @@
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
                     "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
-					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
 				},
 				"TimeoutInMinutes" : "10"
@@ -611,7 +612,7 @@
 					"SubnetId": { "Fn::If": [ "isLogserverPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
                     "PrivateSubnet": { "Ref": "PrivateLogserver" },
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" },
-					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
 				},
 				"TimeoutInMinutes" : "10"
@@ -633,7 +634,7 @@
 					"SubnetId": { "Fn::If": [ "isTacPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
                     "PrivateSubnet": { "Ref": "PrivateTac" },
 					"SecurityGroupIds": { "Ref": "TacSecurityGroup" },
-					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "TacDbHost": { "Ref": "TacDbHost" },
                     "AmcDbHost": { "Ref": "TacDbHost" },
@@ -686,7 +687,7 @@
 					"SubnetId": { "Fn::If": [ "isJobserverPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
                     "PrivateSubnet": { "Ref": "PrivateJobserver" },
 					"SecurityGroupIds": { "Ref": "JobserverSecurityGroup" },
-					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
@@ -713,7 +714,7 @@
                     "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
                     "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
-					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
@@ -740,7 +741,7 @@
                     "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
                     "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
-					"TalendLicenseUrl":  { "Ref": "TalendLicenseUrl" },
+					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
