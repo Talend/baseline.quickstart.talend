@@ -371,6 +371,16 @@
             "Type": "String",
             "Default": "/"
         },
+        "NexusAdminUserid": {
+            "Description": "Nexus administrator userid.",
+            "Type": "String",
+            "Default": "admin"
+        },
+        "NexusAdminPassword": {
+            "Description": "Nexus password.",
+            "Type": "String",
+            "NoEcho": "true"
+        },
         "TacDbHost": {
             "Description": "TAC database hostname.  Leave blank to create a new RDS instance.",
             "Type": "String",
@@ -399,6 +409,11 @@
             "AllowedValues": [ "true", "false" ],
             "Default": "true"
         },
+        "TacPassword": {
+            "Description": "TAC application password for tadmin account.",
+            "Type": "String",
+            "NoEcho": "true"
+        },
         "MasterDbUser": {
             "Description": "The master or root user used to create TAC and AMC databases and the TAC user.  Only needed if creating a new TAC or AMC database.",
             "Type": "String",
@@ -409,6 +424,11 @@
             "Type": "String",
             "NoEcho": "true"
         },
+        "TacDbSchema": {
+            "Description": "TAC database schema.",
+            "Type": "String",
+            "Default": "tac_quickstart"
+        },
         "TacDbUser": {
             "Description": "TAC database user.",
             "Type": "String",
@@ -416,6 +436,16 @@
         },
         "TacDbPassword": {
             "Description": "TAC database password.",
+            "Type": "String",
+            "NoEcho": "true"
+        },
+        "AmcDbUser": {
+            "Description": "AMC database user.",
+            "Type": "String",
+            "Default": "amc"
+        },
+        "AmcDbPassword": {
+            "Description": "AMC database password.",
             "Type": "String",
             "NoEcho": "true"
         },
@@ -726,6 +756,10 @@
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
                     "TalendResourceBucketRepoPath": { "Ref": "TalendResourceBucketRepoPath" },
 
+                    "NexusPort": "8081",
+                    "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
+                    "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
+
                     "TacDbHost": {
                         "Fn::If": [
                             "CreateRdsCondition",
@@ -733,10 +767,14 @@
                             { "Ref": "TacDbHost" } 
                         ]
                     },
+                    "TacPassword": { "Ref": "TacPassword" },
                     "MasterDbUser": { "Ref": "MasterDbUser" },
                     "MasterDbPassword": { "Ref": "MasterDbPassword" },
+                    "TacDbSchema": { "Ref": "TacDbSchema" },
                     "TacDbUser": { "Ref": "TacDbUser" },
                     "TacDbPassword": { "Ref": "TacDbPassword" },
+                    "AmcDbUser": { "Ref": "AmcDbUser" },
+                    "AmcDbPassword": { "Ref": "AmcDbPassword" },
                     "CreateTacDatabase": { "Ref": "CreateTacDatabase" },
                     "CreateAmcDatabase": { "Ref": "CreateAmcDatabase" },
 
