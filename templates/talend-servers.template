@@ -591,7 +591,6 @@
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
                     "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
-					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
 				},
 				"TimeoutInMinutes" : "10"
@@ -612,7 +611,6 @@
 					"SubnetId": { "Fn::If": [ "isLogserverPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
                     "PrivateSubnet": { "Ref": "PrivateLogserver" },
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" },
-					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
 				},
 				"TimeoutInMinutes" : "10"
@@ -687,7 +685,6 @@
 					"SubnetId": { "Fn::If": [ "isJobserverPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
                     "PrivateSubnet": { "Ref": "PrivateJobserver" },
 					"SecurityGroupIds": { "Ref": "JobserverSecurityGroup" },
-					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
@@ -714,7 +711,6 @@
                     "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
                     "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
-					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
@@ -741,7 +737,6 @@
                     "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
                     "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
-					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }

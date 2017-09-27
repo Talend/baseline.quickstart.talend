@@ -407,7 +407,6 @@
         "MasterDbPassword": {
             "Description": "Master user database password.  Only needed if creating a new TAC or AMC database.",
             "Type": "String",
-            "Default": "",
             "NoEcho": "true"
         },
         "TacDbUser": {
@@ -418,7 +417,6 @@
         "TacDbPassword": {
             "Description": "TAC database password.",
             "Type": "String",
-            "Default": "tac_adminTalend123",
             "NoEcho": "true"
         },
         "CreateNexusStack": {
@@ -487,8 +485,7 @@
         "GitAdminPassword": {
             "Description": "Git password.",
             "Type": "String",
-            "NoEcho": "true",
-            "Default": "tadminPassword"
+            "NoEcho": "true"
         },
         "GitAdminEmail": {
             "Description": "Git admin contact email.",
@@ -503,8 +500,7 @@
         "GitTacPassword": {
             "Description": "Git TAC password.",
             "Type": "String",
-            "NoEcho": "true",
-            "Default": "tacPassword"
+            "NoEcho": "true"
         },
         "GitTacEmail": {
             "Description": "TAC contact email.",

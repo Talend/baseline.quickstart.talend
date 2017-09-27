@@ -103,12 +103,6 @@
             "Description": "Talend Server Security Group.",
             "Type": "CommaDelimitedList"
 		},
-        "TalendLicenseBucket": {
-            "Description": "Bucket holding Talend license",
-            "Type": "String",
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
-            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-) or period (.)."
-        },
         "TalendResourceBucket": {
             "Description": "Talend S3 resources bucket.",
             "Type": "String",
@@ -157,9 +151,6 @@
 	},
     "Mappings": {
         "Talend": {
-            "license": {
-                "licenseTarget": "/home/ec2-user/TUI-4.5.2/licenses/6.3.1"
-            },
             "baseline": {
                 "baselineTarget": "/home/ec2-user/baseline",
                 "generatedTarget": "/home/ec2-user/generated"
@@ -496,13 +487,6 @@
                                 "owner": "ec2-user",
                                 "group": "ec2-user",
                                 "mode": "000400"
-                            },
-                            "/home/ec2-user/generated/licenses/license": {
-                                "source": { "Fn::Sub": "https://s3.amazonaws.com/${TalendLicenseBucket}/license" },
-                                "authentication": "S3AccessCreds",
-                                "owner": "ec2-user",
-                                "group": "ec2-user",
-                                "mode": "000400"
                             }
                         },
                         "commands": {
@@ -647,31 +631,6 @@
                                                 ]
                                             },
 											"/"
-                                        ]
-                                    ]
-                                }
-                            },
-                            "02-load-license": {
-                                "command": {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            "cp ",
-                                            {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    "baseline",
-                                                    "generatedTarget"
-                                                ]
-                                            },
-											"/licenses/* ",
-                                            {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    "license",
-                                                    "licenseTarget"
-                                                ]
-                                            }
                                         ]
                                     ]
                                 }
