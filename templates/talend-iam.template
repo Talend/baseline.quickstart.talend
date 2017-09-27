@@ -42,7 +42,6 @@
                     ],
                     "Version": "2012-10-17"
                 },
-                "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess" ],
                 "Path": "/talend/"
             }
         },
@@ -62,6 +61,24 @@
                             "Action": [ "s3:GetObject" ],
                             "Effect": "Allow",
                             "Resource": [ { "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}scripts/*" } ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Resource": [
+                                { "Fn::Sub": "arn:aws:s3:::${LicenseBucket}" }
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                { "Fn::Sub": "arn:aws:s3:::${LicenseBucket}/*" }
+                            ]
                         }
                     ]
                 }
