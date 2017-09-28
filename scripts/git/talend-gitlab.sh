@@ -63,18 +63,18 @@ function gitlab_init() {
     echo "creating project ${git_repo}"
     curl --header "PRIVATE-TOKEN: ${xvar}" -X POST --data-urlencode 'visibility_level=10' "http://${ipvar}/api/v3/projects?name=${git_repo}"
 
-    echo "cloning http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
-    git clone "http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
+#    echo "cloning http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
+#    git clone "http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
 
-    cd "${git_repo}"
+#    cd "${git_repo}"
 
     # placeholder to retrieve standard jobs
-    echo "wget ${source_url}"
-    wget "${source_url}"
+#    echo "wget ${source_url}"
+#    wget "${source_url}"
  
-    echo "git commit and push"
-    git add .
-    git commit -m "First Jobs"
-    git push "http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
+#    echo "git commit and push"
+#    git add .
+#    git commit -m "First Jobs"
+#    git push "http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
 
 }

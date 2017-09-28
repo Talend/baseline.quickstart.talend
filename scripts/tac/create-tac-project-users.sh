@@ -31,7 +31,7 @@ USER_LOGIN="tadmin@talend.com"
 USER_PASSWD="${tac_password}"
 USER_TYPE="DI"
 JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
-${metaservlet_path} --tac-url "${tac_url}" --json-params="${JSON}"
+"${metaservlet_path}" --tac-url "${tac_url}" --json-params="${JSON}"
 echo "tadmin added: result $?"
 
 
@@ -47,14 +47,14 @@ while read line; do
         USER_PASSWD=`echo $line | awk -F "," '{print $5}'`
         USER_TYPE=`echo $line | awk -F "," '{print $6}'`
         JSON={"actionName":"createUser","authPass":"${tac_password}","authUser":"tadmin@talend.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
-        ${metaservlet_path} --tac-url "${tac_url}" --json-params="${JSON}"
+        "${metaservlet_path}" --tac-url "${tac_url}" --json-params="${JSON}"
         echo "${USER_LOGIN} added: result $?"
     elif [ $REQ_TYPE == PROJECT ]
     then
         PROJ=`echo $line | awk -F "," '{print $2}'`
         PROJ_TYPE=`echo $line | awk -F "," '{print $3}'`
         JSON={"actionName":"createProject","addTechNameAtURL":true,"authPass":"${tac_password}","authUser":"tadmin@talend.com","projectName":"$PROJ","projectType":"$PROJ_TYPE"}
-        ${metaservlet_path} --tac-url="${tac_url}" --json-params="${JSON}"
+        "${metaservlet_path}" --tac-url="${tac_url}" --json-params="${JSON}"
         echo "${PROJ} added: result $?"
     fi
 done < "${project_users_file}"
