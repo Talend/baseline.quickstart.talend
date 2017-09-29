@@ -687,270 +687,35 @@
                                     "Fn::Join": [
                                         "\n",
                                         [
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_REPO=",
-                                                        {
-                                                            "Fn::FindInMap": [ "Talend", "tui", "talendRepoDir"]
-                                                        }
-                                                    ]
+                                            { "Fn::Sub":
+                                                [
+                                                    "export TALEND_REPO=${talendRepoDir}",
+                                                    { "talendRepoDir": { "Fn::FindInMap": [ "Talend", "tui", "talendRepoDir"] } }
                                                 ]
                                             },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_TAC_DB_HOST=",
-                                                        {
-                                                            "Ref": "TacDbHost"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_TAC_DB_PORT=",
-                                                        {
-                                                            "Ref": "TacDbPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_TAC_DB_SCHEMA=",
-                                                        {
-                                                            "Ref": "TacDbSchema"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_TAC_DB_USER=",
-                                                        {
-                                                            "Ref": "TacDbUser"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_TAC_DB_PASSWORD=",
-                                                        {
-                                                            "Ref": "TacDbPassword"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_AMC_DB_HOST=",
-                                                        {
-                                                            "Ref": "AmcDbHost"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_AMC_DB_PORT=",
-                                                        {
-                                                            "Ref": "AmcDbPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_AMC_DB_SCHEMA=",
-                                                        {
-                                                            "Ref": "AmcDbSchema"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_AMC_DB_USER=",
-                                                        {
-                                                            "Ref": "AmcDbUser"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_AMC_DB_PASSWORD=",
-                                                        {
-                                                            "Ref": "AmcDbPassword"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_NEXUS_HOST=",
-                                                        {
-                                                            "Ref": "NexusHost"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_NEXUS_PORT=",
-                                                        {
-                                                            "Ref": "NexusPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_NEXUS_ADMIN=",
-                                                        {
-                                                            "Ref": "NexusAdminUserid"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_NEXUS_PASSWORD=",
-                                                        {
-                                                            "Ref": "NexusAdminPassword"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGGING_HOST=",
-                                                        {
-                                                            "Ref": "LoggingHost"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGSTASH_TAC_PORT=",
-                                                        {
-                                                            "Ref": "LoggingTacPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGSTASH_KIBANA_PORT=",
-                                                        {
-                                                            "Ref": "LoggingKibanaPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_GIT_PROTOCOL=",
-                                                        {
-                                                            "Ref": "GitProtocol"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_GIT_HOST=",
-                                                        {
-                                                            "Ref": "GitHost"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_GIT_PORT=",
-                                                        {
-                                                            "Ref": "GitPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_GIT_REPO=",
-                                                        {
-                                                            "Ref": "GitRepo"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_GIT_USER=",
-                                                        {
-                                                            "Ref": "GitAdminUserid"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_GIT_PASSWORD=",
-                                                        {
-                                                            "Ref": "GitAdminPassword"
-                                                        }
-                                                    ]
-                                                ]
-                                            }
+                                            { "Fn::Sub": "export TALEND_TAC_DB_HOST=${TacDbHost}" },
+                                            { "Fn::Sub": "export TALEND_TAC_DB_PORT=${TacDbPort}" },
+                                            { "Fn::Sub": "export TALEND_TAC_DB_SCHEMA=${TacDbSchema}" },
+                                            { "Fn::Sub": "export TALEND_TAC_DB_USER=${TacDbUser}" },
+                                            { "Fn::Sub": "export TALEND_TAC_DB_PASSWORD=${TacDbPassword}" },
+                                            { "Fn::Sub": "export TALEND_AMC_DB_HOST=${AmcDbHost}" },
+                                            { "Fn::Sub": "export TALEND_AMC_DB_PORT=${AmcDbPort}" },
+                                            { "Fn::Sub": "export TALEND_AMC_DB_SCHEMA=${AmcDbSchema}" },
+                                            { "Fn::Sub": "export TALEND_AMC_DB_USER=${AmcDbUser}" },
+                                            { "Fn::Sub": "export TALEND_AMC_DB_PASSWORD=${AmcDbPassword}" },
+                                            { "Fn::Sub": "export TALEND_NEXUS_HOST=${NexusHost}" },
+                                            { "Fn::Sub": "export TALEND_NEXUS_PORT=${NexusPort}" },
+                                            { "Fn::Sub": "export TALEND_NEXUS_ADMIN=${NexusAdminUserid}" },
+                                            { "Fn::Sub": "export TALEND_NEXUS_PASSWORD=${NexusAdminPassword}" },
+                                            { "Fn::Sub": "export TALEND_LOGGING_HOST=${LoggingHost}" },
+                                            { "Fn::Sub": "export TALEND_LOGSTASH_TAC_PORT=${LoggingTacPort}" },
+                                            { "Fn::Sub": "export TALEND_LOGSTASH_KIBANA_PORT=${LoggingKibanaPort}" },
+                                            { "Fn::Sub": "export TALEND_GIT_PROTOCOL=${GitProtocol}" },
+                                            { "Fn::Sub": "export TALEND_GIT_HOST=${GitHost}" },
+                                            { "Fn::Sub": "export TALEND_GIT_PORT=${GitPort}" },
+                                            { "Fn::Sub": "export TALEND_GIT_REPO=${GitRepo}.git" },
+                                            { "Fn::Sub": "export TALEND_GIT_USER=${GitAdminUserid}" },
+                                            { "Fn::Sub": "export TALEND_GIT_PASSWORD=${GitAdminPassword}" }
                                         ]
                                     ]
                                 },

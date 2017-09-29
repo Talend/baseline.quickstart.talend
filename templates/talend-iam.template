@@ -32,6 +32,10 @@
         "Talend": {
             "tui": {
 				"talendRepoDir": "/opt/repo"
+            },
+            "jobserver": {
+                "sparkJarsBucket": "spark.quickstart.talend",
+                "sparkJarsTarget": "/var/lib/spark/jars"
             }
         }
     },
@@ -107,6 +111,31 @@
                             "Effect": "Allow",
                             "Resource": [
                                 { "Fn::Sub": "arn:aws:s3:::${TalendResourceBucket}/*" }
+                            ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Resource": [
+                                { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsBucket" ] }
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                { "Fn::Sub": 
+                                    [
+                                        "arn:aws:s3:::${SparkJarsBucket}/*",
+                                        {
+                                            "SparkJarsBucket": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsBucket" ] }
+                                        }
+                                    ]
+                                }
                             ]
                         }
                     ]
