@@ -119,7 +119,14 @@
                                 "s3:ListBucket"
                             ],
                             "Resource": [
-                                { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsBucket" ] }
+                                { "Fn::Sub": 
+                                    [
+                                        "arn:aws:s3:::${SparkJarsBucket}",
+                                        {
+                                            "SparkJarsBucket": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsBucket" ] }
+                                        }
+                                    ]
+                                }
                             ]
                         },
                         {
