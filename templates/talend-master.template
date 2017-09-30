@@ -649,7 +649,7 @@
                             [ { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ]
                         ]
                     },
-                    "SecurityGroups": { "Fn::GetAtt": [ "SecurityGroupsStack", "Outputs.DatabaseSecurityGroup" ] },
+                    "SecurityGroups": { "Fn::GetAtt": [ "SecurityGroupsStack", "Outputs.DatabaseSecurityGroupID" ] },
                     "DbClass": { "Ref": "DbClass" },
                     "DbAllocatedStorage": { "Ref": "DbAllocatedStorage" },
                     "MasterDbUser": { "Ref": "MasterDbUser" },
@@ -671,7 +671,7 @@
                     "InstanceType": "c4.large",
                     "InstanceRole": { "Fn::GetAtt": [ "IamStack", "Outputs.InstanceRole" ] },
                     "InstanceProfile": { "Fn::GetAtt": [ "IamStack", "Outputs.InstanceProfile" ] },
-                    "GitSecurityGroup": { "Fn::GetAtt": [ "SecurityGroupsStack", "Outputs.GitSecurityGroup" ] },
+                    "GitSecurityGroup": { "Fn::GetAtt": [ "SecurityGroupsStack", "Outputs.GitSecurityGroupID" ] },
                     "KeyPairName": { "Ref": "KeyName" },
                     "VolumeSize": "100",
                     "VolumeType": "gp2",
@@ -809,7 +809,7 @@
                         ]
                     },
                     "PrivateSubnet": "public",
-                    "SecurityGroupIds": { "Fn::GetAtt": [ "SecurityGroupsStack", "Outputs.StudioSecurityGroup" ] },
+                    "SecurityGroupIds": { "Fn::GetAtt": [ "SecurityGroupsStack", "Outputs.StudioSecurityGroupID" ] },
 					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" }
 				},
