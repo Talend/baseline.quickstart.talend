@@ -139,7 +139,7 @@
             "Description": "The size of the EBS attached volume",
             "Type": "String"
         },
-        "GitSecurityGroup": {
+        "GitSecurityGroupID": {
             "Type": "AWS::EC2::SecurityGroup::Id",
             "Description": "Gitlab Security Group"
         },
@@ -277,7 +277,7 @@
             "Properties": {
                 "InstanceType": { "Ref": "InstanceType" },
                 "KeyName": { "Ref": "KeyPairName" },
-                "SecurityGroupIds": [ { "Ref": "GitSecurityGroup" } ],
+                "SecurityGroupIds": [ { "Ref": "GitSecurityGroupID" } ],
                 "SubnetId": { "Ref": "SubnetId" },
                 "Tags": [ { "Key": "Name", "Value": "GitLab CE" } ],
                 "BlockDeviceMappings": [
