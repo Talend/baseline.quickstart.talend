@@ -489,12 +489,6 @@
 			"Default": "true",
             "AllowedValues": [ "true", "false" ]
         },
-        "CreateJobserverStack": {
-            "Description": "Create Jobserver stack.",
-            "Type": "String",
-			"Default": "true",
-            "AllowedValues": [ "true", "false" ]
-        },
         "CreateJobserverAutoscaleStack": {
             "Description": "Create JobserverAutoscale stack.",
             "Type": "String",
@@ -529,16 +523,15 @@
                 "true"
             ]
         },
-        "CreateJobserverStackCondition": {
-            "Fn::Equals": [
-                { "Ref": "CreateJobserverStack" },
-                "true"
-            ]
-        },
         "CreateJobserverAutoscaleStackCondition": {
             "Fn::Equals": [
                 { "Ref": "CreateJobserverAutoscaleStack" },
                 "true"
+            ]
+        },
+        "CreateJobserverStackCondition": {
+            "Fn::Not": [
+                { "Condition": "CreateJobserverAutoscaleStackCondition" }
             ]
         },
         "CreateDistantRunStackCondition": {
