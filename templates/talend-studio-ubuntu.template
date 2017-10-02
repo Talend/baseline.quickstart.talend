@@ -295,7 +295,7 @@
                                 "mode": "000400"
                             },
                             "/home/ubuntu/Talend_BigData.png": {
-                                "source": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts}/images/Talend_BigData.png" },
+                                "source": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/images/Talend_BigData.png" },
                                 "authentication": "S3AccessCreds",
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
