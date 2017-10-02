@@ -352,7 +352,7 @@
                                         "\n",
                                         [
                                             {
-                                                "Fn::Sub": [
+                                                "Fn::Join": [
                                                     "",
                                                     [
                                                         "export TALEND_REPO=",
