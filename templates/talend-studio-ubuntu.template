@@ -352,7 +352,7 @@
                                         "\n",
                                         [
                                             {
-                                                "Fn::Join": [
+                                                "Fn::Sub": [
                                                     "",
                                                     [
                                                         "export TALEND_REPO=",
@@ -362,6 +362,28 @@
                                                     ]
                                                 ]
                                             }
+                                        ]
+                                    ]
+                                },
+                                "mode": "000400",
+								"owner": "ubuntu",
+								"group": "ubuntu"
+                            },
+                            "/home/ubuntu/Desktop/TalendStudio.desktop": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "\n",
+                                        [
+                                            "[Desktop Entry]",
+                                            "Version=1.0",
+                                            "Type=Application",
+                                            "Name=Talend Studio",
+                                            "Comment=",
+                                            "Exec=/opt/talend/6.3.1/studio/studio/Talend-Studio-linux-gtk-x86_64",
+                                            "Icon=",
+                                            "Path=/opt/talend/6.3.1/studio/studio",
+                                            "Terminal=false",
+                                            "StartupNotify=false"
                                         ]
                                     ]
                                 },
