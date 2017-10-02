@@ -293,6 +293,13 @@
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
                                 "mode": "000400"
+                            },
+                            "/home/ubuntu/Talend_BigData.png": {
+                                "source": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts}/images/Talend_BigData.png" },
+                                "authentication": "S3AccessCreds",
+                                "owner": "ubuntu",
+                                "group": "ubuntu",
+                                "mode": "000444"
                             }
                         },
                         "commands": {
@@ -379,15 +386,15 @@
                                             "Type=Application",
                                             "Name=Talend Studio",
                                             "Comment=",
-                                            "Exec=/opt/talend/6.3.1/studio/studio/Talend-Studio-linux-gtk-x86_64",
-                                            "Icon=",
+                                            "Exec=/opt/talend/6.3.1/studio/studio/Talend-Studio-linux-gtk-x86_64 -clean",
+                                            "Icon=/home/ubuntu/Talend_BigData.png",
                                             "Path=/opt/talend/6.3.1/studio/studio",
                                             "Terminal=false",
                                             "StartupNotify=false"
                                         ]
                                     ]
                                 },
-                                "mode": "000400",
+                                "mode": "000751",
 								"owner": "ubuntu",
 								"group": "ubuntu"
                             }
@@ -623,6 +630,9 @@
                             },
                             "06-install-firefox": {
                                 "command": "apt-get install -y firefox"
+                            },
+                            "07-install-geany": {
+                                "command": "apt-get install -y gedit"
                             }
                         }
                     }
