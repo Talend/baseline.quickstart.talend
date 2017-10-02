@@ -39,7 +39,7 @@
         "InstanceType": {
             "Description": "Talend Server EC2 instance type",
             "Type": "String",
-            "Default": "t2.micro",
+            "Default": "m3.xlarge",
             "AllowedValues": [
                 "t1.micro",
                 "t2.micro",
@@ -139,6 +139,10 @@
             "s3fs": {
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
                 "s3fsTarget": "/home/ubuntu/s3fs-fuse-1.82"
+            },
+            "jobserver": {
+                "sparkJarsBucket": "spark.quickstart.talend",
+                "sparkJarsTarget": "/var/lib/spark/jars"
             }
         },
         "AwsAmiRegionMap": {
@@ -324,6 +328,17 @@
                                             { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
                                             " -type f -name \"ec2-metadata\" -exec chmod u+x {} \\;"
                                         ]
+                                    ]
+                                }
+                            },
+                            "06-spark-jars": {
+                                "command": {
+                                    "Fn::Sub": [ 
+                                        "aws s3 cp s3://${sparkJarsBucket} ${sparkJarsTarget} --recursive",
+                                        {
+                                            "sparkJarsBucket": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsBucket" ] },
+                                            "sparkJarsTarget": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsTarget" ] }
+                                        }
                                     ]
                                 }
                             }
@@ -583,6 +598,9 @@
                             },
                             "05-install-xfce": {
                                 "command": "apt-get install -y xfce4"
+                            },
+                            "06-install-firefox": {
+                                "command": "apt-get install -y firefox"
                             }
                         }
                     }
