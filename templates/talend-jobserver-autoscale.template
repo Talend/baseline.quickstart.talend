@@ -381,7 +381,12 @@
         },
 		"isPublicSubnet": {
 			"Fn::Not": [ { "Condition": "isPrivateSubnet" } ]
-		}
+		},
+        "SelfRegisterWithTacCondition": {
+            "Fn::Not": [
+                { "Fn::Equals": [ "", { "Ref": "TacHost" } ] }
+            ]
+        }
 	},
     "Resources": {
         "JobserverAutoscaling": {
@@ -588,37 +593,21 @@
                                                     ]
                                                 ]
                                             },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_TAC_HOST=",
-                                                        {
-                                                            "Ref": "TacHost"
+                                            { "Fn::Sub": "export TALEND_TAC_HOST=${TacHost}" },
+                                            { "Fn::Sub": "export TALEND_LOGGING_HOST=${LoggingHost}" },
+                                            { "Fn::Sub": "export TALEND_LOGSTASH_JOBSERVER_PORT=${LoggingJobserverPort}" },
+                                            { "Fn::Sub":
+                                                [
+                                                    "export TALEND_JOBSERVER_REGISTER=${SelfRegisterWithTac}",
+                                                    { 
+                                                        "SelfRegisterWithTac": {
+                                                            "Fn::If": [
+                                                                "SelfRegisterWithTacCondition",
+                                                                "true",
+                                                                "false"
+                                                            ]
                                                         }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGGING_HOST=",
-                                                        {
-                                                            "Ref": "LoggingHost"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGSTASH_JOBSERVER_PORT=",
-                                                        {
-                                                            "Ref": "LoggingJobserverPort"
-                                                        }
-                                                    ]
+                                                    }
                                                 ]
                                             }
                                         ]
@@ -812,6 +801,14 @@
                                     "Fn::Join": [
                                         "",
                                         [
+                                            { "Fn::If":
+                                                [
+                                                    "SelfRegisterWithTacCondition",
+                                                    "true",
+                                                    "false"
+                                                ]
+                                            },
+                                            " && ",
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",

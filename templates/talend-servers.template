@@ -664,31 +664,6 @@
 				"TimeoutInMinutes" : "10"
 			}
 		},
-		"JobserverStack": {
-			"Type" : "AWS::CloudFormation::Stack",
-            "Condition" : "CreateJobserverStackCondition",
-			"DependsOn": [ "TacStack", "LogserverStack" ],
-			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}${JobserverTemplate}" },
-				"Parameters" : {
-                    "QSS3BucketName": { "Ref": "QSS3BucketName" },
-                    "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
-					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
-                    "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
-                    "InstanceRole": { "Ref": "InstanceRole" },
-                    "InstanceProfile": { "Ref": "InstanceProfile" },
-					"InstanceType": { "Ref": "JobserverInstanceType" },
-					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Fn::If": [ "isJobserverPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
-                    "PrivateSubnet": { "Ref": "PrivateJobserver" },
-					"SecurityGroupIds": { "Ref": "JobserverSecurityGroup" },
-					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
-                    "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
-                    "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
-				},
-				"TimeoutInMinutes" : "10"
-			}
-        },
 		"JobserverAutoscaleStack": {
 			"Type" : "AWS::CloudFormation::Stack",
             "Condition" : "CreateJobserverAutoscaleStackCondition",
@@ -738,7 +713,7 @@
                     "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
                     "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
-					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
+					"TacHost": "",
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
 				},
@@ -771,12 +746,12 @@
 				"Name": { "Fn::Sub": "${AWS::StackName}:Tac" } 
 			}
         },
-        "JobserverStack": {
-            "Condition": "CreateJobserverStackCondition",
+        "JobserverAutoscaleStack": {
+            "Condition": "CreateJobserverAutoscaleStackCondition",
             "Value": { "Ref": "JobserverStack" },
-            "Description": "Nested Jobserver stack",
+            "Description": "Nested JobserverAutoscale stack",
 			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:Jobserver" } 
+				"Name": { "Fn::Sub": "${AWS::StackName}:JobserverAutoscale" } 
 			}
         }
     }
