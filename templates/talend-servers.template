@@ -550,11 +550,6 @@
                 "true"
             ]
         },
-        "CreateJobserverStackCondition": {
-            "Fn::Not": [
-                { "Condition": "CreateJobserverAutoscaleStackCondition" }
-            ]
-        },
         "CreateDistantRunStackCondition": {
             "Fn::Equals": [
                 { "Ref": "CreateDistantRunStack" },
@@ -769,7 +764,7 @@
         },
         "JobserverAutoscaleStack": {
             "Condition": "CreateJobserverAutoscaleStackCondition",
-            "Value": { "Ref": "JobserverStack" },
+            "Value": { "Ref": "JobserverAutoscaleStack" },
             "Description": "Nested JobserverAutoscale stack",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:JobserverAutoscale" } 
