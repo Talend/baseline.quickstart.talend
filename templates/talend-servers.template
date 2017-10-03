@@ -132,6 +132,27 @@
             "MaxValue": "10",
             "Default": "2"
         },
+        "DistantRunAutoscaleMinSize": {
+            "Description": "Talend DistantRun autoscale minimum size",
+            "Type": "Number",
+            "MinValue": "1",
+            "MaxValue": "10",
+            "Default": "1"
+        },
+        "DistantRunAutoscaleMaxSize": {
+            "Description": "Talend DistantRun autoscale maximum size",
+            "Type": "Number",
+            "MinValue": "1",
+            "MaxValue": "10",
+            "Default": "5"
+        },
+        "DistantRunAutoscaleDesiredCapacity": {
+            "Description": "Talend DistantRun autoscale maximum size",
+            "Type": "Number",
+            "MinValue": "1",
+            "MaxValue": "10",
+            "Default": "2"
+        },
         "TacInstanceType": {
             "Description": "TAC EC2 instance type",
             "Type": "String",
@@ -710,9 +731,9 @@
 					"SubnetId": { "Ref": "PublicSubnetId" },
                     "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "DistantRunSecurityGroup" },
-                    "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
-                    "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
-                    "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
+                    "JobserverAutoscaleMinSize": { "Ref": "DistantRunAutoscaleMinSize" },
+                    "JobserverAutoscaleMaxSize": { "Ref": "DistantRunAutoscaleMaxSize" },
+                    "JobserverAutoscaleDesiredCapacity": { "Ref": "DistantRunAutoscaleDesiredCapacity" },
 					"TacHost": "",
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
