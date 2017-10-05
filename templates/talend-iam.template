@@ -168,7 +168,7 @@
                             ],
                             "Effect": "Allow",
                             "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendSourceBucket}" }
+                                { "Fn::Sub": "arn:aws:s3:::${TalendSourceBucket}/*" }
                             ]
                         }
                     ]
@@ -200,7 +200,7 @@
                             ],
                             "Effect": "Allow",
                             "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendTargetBucket}" }
+                                { "Fn::Sub": "arn:aws:s3:::${TalendTargetBucket}/*" }
                             ]
                         }
                     ]
