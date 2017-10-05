@@ -298,6 +298,9 @@
             "s3fs": {
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
                 "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
+            },
+            "cfn": {
+                "workDir": "/home/ec2-user/work"
             }
         },
         "AWSInstanceType2Arch": {
@@ -931,6 +934,13 @@
                                             "jre_installer_install"
                                         ]
                                     ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
                                 }
                             },
                             "03-install-git": {
@@ -947,6 +957,13 @@
                                             },
                                             "/scripts/pre-install/install_git.sh"
                                         ]
+                                    ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
                                     ]
                                 }
                             },
@@ -971,6 +988,13 @@
                                         },
                                         "echo CreateTacDatabaseCondition is false, using existing database and credentials"
                                     ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
                                 }
                             },
                             "05-install-amc-db": {
@@ -994,6 +1018,13 @@
                                         },
                                         "echo CreateAmcDatabaseCondition is false, using existing database and credentials"
                                         ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
                                 }
                             },
                             "06-install-talend": {
@@ -1013,8 +1044,8 @@
                                 "cwd": {
                                     "Fn::FindInMap": [
                                         "Talend",
-                                        "tui",
-                                        "tuiTarget"
+                                        "cfn",
+                                        "workDir"
                                     ]
                                 }
                             },
@@ -1034,9 +1065,40 @@
                                             "localhost"
                                         ]
                                     ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
                                 }
                             },
-                            "08-project-users": {
+                            "08-load-git": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "${guardCondition} && /git/load-git.sh myzipfile.tgz ./work_repo ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
+                                        {
+                                            "guardCondition": "true",
+                                            "baselineTarget": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "baseline",
+                                                    "baselineTarget"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
+                                }
+                            },
+                            "09-project-users": {
                                 "command": {
                                     "Fn::Join": [
                                         "",
@@ -1051,6 +1113,13 @@
                                             "/tac/create-tac-project-users.sh ",
                                             { "Ref": "TacPassword" }
                                         ]
+                                    ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
                                     ]
                                 }
                             }
