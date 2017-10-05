@@ -253,8 +253,7 @@
         },
         "GitHost": {
             "Description": "Git host DNS hostname.",
-            "Type": "String",
-            "Default": "localhost"
+            "Type": "String"
         },
         "GitPort": {
             "Description": "Git port.",
@@ -698,7 +697,7 @@
                                             "skipCondition": {
                                                 "Fn::If": [
                                                     "CopyToTalendSourceBucketCondition",
-                                                    "true",
+                                                    "false",
                                                     "true"
                                                     ]
                                             }
@@ -1095,7 +1094,7 @@
                                     "Fn::Sub": [
                                         "${skipCondition} || /git/load-git.sh myzipfile.tgz ./work_repo ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
                                         {
-                                            "skipCondition": "true",
+                                            "skipCondition": "false",
                                             "baselineTarget": {
                                                 "Fn::FindInMap": [
                                                     "Talend",
