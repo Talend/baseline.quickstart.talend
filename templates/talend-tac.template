@@ -677,13 +677,13 @@
                             "04-copy-demo-data": {
                                 "command": {
                                     "Fn::Sub": [ 
-                                        "${guardCondition} && aws s3 cp s3://${TalendResourceBucket}/demo_data s3://${TalendSourceBucket} --recursive",
+                                        "${skipCondition} || aws s3 cp s3://${TalendResourceBucket}/demo_data s3://${TalendSourceBucket} --recursive",
                                         {
-                                            "guardCondition": {
+                                            "skipCondition": {
                                                 "Fn::If": [
                                                     "CopyToTalendSourceBucketCondition",
-                                                    "false",
-                                                    "false"
+                                                    "true",
+                                                    "true"
                                                     ]
                                             }
                                         }
@@ -1077,9 +1077,9 @@
                             "08-load-git": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "${guardCondition} && /git/load-git.sh myzipfile.tgz ./work_repo ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
+                                        "${skipCondition} || /git/load-git.sh myzipfile.tgz ./work_repo ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
                                         {
-                                            "guardCondition": "true",
+                                            "skipCondition": "true",
                                             "baselineTarget": {
                                                 "Fn::FindInMap": [
                                                     "Talend",
