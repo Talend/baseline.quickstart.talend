@@ -301,7 +301,7 @@
             "cfn": {
                 "workDir": "/home/ec2-user/work"
             },
-            "demo_jobs": {
+            "demojobs": {
                 "path": "demo_jobs/oodlejobs.tgz"
             }
         },
@@ -1140,7 +1140,7 @@
                                             "demo_jobs_path": {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "demo_jobs",
+                                                    "demojobs",
                                                     "path"
                                                 ]
                                             },
