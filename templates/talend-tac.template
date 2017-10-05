@@ -119,6 +119,11 @@
             "Type": "String",
             "Default": "/"
         },
+        "TalendSourceBucket": {
+            "Description": "Talend source bucket for demo jobs.",
+            "Type": "String",
+            "Default": ""
+        },          
         "CreateTacDatabase": {
             "Description": "Create TAC Database (true) or use an existing TAC database (false)",
             "Type": "String",
@@ -506,6 +511,16 @@
                 { "Ref": "CreateAmcDatabase" },
                 "true"
             ]
+        },
+        "CopyToTalendSourceBucketCondition": {
+            "Fn::Not": [
+                { 
+                    "Fn::Equals": [
+                        "",
+                        { "Ref": "TalendSourceBucket" }
+                    ]
+                }
+            ]
         }
     },
     "Resources": {
@@ -656,7 +671,23 @@
                                     "Fn::Sub": "aws s3 cp s3://${QSS3BucketName}/${QSS3KeyPrefix}scripts /home/ec2-user/baseline --recursive"
                                 }
                             },
-                            "04-chmod-qss3bucket": {
+                            "04-copy-demo-data": {
+                                "command": {
+                                    "Fn::Sub": [ 
+                                        "${guardCondition} && aws s3 cp s3://${TalendResourceBucket}/demo_data s3://${TalendSourceBucket} --recursive",
+                                        {
+                                            "guardCondition": {
+                                                "Fn::If": [
+                                                    "CopyToTalendSourceBucketCondition",
+                                                    "true",
+                                                    "false"
+                                                    ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "05-chmod-qss3bucket": {
                                 "command": {
                                     "Fn::Join": [ "",
                                         [
@@ -667,7 +698,7 @@
                                     ]
                                 }
                             },
-                            "05-chmod-ec2-metadata": {
+                            "06-chmod-ec2-metadata": {
                                 "command": {
                                     "Fn::Join": [ "",
                                         [

@@ -386,6 +386,11 @@
             "Type": "String",
             "Default": "repo-quickstart-talend"
         },
+        "TalendSourceBucket": {
+            "Description": "Talend source bucket for demo jobs.",
+            "Type": "String",
+            "Default": ""
+        },          
         "NexusPort": {
             "Description": "Nexus port.",
             "Type": "Number",
@@ -638,6 +643,7 @@
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
 					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
                     "TalendResourceBucket": { "Ref": "TalendResourceBucket" },
+                    "TalendSourceBucket": { "Ref": "TalendSourceBucket" },
                     "InstanceRole": { "Ref": "InstanceRole" },
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "TacInstanceType" },
