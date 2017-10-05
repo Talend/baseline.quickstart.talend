@@ -682,7 +682,7 @@
                                             "guardCondition": {
                                                 "Fn::If": [
                                                     "CopyToTalendSourceBucketCondition",
-                                                    "true",
+                                                    "false",
                                                     "false"
                                                     ]
                                             }
