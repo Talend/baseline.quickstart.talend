@@ -26,20 +26,46 @@
             "Description": "Talend S3 resources bucket.",
             "Type": "String",
             "Default": "repo-quickstart-talend"
+        },
+        "TalendSourceBucket": {
+            "Description": "Talend source bucket for demo jobs.",
+            "Type": "String",
+            "Default": ""
+        },
+        "TalendTargetBucket": {
+            "Description": "Talend target bucket for demo jobs.",
+            "Type": "String",
+            "Default": ""
         }
 	},
     "Mappings": {
         "Talend": {
             "tui": {
 				"talendRepoDir": "/opt/repo"
-            },
-            "jobserver": {
-                "sparkJarsBucket": "spark.quickstart.talend",
-                "sparkJarsTarget": "/var/lib/spark/jars"
             }
         }
     },
 	"Conditions": {
+        "TalendSourceBucketCondition": {
+            "Fn::Not": [
+                { 
+                    "Fn::Equals": [
+                        "",
+                        { "Ref": "TalendSourceBucket" }
+                    ]
+                }
+            ]
+        },
+        "TalendTargetBucketCondition": {
+            "Fn::Not": [
+                { 
+                    "Fn::Equals": [
+                        "",
+                        { "Ref": "TalendTargetBucket" }
+                    ]
+                }
+            ]
+        }
 	},
     "Resources": {
         "InstanceRole": {
@@ -60,10 +86,10 @@
                 "Path": "/talend/"
             }
         },
-        "RolePolicies":{
+        "QuickstartBucketPolicy":{
             "Type":"AWS::IAM::Policy",
             "Properties":{
-                "PolicyName":"S3Download",
+                "PolicyName":"QuickstartBucketAccess",
                 "Roles":[ { "Ref":"InstanceRole" } ],
                 "PolicyDocument":{
                     "Statement":[
@@ -112,37 +138,69 @@
                             "Resource": [
                                 { "Fn::Sub": "arn:aws:s3:::${TalendResourceBucket}/*" }
                             ]
-                        },
+                        }
+                    ]
+                }
+            }
+        },
+        "DemoSourceBucketPolicy":{
+            "Type":"AWS::IAM::Policy",
+            "Condition": "TalendSourceBucketCondition",
+            "Properties":{
+                "PolicyName":"DemoSourceBucketAccess",
+                "Roles":[ { "Ref":"InstanceRole" } ],
+                "PolicyDocument":{
+                    "Statement":[
                         {
                             "Effect": "Allow",
                             "Action": [
                                 "s3:ListBucket"
                             ],
                             "Resource": [
-                                { "Fn::Sub": 
-                                    [
-                                        "arn:aws:s3:::${SparkJarsBucket}",
-                                        {
-                                            "SparkJarsBucket": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsBucket" ] }
-                                        }
-                                    ]
-                                }
+                                { "Fn::Sub": "arn:aws:s3:::${TalendSourceBucket}" }
                             ]
                         },
                         {
                             "Action": [
-                                "s3:GetObject"
+                                "s3:GetObject",
+                                "s3:PutObject",
+                                "s3:DeleteObject"
                             ],
                             "Effect": "Allow",
                             "Resource": [
-                                { "Fn::Sub": 
-                                    [
-                                        "arn:aws:s3:::${SparkJarsBucket}/*",
-                                        {
-                                            "SparkJarsBucket": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsBucket" ] }
-                                        }
-                                    ]
-                                }
+                                { "Fn::Sub": "arn:aws:s3:::${TalendSourceBucket}" }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "DemoTargetBucketPolicy":{
+            "Type":"AWS::IAM::Policy",
+            "Condition": "TalendTargetBucketCondition",
+            "Properties":{
+                "PolicyName":"DemoSourceBucketAccess",
+                "Roles":[ { "Ref":"InstanceRole" } ],
+                "PolicyDocument":{
+                    "Statement":[
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Resource": [
+                                { "Fn::Sub": "arn:aws:s3:::${TalendTargetBucket}" }
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:PutObject",
+                                "s3:DeleteObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                { "Fn::Sub": "arn:aws:s3:::${TalendTargetBucket}" }
                             ]
                         }
                     ]

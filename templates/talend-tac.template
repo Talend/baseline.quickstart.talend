@@ -123,7 +123,7 @@
             "Description": "Talend source bucket for demo jobs.",
             "Type": "String",
             "Default": ""
-        },          
+        },
         "CreateTacDatabase": {
             "Description": "Create TAC Database (true) or use an existing TAC database (false)",
             "Type": "String",
