@@ -300,6 +300,9 @@
             },
             "cfn": {
                 "workDir": "/home/ec2-user/work"
+            },
+            "demo_jobs": {
+                "path": "demo_jobs/oodlejobs.tgz"
             }
         },
         "AWSInstanceType2Arch": {
@@ -1089,31 +1092,7 @@
                                     ]
                                 }
                             },
-                            "08-load-git": {
-                                "command": {
-                                    "Fn::Sub": [
-                                        "${skipCondition} || /git/load-git.sh myzipfile.tgz ./work_repo ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
-                                        {
-                                            "skipCondition": "false",
-                                            "baselineTarget": {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    "baseline",
-                                                    "baselineTarget"
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                },
-                                "cwd": {
-                                    "Fn::FindInMap": [
-                                        "Talend",
-                                        "cfn",
-                                        "workDir"
-                                    ]
-                                }
-                            },
-                            "09-project-users": {
+                            "08-project-users": {
                                 "command": {
                                     "Fn::Join": [
                                         "",
@@ -1128,6 +1107,51 @@
                                             "/tac/create-tac-project-users.sh ",
                                             { "Ref": "TacPassword" }
                                         ]
+                                    ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
+                                }
+                            },
+                            "09-load-git": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "${skipCondition} || ${baselineTarget}/git/load-git.sh ${talendRepoDir}/${demo_jobs_path} ${workDir} ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
+                                        {
+                                            "skipCondition": "false",
+                                            "baselineTarget": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "baseline",
+                                                    "baselineTarget"
+                                                ]
+                                            },
+                                            "talendRepoDir": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "tui",
+                                                    "talendRepoDir"
+                                                ]
+                                            },
+                                            "demo_jobs_path": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "demo_jobs",
+                                                    "path"
+                                                ]
+                                            },
+                                            "workDir": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "cfn",
+                                                    "workDir"
+                                                ]
+                                            }
+                                        }
                                     ]
                                 },
                                 "cwd": {
