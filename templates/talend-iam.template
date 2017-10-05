@@ -180,7 +180,7 @@
             "Type":"AWS::IAM::Policy",
             "Condition": "TalendTargetBucketCondition",
             "Properties":{
-                "PolicyName":"DemoSourceBucketAccess",
+                "PolicyName":"DemoTargetBucketAccess",
                 "Roles":[ { "Ref":"InstanceRole" } ],
                 "PolicyDocument":{
                     "Statement":[
