@@ -6,7 +6,7 @@ set -x
 
 function gitlab_init() {
 
-    local usage="gitlab_init.sh <git_admin_userid> <git_admin_password> <git_admin_email> <git_tac_userid> <git_tac_password> <git_tac_email> <git_repo> <source_url>"
+    local usage="gitlab_init.sh <git_admin_userid> <git_admin_password> <git_admin_email> <git_tac_userid> <git_tac_password> <git_tac_email> <git_repo>"
 
     local git_admin_userid="${1:-${git_admin_userid:-}}"
     local git_admin_password="${2:-${git_admin_password:-}}"
@@ -15,7 +15,6 @@ function gitlab_init() {
     local git_tac_password="${5:-${git_tac_password:-}}"
     local git_tac_email="${6:-${git_tac_email:-}}"
     local git_repo="${7:-${git_repo:-}}"
-    local source_url="${8:-${source_url:-}}"
 
     [ -z "${git_admin_userid}" ] && echo "invalid argument git_admin_userid cannot be empty: usage: ${usage}" && return 1
     [ -z "${git_admin_password}" ] && echo "invalid argument git_admin_password cannot be empty: usage: ${usage}" && return 1
@@ -24,7 +23,6 @@ function gitlab_init() {
     [ -z "${git_tac_password}" ] && echo "invalid argument git_tac_password cannot be empty: usage: ${usage}" && return 1
     [ -z "${git_tac_email}" ] && echo "invalid argument git_tac_email cannot be empty: usage: ${usage}" && return 1
     [ -z "${git_repo}" ] && echo "invalid argument git_repo cannot be empty: usage: ${usage}" && return 1
-    [ -z "${source_url}" ] && echo "invalid argument source_url cannot be empty: usage: ${usage}" && return 1
 
     #Install the packages.  The wait is to prevent a stall after reconfigure
 
@@ -62,19 +60,5 @@ function gitlab_init() {
 
     echo "creating project ${git_repo}"
     curl --header "PRIVATE-TOKEN: ${xvar}" -X POST --data-urlencode 'visibility_level=10' "http://${ipvar}/api/v3/projects?name=${git_repo}"
-
-#    echo "cloning http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
-#    git clone "http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
-
-#    cd "${git_repo}"
-
-    # placeholder to retrieve standard jobs
-#    echo "wget ${source_url}"
-#    wget "${source_url}"
- 
-#    echo "git commit and push"
-#    git add .
-#    git commit -m "First Jobs"
-#    git push "http://${git_admin_userid}:${git_admin_password}@${ipvar}/${git_admin_userid}/${git_repo}.git"
 
 }

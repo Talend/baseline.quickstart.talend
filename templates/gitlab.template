@@ -35,8 +35,7 @@
                         "GitAdminEmail",
                         "GitTacUserid",
                         "GitTacPassword",
-                        "GitTacEmail",
-                        "GitSourceUrl"
+                        "GitTacEmail"
                     ]
                 }
             ],
@@ -188,11 +187,6 @@
             "Description": "Initial Git repository.",
             "Type": "String",
             "Default": "oodlejobs"
-        },
-        "GitSourceUrl": {
-            "Description": "Git repo content.",
-            "Type": "String",
-            "Default": "https://raw.githubusercontent.com/EdwardOst/bash-util/master/util.sh"
         }
     },
     "Mappings": {
@@ -428,7 +422,6 @@
                                             { "Fn::Sub": "    local git_tac_password=\"${GitTacPassword}\"" },
                                             { "Fn::Sub": "    local git_tac_email=\"${GitTacEmail}\"" },
                                             { "Fn::Sub": "    local git_repo=\"${GitRepo}\"" },
-                                            { "Fn::Sub": "    local source_url=\"${GitSourceUrl}\"" },
                                             "\"${@}\"",
                                             "}",
                                             ""
