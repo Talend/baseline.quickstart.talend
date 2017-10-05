@@ -623,6 +623,22 @@
                         "commands": {
                             "01-install-mysql-client": {
                                 "command": "while ! yum install -y mysql ; do sleep 10; done"
+                            },
+                            "02-create-work-dir": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "mkdir -p ${workDir}",
+                                        {
+                                            "workDir": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "cfn",
+                                                    "workDir"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
                             }
                         }
                     },
