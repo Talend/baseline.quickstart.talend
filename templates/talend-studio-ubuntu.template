@@ -634,7 +634,7 @@
                                     ]
                                 }
                             },
-                            "05-install-x2go": {
+                            "05-install-x2go":  {
                                 "command": {
                                     "Fn::Join": [
                                         ";",
