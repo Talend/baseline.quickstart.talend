@@ -518,13 +518,13 @@
         "CreateJobserverAutoscaleStack": {
             "Description": "Create JobserverAutoscale stack.",
             "Type": "String",
-			"Default": "false",
+			"Default": "true",
             "AllowedValues": [ "true", "false" ]
         },
         "CreateDistantRunStack": {
             "Description": "Create Jobserver stack in public subnet for use by Studio Distant Run capability.",
             "Type": "String",
-			"Default": "false",
+			"Default": "true",
             "AllowedValues": [ "true", "false" ]
         }
     },
