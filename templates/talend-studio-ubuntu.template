@@ -534,6 +534,22 @@
                                         ]
                                     ]
                                 }
+                            },
+                            "06-install-studio-config": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "cp ${baselineTarget}/studio/connection_user.properties ${studioDir}/configuration",
+                                        {
+                                            "baselineTarget": { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
+                                            "studioDir": { "Fn::FindInMap": [ "Talend", "studio", "installDir" ] }
+                                        }
+                                    ]
+                                }
+                            },
+                            "07-update-hosts": {
+                                "command": {
+                                    "Fn::Sub": "echo \"${TacIp}    tac\" >> /etc/hosts"
+                                }
                             }
                         }
                     },
@@ -618,18 +634,7 @@
                                     ]
                                 }
                             },
-                            "04-install-studio-config": {
-                                "command": {
-                                    "Fn::Sub": [
-                                        "cp ${baselineTarget}/studio/connection_user.properties ${studioDir}/configuration",
-                                        {
-                                            "baselineTarget": { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
-                                            "studioDir": { "Fn::FindInMap": [ "Talend", "studio", "installDir" ] }
-                                        }
-                                    ]
-                                }
-                            },
-                            "05-install-x2go": {
+                            "04-install-x2go": {
                                 "command": {
                                     "Fn::Join": [
                                         ";",
@@ -643,13 +648,13 @@
                                 }
                             
                             },
-                            "06-install-xfce": {
+                            "05-install-xfce": {
                                 "command": "apt-get install -y xfce4"
                             },
-                            "07-install-firefox": {
+                            "06-install-firefox": {
                                 "command": "apt-get install -y firefox"
                             },
-                            "08-install-geany": {
+                            "07-install-geany": {
                                 "command": "apt-get install -y gedit"
                             }
                         }
