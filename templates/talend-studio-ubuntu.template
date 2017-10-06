@@ -109,6 +109,10 @@
             "Description": "Talend Server Security Group.",
             "Type": "CommaDelimitedList"
 		},
+        "TacIp": {
+            "Description": "TAC IP address.",
+            "Type": "String"
+        },
         "TalendResourceBucket": {
             "Description": "Talend S3 resources bucket.",
             "Type": "String",

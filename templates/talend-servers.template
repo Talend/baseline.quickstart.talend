@@ -768,6 +768,14 @@
 				"Name": { "Fn::Sub": "${AWS::StackName}:Tac" } 
 			}
         },
+        "TacPrivateIp": {
+            "Condition": "CreateTacStackCondition",
+            "Value": { "GetAtt": [ "TacStack", "Outputs.privateIp"] },
+            "Description": "TAC private IP address",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:TacPrivateIp" } 
+			}
+        },
         "JobserverAutoscaleStack": {
             "Condition": "CreateJobserverAutoscaleStackCondition",
             "Value": { "Ref": "JobserverAutoscaleStack" },
