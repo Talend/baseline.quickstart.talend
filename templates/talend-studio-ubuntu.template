@@ -624,7 +624,7 @@
                                         "cp ${baselineTarget}/studio/connection_user.properties ${studioDir}/configuration",
                                         {
                                             "baselineTarget": { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
-                                            "studioDir": { "Fn::FindInMap": [ "Talend", "studio", "installDir" ] },
+                                            "studioDir": { "Fn::FindInMap": [ "Talend", "studio", "installDir" ] }
                                         }
                                     ]
                                 }
