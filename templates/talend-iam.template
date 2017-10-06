@@ -83,130 +83,118 @@
                     ],
                     "Version": "2012-10-17"
                 },
-                "Path": "/talend/"
-            }
-        },
-        "QuickstartBucketPolicy":{
-            "Type":"AWS::IAM::Policy",
-            "Properties":{
-                "PolicyName":"QuickstartBucketAccess",
-                "Roles":[ { "Ref":"InstanceRole" } ],
-                "PolicyDocument":{
-                    "Statement":[
-                        {
-                          "Effect": "Allow",
-                          "Action": ["s3:ListBucket"],
-                          "Resource": [ { "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}" } ]
-                        },
-                        {
-                            "Action": [ "s3:GetObject" ],
-                            "Effect": "Allow",
-                            "Resource": [ { "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*" } ]
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "s3:ListBucket"
-                            ],
-                            "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendLicenseBucket}" }
-                            ]
-                        },
-                        {
-                            "Action": [
-                                "s3:GetObject"
-                            ],
-                            "Effect": "Allow",
-                            "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendLicenseBucket}/*" }
-                            ]
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "s3:ListBucket"
-                            ],
-                            "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendResourceBucket}" }
-                            ]
-                        },
-                        {
-                            "Action": [
-                                "s3:GetObject"
-                            ],
-                            "Effect": "Allow",
-                            "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendResourceBucket}/*" }
+                "Path": "/talend/",
+                "Policies": [
+                    {
+                        "PolicyName": "QuickstartBucketAccess",
+                        "PolicyDocument": {
+                            "Statement":[
+                                {
+                                  "Effect": "Allow",
+                                  "Action": ["s3:ListBucket"],
+                                  "Resource": [ { "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}" } ]
+                                },
+                                {
+                                    "Action": [ "s3:GetObject" ],
+                                    "Effect": "Allow",
+                                    "Resource": [ { "Fn::Sub": "arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*" } ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:ListBucket"
+                                    ],
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${TalendLicenseBucket}" }
+                                    ]
+                                },
+                                {
+                                    "Action": [
+                                        "s3:GetObject"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${TalendLicenseBucket}/*" }
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:ListBucket"
+                                    ],
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${TalendResourceBucket}" }
+                                    ]
+                                },
+                                {
+                                    "Action": [
+                                        "s3:GetObject"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${TalendResourceBucket}/*" }
+                                    ]
+                                }
                             ]
                         }
-                    ]
-                }
-            }
-        },
-        "DemoSourceBucketPolicy":{
-            "Type":"AWS::IAM::Policy",
-            "Condition": "TalendSourceBucketCondition",
-            "Properties":{
-                "PolicyName":"DemoSourceBucketAccess",
-                "Roles":[ { "Ref":"InstanceRole" } ],
-                "PolicyDocument":{
-                    "Statement":[
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "s3:ListBucket"
-                            ],
-                            "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendSourceBucket}" }
-                            ]
-                        },
-                        {
-                            "Action": [
-                                "s3:GetObject",
-                                "s3:PutObject",
-                                "s3:DeleteObject",
-                                "s3:PutObjectAcl"
-                            ],
-                            "Effect": "Allow",
-                            "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendSourceBucket}/*" }
+                    },
+                    {
+                        "PolicyName":"DemoSourceBucketAccess",
+                        "PolicyDocument":{
+                            "Statement":[
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:ListBucket"
+                                    ],
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${TalendSourceBucket}" }
+                                    ]
+                                },
+                                {
+                                    "Action": [
+                                        "s3:GetObject",
+                                        "s3:PutObject",
+                                        "s3:DeleteObject",
+                                        "s3:PutObjectAcl"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${TalendSourceBucket}/*" }
+                                    ]
+                                }
                             ]
                         }
-                    ]
-                }
-            }
-        },
-        "DemoTargetBucketPolicy":{
-            "Type":"AWS::IAM::Policy",
-            "Condition": "TalendTargetBucketCondition",
-            "Properties":{
-                "PolicyName":"DemoTargetBucketAccess",
-                "Roles":[ { "Ref":"InstanceRole" } ],
-                "PolicyDocument":{
-                    "Statement":[
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "s3:ListBucket"
-                            ],
-                            "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendTargetBucket}" }
-                            ]
-                        },
-                        {
-                            "Action": [
-                                "s3:GetObject",
-                                "s3:PutObject",
-                                "s3:DeleteObject",
-                                "s3:PutObjectAcl"
-                            ],
-                            "Effect": "Allow",
-                            "Resource": [
-                                { "Fn::Sub": "arn:aws:s3:::${TalendTargetBucket}/*" }
+                    },
+                    {
+                        "PolicyName":"DemoTargetBucketAccess",
+                        "PolicyDocument":{
+                            "Statement":[
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:ListBucket"
+                                    ],
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${TalendTargetBucket}" }
+                                    ]
+                                },
+                                {
+                                    "Action": [
+                                        "s3:GetObject",
+                                        "s3:PutObject",
+                                        "s3:DeleteObject",
+                                        "s3:PutObjectAcl"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${TalendTargetBucket}/*" }
+                                    ]
+                                }
                             ]
                         }
-                    ]
-                }
+                    }
+                ]
             }
         },
         "InstanceProfile": {
