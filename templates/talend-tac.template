@@ -1120,7 +1120,7 @@
                             "09-load-git": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "${skipCondition} || ${baselineTarget}/git/load-git.sh ${talendRepoDir}/${demo_jobs_path} ${workDir} ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
+                                        ". ${baselineTarget}/git/load-git.sh; load_git ${talendRepoDir}/${demo_jobs_path} ${workDir} ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
                                         {
                                             "skipCondition": "false",
                                             "baselineTarget": {

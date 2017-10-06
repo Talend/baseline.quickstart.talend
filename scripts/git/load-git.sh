@@ -2,6 +2,7 @@
 
 set -e
 set -u
+set -x
 
 function load_git() {
 
@@ -23,6 +24,15 @@ function load_git() {
     [ -z "${git_user}" ] && echo "git_user required: ${usage}" 1>&2 && return 1
     [ -z "${git_password}" ] && echo "git_password required: ${usage}" 1>&2 && return 1
 
+    echo "source_zip_path=${source_zip_path}" 1>&2
+    echo "work_dir=${work_dir}" 1>&2
+    echo "git_protocol=${git_protocol}" 1>&2
+    echo "git_host=${git_host}" 1>&2
+    echo "git_repo_owner=${git_repo_owner}" 1>&2
+    echo "git_repo=${git_repo}" 1>&2
+    echo "git_user=${git_user}" 1>&2
+    echo "git_password=${git_password}" 1>&2
+
     local git_url="${git_protocol}://${git_user}:${git_password}@${git_host}/${git_repo_owner}/${git_repo}.git"
 
     local project_name="${source_zip_path##*/}"
@@ -30,21 +40,27 @@ function load_git() {
 
     [ ! -d "${work_dir}" ] && echo "WARNING: '${work_dir}' doest not exist: creating directory" 1>&2 && mkdir -p "${work_dir}"
 
+    echo "director is ${work_dir}" 1>&2
     cd "${work_dir}"
+
+    echo "clonging ${git_url} to ${project_name}" 1>&2
     git clone "${git_url}" "${project_name}"
+
     tar -xzvf "${source_zip_path}"
     cd "${project_name}"
     git add .
     git commit -m "initial version"
     git push --all
+
+    echo "pushed" 1>&2
 }
 
 #load_git \
-#        oodlejobs.tgz \
+#        /opt/repo/demo_jobs/oodlejobs.tgz \
 #        /home/ec2-user/work \
-#        https \
-#        github.com \
-#        EdwardOst \
-#        quickstart-repo \
-#        EdwardOst \
-#        mypassword
+#        http \
+#        ec2-34-230-23-78.compute-1.amazonaws.com \
+#        tadmin \
+#        oodlejobs \
+#        tadmin \
+#        tadm1nPassw0rd
