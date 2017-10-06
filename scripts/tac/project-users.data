@@ -1,5 +1,5 @@
 REC_TYPE,USER_FNAME,USER_LNAME,USER_LOGIN,USER_PASSWD,USER_TYPE,USER_ROLE
 USER,Talend,Developer,dev@talend.com,devPassw0rd,DI
 PROJECT,oodle_demo,DI
-AUTH,oodle_proj,tadmin@talend.com
-AUTH,oodle_proj,dev@talend.com
+AUTH,oodle_demo,tadmin@talend.com
+AUTH,oodle_demo,dev@talend.com
