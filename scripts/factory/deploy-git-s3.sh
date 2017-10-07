@@ -164,13 +164,13 @@ function deploy_git_s3() {
     debugVar git_url; debugVar git_repo; debugVar git_target; debugVar s3_bucket
 
     create_bucket "${s3_bucket}"
-    
+
     local deploy_bucket_policy
     policy_public_read deploy_bucket_policy "${s3_bucket}"
     local policy_file="${s3_bucket}.policy"
     echo "${deploy_bucket_policy}" > "${policy_file}"
     attach_policy "${policy_file}" "${s3_bucket}"
-    
+
     git_snapshot "${git_url}" "${git_repo}" "${git_target}"
 
     s3_sync "${git_repo}-${git_target}" "${s3_bucket}" "${s3_path}" "${s3_grant}"
