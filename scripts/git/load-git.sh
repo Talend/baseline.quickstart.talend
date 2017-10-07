@@ -49,7 +49,8 @@ function load_git() {
     tar -xzvf "${source_zip_path}"
     cd "${project_name}"
     git add .
-    git commit -m "initial version"
+    git commit -m "initial version" && true
+    [ "${?}" -ne 0 ] && echo "repository already up to date, no commit or push" 1>&2 && return 0
     git push --all
 
     echo "pushed" 1>&2
