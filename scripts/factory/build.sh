@@ -15,8 +15,8 @@ source "${build_script_dir}/../util/util.sh"
 source "${build_script_dir}/../util/string_util.sh"
 # shellcheck source=../s3fs/s3fs-util.sh
 source "${build_script_dir}/../s3fs/s3fs-util.sh"
-# shellcheck source=policy/policy.sh
-source "${build_script_dir}/policy/policy.sh"
+# shellcheck source=policy.sh
+source "${build_script_dir}/policy.sh"
 # shellcheck source=deploy-git-s3.sh
 source "${build_script_dir}/deploy-git-s3.sh"
 # shellcheck source=create-bucket.sh
