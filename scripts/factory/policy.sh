@@ -20,7 +20,6 @@ function policy_public_read() {
     local policy_ref="${1:-${policy_ref:-}}"
     local bucket="${2:-${bucket:-}}"
 
-    local usage="policy_pubic_read <bucket> <policy_varname>\n\ncreate a policy granting BucketList and GetObject access to the public"
     required policy_ref bucket
 
     define "${policy_ref}" <<EOF
