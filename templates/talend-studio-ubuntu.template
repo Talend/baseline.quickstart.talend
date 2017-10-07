@@ -365,6 +365,7 @@
                                     "Fn::Join": [
                                         "\n",
                                         [
+                                            "export TALEND_USER_HOME=/home/ubuntu",
                                             {
                                                 "Fn::Join": [
                                                     "",
