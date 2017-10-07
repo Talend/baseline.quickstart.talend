@@ -17,7 +17,11 @@ source "${deploy_git_s3_script_dir}/../util/util.sh"
 # shellcheck source=../util/string_util.sh
 source "${deploy_git_s3_script_dir}/../util/string_util.sh"
 
+# shellcheck source=../factory/policy.sh
+source "${deploy_git_s3_script_dir}/../factory/policy.sh"
 
+# shellcheck source=../factory/create-bucket.sh
+source "${deploy_git_s3_script_dir}/../factory/create-bucket.sh"
 
 function git_snapshot_usage() {
     cat 1>&2 <<-EOF
@@ -141,8 +145,6 @@ function deploy_git_s3_usage() {
 
 export -f deploy_git_s3_usage
 
-
-
 function deploy_git_s3() {
 
     if [ "${1:-}" == "--help" ] || [ "${1:-}" == "-h" ]; then
@@ -161,6 +163,14 @@ function deploy_git_s3() {
 
     debugVar git_url; debugVar git_repo; debugVar git_target; debugVar s3_bucket
 
+    create_bucket "${s3_bucket}"
+    
+    local deploy_bucket_policy
+    policy_public_read deploy_bucket_policy "${s3_bucket}"
+    local policy_file="${s3_bucket}.policy"
+    echo "${deploy_bucket_policy}" > "${policy_file}"
+    attach_policy "${policy_file}" "${s3_bucket}"
+    
     git_snapshot "${git_url}" "${git_repo}" "${git_target}"
 
     s3_sync "${git_repo}-${git_target}" "${s3_bucket}" "${s3_path}" "${s3_grant}"

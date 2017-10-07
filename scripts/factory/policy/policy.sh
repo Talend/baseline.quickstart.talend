@@ -15,31 +15,19 @@ source "${policy_script_dir}/../../util/util.sh"
 source "${policy_script_dir}/../../util/string_util.sh"
 
 
-function policy_public_read_usage() {
-    cat 1>&2 <<EOF
-
-usage:
-    policy_pubic_read <bucket> <policy_varname>
-
-creates a policy granting BucketList and GetObject access to the public
-
-EOF
-}
-
 function policy_public_read() {
 
     local policy_ref="${1:-${policy_ref:-}}"
     local bucket="${2:-${bucket:-}}"
 
+    local usage="policy_pubic_read <bucket> <policy_varname>\n\ncreate a policy granting BucketList and GetObject access to the public"
     required policy_ref bucket
 
     define "${policy_ref}" <<EOF
 {
     "Version": "2012-10-17",
-    "Id": "Policy1502563323941",
     "Statement": [
         {
-            "Sid": "Stmt1502563322940",
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:GetObject",
@@ -56,3 +44,20 @@ function policy_public_read() {
 EOF
 
 }
+
+export -f policy_public_read
+
+
+
+function attach_policy() {
+
+    local policy_file="${1:-${policy_file}}"
+    local bucket="${2:-${bucket:-}}"
+
+    required policy_file bucket
+
+    aws s3api put-bucket-policy --bucket "${bucket}" --policy "file://${policy_file}"
+}
+
+export -f attach_policy
+

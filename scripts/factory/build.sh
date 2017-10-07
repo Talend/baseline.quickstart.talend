@@ -157,18 +157,6 @@ function load_license() {
 export -f load_license
 
 
-function attach_policy() {
-
-    local policy_file="${1:-${policy_file}}"
-    local bucket="${2:-${bucket:-}}"
-
-    required policy_file bucket
-
-    aws s3api put-bucket-policy --bucket "${bucket}" --policy "file://${policy_file}"
-}
-
-export -f attach_policy
-
 
 function build() {
     local license_env="${1:-${license_env:-${TALEND_FACTORY_LICENSE_ENV:-}}}"
