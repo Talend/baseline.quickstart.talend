@@ -9,10 +9,10 @@ export TALEND_FACTORY_FLAG=1
 policy_script_path=$(readlink -e "${BASH_SOURCE[0]}")
 policy_script_dir="${policy_script_path%/*}"
 
-# shellcheck source=../../util/util.sh
-source "${policy_script_dir}/../../util/util.sh"
-# shellcheck source=../../util/string_util.sh
-source "${policy_script_dir}/../../util/string_util.sh"
+# shellcheck source=../util/util.sh
+source "${policy_script_dir}/../util/util.sh"
+# shellcheck source=../util/string_util.sh
+source "${policy_script_dir}/../util/string_util.sh"
 
 
 function policy_public_read() {

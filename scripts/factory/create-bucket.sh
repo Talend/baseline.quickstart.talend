@@ -9,8 +9,11 @@ export CREATE_BUCKET_FLAG=1
 create_bucket_script_path=$(readlink -e "${BASH_SOURCE[0]}")
 create_bucket_script_dir="${create_bucket_script_path%/*}"
 
+# shellcheck source=../util/util.sh
 source "${create_bucket_script_dir}/../util/util.sh"
+# shellcheck source=../util/string_util.sh
 source "${create_bucket_script_dir}/../util/string_util.sh"
+
 
 function create_bucket_usage() {
 
