@@ -148,7 +148,7 @@
                 "installDir": "/opt/talend/6.3.1/studio/studio"
             },
             "jobserver": {
-                "sparkJarsBucket": "spark.quickstart.talend",
+                "sparkJarsPrefix": "spark",
                 "sparkJarsTarget": "/var/lib/spark/jars"
             }
         },
@@ -354,9 +354,9 @@
                             "06-spark-jars": {
                                 "command": {
                                     "Fn::Sub": [ 
-                                        "aws s3 cp s3://${sparkJarsBucket} ${sparkJarsTarget} --recursive",
+                                        "aws s3 cp s3://${TalendResourceBucket}/${sparkJarsPrefix} ${sparkJarsTarget} --recursive",
                                         {
-                                            "sparkJarsBucket": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsBucket" ] },
+                                            "sparkJarsKeyPrefix": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsKeyPrefix" ] },
                                             "sparkJarsTarget": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsTarget" ] }
                                         }
                                     ]
