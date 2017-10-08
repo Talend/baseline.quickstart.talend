@@ -730,7 +730,7 @@
 					"InstanceType": { "Ref": "JobserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
 					"SubnetId": { "Ref": "PublicSubnetId" },
-                    "PrivateSubnet": "private",
+                    "PrivateSubnet": "public",
 					"SecurityGroupIds": { "Ref": "DistantRunSecurityGroup" },
                     "JobserverAutoscaleMinSize": { "Ref": "DistantRunAutoscaleMinSize" },
                     "JobserverAutoscaleMaxSize": { "Ref": "DistantRunAutoscaleMaxSize" },
