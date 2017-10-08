@@ -55,7 +55,7 @@
             "Type": "Number",
             "MinValue": "1",
             "MaxValue": "10",
-            "Default": "2"
+            "Default": "1"
         },
         "InstanceType": {
             "Description": "Talend Server EC2 instance type",
