@@ -381,6 +381,12 @@
 				"SecurityGroupIds": { "Ref": "SecurityGroupIds" },
 				"SubnetId": { "Ref": "SubnetId" },
                 "IamInstanceProfile": { "Ref": "InstanceProfile" },
+                "BlockDeviceMappings" : [
+                   {
+                      "DeviceName" : "/dev/xvda",
+                      "Ebs" : { "VolumeSize" : "50" }
+                   }
+                ],
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
