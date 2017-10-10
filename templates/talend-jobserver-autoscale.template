@@ -811,7 +811,6 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "bash -c ",
                                             { "Fn::If":
                                                 [
                                                     "SelfRegisterWithTacCondition",
@@ -828,6 +827,7 @@
                                                 ]
                                             },
                                             "/tac/isTACStarted.sh ",
+                                            " || true ",
                                             { "Ref": "TacHost" }
                                         ]
                                     ]
