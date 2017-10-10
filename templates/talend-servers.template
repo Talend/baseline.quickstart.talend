@@ -59,12 +59,20 @@
             "Default": "templates/talend-jobserver-autoscale.template",
             "AllowedValues": [ "templates/talend-jobserver-autoscale.template" ]
         },
-        "PublicSubnetId": {
-        	"Description": "Public Subnet",
+        "PublicSubnetId1": {
+        	"Description": "Public Subnet 1",
         	"Type": "AWS::EC2::Subnet::Id"
         },
-        "PrivateSubnetId": {
-        	"Description": "Private Subnet",
+        "PublicSubnetId2": {
+        	"Description": "Public Subnet 2",
+        	"Type": "AWS::EC2::Subnet::Id"
+        },
+        "PrivateSubnetId1": {
+        	"Description": "Private Subnet 1",
+        	"Type": "AWS::EC2::Subnet::Id"
+        },
+        "PrivateSubnetId2": {
+        	"Description": "Private Subnet 2",
         	"Type": "AWS::EC2::Subnet::Id"
         },
 		"PrivateNexus": {
@@ -601,7 +609,7 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "NexusInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Fn::If": [ "isNexusPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
+					"SubnetId": { "Fn::If": [ "isNexusPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
                     "PrivateSubnet": { "Ref": "PrivateNexus" },
 					"SecurityGroupIds": { "Ref": "NexusSecurityGroup" },
                     "NexusPort": { "Ref": "NexusPort" },
@@ -625,7 +633,7 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "LogserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Fn::If": [ "isLogserverPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
+					"SubnetId": { "Fn::If": [ "isLogserverPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
                     "PrivateSubnet": { "Ref": "PrivateLogserver" },
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" }
 				},
@@ -648,7 +656,7 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "TacInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Fn::If": [ "isTacPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
+					"SubnetId": { "Fn::If": [ "isTacPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
                     "PrivateSubnet": { "Ref": "PrivateTac" },
 					"SecurityGroupIds": { "Ref": "TacSecurityGroup" },
                     "TacDbHost": { "Ref": "TacDbHost" },
@@ -701,7 +709,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "JobserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Fn::If": [ "isJobserverPrivate", { "Ref": "PrivateSubnetId" }, { "Ref": "PublicSubnetId" } ] },
+					"SubnetId1": { "Fn::If": [ "isJobserverPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
+					"SubnetId2": { "Fn::If": [ "isJobserverPrivate", { "Ref": "PrivateSubnetId2" }, { "Ref": "PublicSubnetId2" } ] },
                     "PrivateSubnet": { "Ref": "PrivateJobserver" },
 					"SecurityGroupIds": { "Ref": "JobserverSecurityGroup" },
                     "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
@@ -729,7 +738,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "JobserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Ref": "PublicSubnetId" },
+					"SubnetId1": { "Ref": "PublicSubnetId1" },
+					"SubnetId2": { "Ref": "PublicSubnetId2" },
                     "PrivateSubnet": "public",
 					"SecurityGroupIds": { "Ref": "DistantRunSecurityGroup" },
                     "JobserverAutoscaleMinSize": { "Ref": "DistantRunAutoscaleMinSize" },

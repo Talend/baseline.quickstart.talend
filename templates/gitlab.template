@@ -159,7 +159,6 @@
         "GitAdminPassword": {
             "Description": "Git admin password.",
             "Type": "String",
-            "Default": "tadm1nPassw0rd",
             "NoEcho": "true"
         },
         "GitAdminEmail": {
@@ -175,7 +174,6 @@
         "GitTacPassword": {
             "Description": "Git TAC password.",
             "Type": "String",
-            "Default": "tacPassw0rd",
             "NoEcho": "true"
         },
         "GitTacEmail": {

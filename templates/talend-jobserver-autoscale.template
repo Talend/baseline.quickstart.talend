@@ -116,8 +116,12 @@
             "Type": "AWS::EC2::KeyPair::KeyName",
             "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
         },
-		"SubnetId": {
-            "Description": "Talend Server subnet id.",
+		"SubnetId1": {
+            "Description": "Talend Server subnet id 1.",
+            "Type": "AWS::EC2::Subnet::Id"
+		},
+		"SubnetId2": {
+            "Description": "Talend Server subnet id 2.",
             "Type": "AWS::EC2::Subnet::Id"
 		},
 		"PrivateSubnet": {
@@ -399,7 +403,7 @@
                 "MaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
                 "DesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
                 "HealthCheckGracePeriod": "120",
-                "VPCZoneIdentifier": [ { "Ref": "SubnetId" } ]
+                "VPCZoneIdentifier": [ { "Ref": "SubnetId1" }, { "Ref": "SubnetId2" } ]
             }
         },
         "JobserverLaunchConfig": {
