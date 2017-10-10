@@ -811,6 +811,7 @@
                                     "Fn::Join": [
                                         "",
                                         [
+                                            "bash -c ",
                                             { "Fn::If":
                                                 [
                                                     "SelfRegisterWithTacCondition",
