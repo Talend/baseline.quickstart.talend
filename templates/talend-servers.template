@@ -29,36 +29,6 @@
             "Description": "Talend Server EC2 Instance Profile",
             "Type": "String"
         },
-        "NexusTemplate": {
-            "Description": "Nexus template relative path and filename",
-            "Type": "String",
-            "Default": "templates/talend-nexus.template",
-            "AllowedValues": [ "templates/talend-nexus.template" ]
-        },
-        "LogserverTemplate": {
-            "Description": "Logserver template relative path and filename",
-            "Type": "String",
-            "Default": "templates/talend-logserver.template",
-            "AllowedValues": [ "templates/talend-logserver.template" ]
-        },
-        "TacTemplate": {
-            "Description": "TAC template relative path and filename",
-            "Type": "String",
-            "Default": "templates/talend-tac.template",
-            "AllowedValues": [ "templates/talend-tac.template" ]
-        },
-        "JobserverTemplate": {
-            "Description": "Jobserver template relative path and filename",
-            "Type": "String",
-            "Default": "templates/talend-jobserver.template",
-            "AllowedValues": [ "templates/talend-jobserver.template" ]
-        },
-        "JobserverAutoscaleTemplate": {
-            "Description": "Jobserver template relative path and filename",
-            "Type": "String",
-            "Default": "templates/talend-jobserver-autoscale.template",
-            "AllowedValues": [ "templates/talend-jobserver-autoscale.template" ]
-        },
         "PublicSubnetId1": {
         	"Description": "Public Subnet 1",
         	"Type": "AWS::EC2::Subnet::Id"
@@ -599,7 +569,7 @@
 			"Type" : "AWS::CloudFormation::Stack",
             "Condition" : "CreateNexusStackCondition",
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}${NexusTemplate}" },
+                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-nexus.template" },
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
@@ -623,7 +593,7 @@
 			"Type" : "AWS::CloudFormation::Stack",
             "Condition" : "CreateLogserverStackCondition",
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}${LogserverTemplate}" },
+                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-logserver.template" },
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
@@ -645,7 +615,7 @@
             "Condition" : "CreateTacStackCondition",
 			"DependsOn": [ "NexusStack", "LogserverStack" ],
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}${TacTemplate}" },
+                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-tac.template" },
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
@@ -699,7 +669,7 @@
             "Condition" : "CreateJobserverAutoscaleStackCondition",
 			"DependsOn": [ "TacStack", "LogserverStack" ],
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}${JobserverAutoscaleTemplate}" },
+                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
@@ -728,7 +698,7 @@
             "Condition" : "CreateDistantRunStackCondition",
 			"DependsOn": [ "TacStack", "LogserverStack" ],
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}${JobserverAutoscaleTemplate}" },
+                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
 				"Parameters" : {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
