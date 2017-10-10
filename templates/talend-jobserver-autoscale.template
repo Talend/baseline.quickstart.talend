@@ -808,28 +808,25 @@
                             },
                             "03-tac-started": {
                                 "command": {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            { "Fn::If":
+                                    "Fn::If": [
+                                        "SelfRegisterWithTacCondition",
+                                        {
+                                            "Fn::Join": [
+                                                "",
                                                 [
-                                                    "SelfRegisterWithTacCondition",
-                                                    "true",
-                                                    "false"
+                                                    {
+                                                        "Fn::FindInMap": [
+                                                            "Talend",
+                                                            "baseline",
+                                                            "baselineTarget"
+                                                        ]
+                                                    },
+                                                    "/tac/isTACStarted.sh ",
+                                                    { "Ref": "TacHost" }
                                                 ]
-                                            },
-                                            " && ",
-                                            {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    "baseline",
-                                                    "baselineTarget"
-                                                ]
-                                            },
-                                            "/tac/isTACStarted.sh ",
-                                            " || true ",
-                                            { "Ref": "TacHost" }
-                                        ]
+                                            ]
+                                        },
+                                        "echo \"Skipping registrationn with TAC for DistantRun server\""
                                     ]
                                 }
                             },
