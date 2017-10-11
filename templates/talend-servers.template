@@ -763,6 +763,32 @@
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:TacPrivateIp" } 
 			}
-        }        
+        },
+        "TacPublicIp": {
+            "Condition": "CreateTacStackCondition",
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicIp"] },
+            "Description": "TAC public IP address",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:TacPublicIp" } 
+			}
+        },
+        "TacPublicDnsName": {
+            "Condition": "CreateTacStackCondition",
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicDnsName"] },
+            "Description": "TAC public DNS",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:TacPublicDnsName" } 
+			}
+        },
+        "NexusPublicDnsName": {
+			"Condition": "CreateNexusStackCondition",
+            "Value": { "Fn::GetAtt": [ "NexusStack", "PublicDnsName" ] },
+            "Description": "Talend public DNS",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:publicDnsName"
+				}
+			}
+        }
     }
 }

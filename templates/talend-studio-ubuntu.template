@@ -694,7 +694,7 @@
             "Description": "Talend public DNS",
 			"Export": {
 				"Name": {
-					"Fn::Sub": "${AWS::StackName}:publicDns"
+					"Fn::Sub": "${AWS::StackName}:publicDnsName"
 				}
 			}
         },
@@ -703,7 +703,7 @@
             "Description": "Talend private DNS",
 			"Export": {
 				"Name": {
-					"Fn::Sub": "${AWS::StackName}:privateDns" 
+					"Fn::Sub": "${AWS::StackName}:privateDnsName" 
 				}
 			}
         }
