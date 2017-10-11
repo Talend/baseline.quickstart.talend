@@ -217,16 +217,6 @@
             "MinValue": "1",
             "MaxValue": "65535"
         },
-        "NexusAdminUserid": {
-            "Description": "Nexus administrator userid.",
-            "Type": "String",
-            "Default": "admin"
-        },
-        "NexusAdminPassword": {
-            "Description": "Nexus password.",
-            "Type": "String",
-            "NoEcho": "true"
-        },
         "LoggingHost": {
             "Description": "Logstash server host DNS hostname.",
             "Type": "String",
@@ -763,8 +753,6 @@
                                             { "Fn::Sub": "export TALEND_AMC_DB_PASSWORD=${AmcDbPassword}" },
                                             { "Fn::Sub": "export TALEND_NEXUS_HOST=${NexusHost}" },
                                             { "Fn::Sub": "export TALEND_NEXUS_PORT=${NexusPort}" },
-                                            { "Fn::Sub": "export TALEND_NEXUS_ADMIN=${NexusAdminUserid}" },
-                                            { "Fn::Sub": "export TALEND_NEXUS_PASSWORD=${NexusAdminPassword}" },
                                             { "Fn::Sub": "export TALEND_LOGGING_HOST=${LoggingHost}" },
                                             { "Fn::Sub": "export TALEND_LOGSTASH_TAC_PORT=${LoggingTacPort}" },
                                             { "Fn::Sub": "export TALEND_LOGSTASH_KIBANA_PORT=${LoggingKibanaPort}" },

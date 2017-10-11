@@ -125,16 +125,6 @@
             "Default": "8081",
             "MinValue": "1",
             "MaxValue": "65535"
-        },
-        "NexusAdminUserid": {
-            "Description": "Nexus administrator userid.",
-            "Type": "String",
-            "Default": "admin"
-        },
-        "NexusAdminPassword": {
-            "Description": "Nexus password.",
-            "Type": "String",
-            "NoEcho": "true"
         }
 	},
     "Mappings": {
@@ -547,28 +537,6 @@
                                                         "export TALEND_NEXUS_PORT=",
                                                         {
                                                             "Ref": "NexusPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_NEXUS_ADMIN=",
-                                                        {
-                                                            "Ref": "NexusAdminUserid"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_NEXUS_PASSWORD=",
-                                                        {
-                                                            "Ref": "NexusAdminPassword"
                                                         }
                                                     ]
                                                 ]

@@ -376,16 +376,6 @@
             "MinValue": "1",
             "MaxValue": "65535"
         },
-        "NexusAdminUserid": {
-            "Description": "Nexus administrator userid.",
-            "Type": "String",
-            "Default": "admin"
-        },
-        "NexusAdminPassword": {
-            "Description": "Nexus password.",
-            "Type": "String",
-            "NoEcho": "true"
-        },
         "TacDbHost": {
             "Description": "TAC database hostname.",
             "Type": "String",
@@ -582,9 +572,7 @@
 					"SubnetId": { "Fn::If": [ "isNexusPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
                     "PrivateSubnet": { "Ref": "PrivateNexus" },
 					"SecurityGroupIds": { "Ref": "NexusSecurityGroup" },
-                    "NexusPort": { "Ref": "NexusPort" },
-                    "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
-                    "NexusAdminPassword": { "Ref": "NexusAdminPassword" }
+                    "NexusPort": { "Ref": "NexusPort" }
 				},
 				"TimeoutInMinutes" : "10"
 			}
@@ -643,8 +631,6 @@
                     "CreateAmcDatabase": { "Ref": "CreateAmcDatabase" },
                     "NexusHost": { "Fn::GetAtt": [ "NexusStack", "Outputs.privateDnsName" ] },
                     "NexusPort": { "Ref": "NexusPort" },
-                    "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
-                    "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
                     "LoggingHost": { 
                         "Fn::If": [ 
                             "isLogserverPrivate",
