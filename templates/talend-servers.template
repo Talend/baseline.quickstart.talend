@@ -782,7 +782,7 @@
         },
         "NexusPublicDnsName": {
 			"Condition": "CreateNexusStackCondition",
-            "Value": { "Fn::GetAtt": [ "NexusStack", "PublicDnsName" ] },
+            "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.publicDnsName" ] },
             "Description": "Talend public DNS",
 			"Export": {
 				"Name": {
