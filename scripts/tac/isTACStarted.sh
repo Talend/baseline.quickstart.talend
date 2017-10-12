@@ -3,10 +3,7 @@
 set -e
 set -u
 
-[ "${#}" -ne 1 ] && echo "usage: isTalendStarted <tacHostname>" && exit 1
-
-
-tacHostname="${1}"
+tacHostname="${1:-localhost}"
 tacPort="${2:-8080}"
 tacPath="${3:-tac}"
 user="${4:-ec2-user}"

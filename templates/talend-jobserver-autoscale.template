@@ -826,7 +826,7 @@
                                                 ]
                                             ]
                                         },
-                                        "echo \"Skipping registrationn with TAC for DistantRun server\""
+                                        "echo \"Skipping registration with TAC for DistantRun server\""
                                     ]
                                 }
                             },
