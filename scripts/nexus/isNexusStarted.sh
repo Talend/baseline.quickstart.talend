@@ -10,7 +10,7 @@ declare nexusPath="${3:-nexus}"
 declare userHome="${4:-/home/ec2-user}"
 
 echo "$(date +%Y-%m-%d:%H:%M:%S) --- checking Nexus status..." 1>&2
-until [ "`wget -O - --timeout=10 http://${nexusHostname}:${nexusPort}/${nexusPath} | tee -a ${userHome}/isNexusStarted.log | grep 'Type in the name of a project'`" != "" ]; do
+until [ "`wget -O - --timeout=10 http://${nexusHostname}:${nexusPort}/${nexusPath} | tee -a ${userHome}/isNexusStarted.log | grep 'Sonatype Nexus'`" != "" ]; do
     echo "$(date +%Y-%m-%d:%H:%M:%S) --- sleeping for 10 seconds before checking http://${nexusHostname}:${nexusPort}/${nexusPath}" | tee -a ${userHome}/isNexusStarted.log
     sleep 10
 done
