@@ -135,6 +135,11 @@
             "Description": "Nexus password.",
             "Type": "String",
             "NoEcho": "true"
+        },
+        "NexusAdminEmail": {
+            "Description": "Nexus admin email.",
+            "Type": "String",
+            "Default": "nexus@company.com"
         }
 	},
     "Mappings": {
@@ -778,6 +783,22 @@
                                         "Talend",
                                         "tui",
                                         "tuiTarget"
+                                    ]
+                                }
+                            },
+                            "04-is-nexus-started": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "${baselineDir}/nexus/isNexusStarted.sh",
+                                        { "baselineDir": { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] } }
+                                    ]
+                                }
+                            },
+                            "05-create-nexus-user": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "${baselineDir}/nexus/create-nexus-user.sh \"${NexusAdminUserid}\" \"${NexusAdminPassword}\" \"${NexusAdminEmail}\" ",
+                                        { "baselineDir": { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] } }
                                     ]
                                 }
                             }
