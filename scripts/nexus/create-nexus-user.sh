@@ -40,3 +40,12 @@ curl -i -v \
     -d "${create_user_message}" \
     -u "${NEXUS_USERID}:${NEXUS_PASSWORD}" \
     "${NEXUS_HOST}:${NEXUS_PORT}/nexus/service/local/users"
+    
+# delete the old admin user
+
+curl -i -v \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json; charset=UTF-8" \
+    -u "${userid}:${password}" \
+    -X "DELETE" \
+    "${NEXUS_HOST}:${NEXUS_PORT}/nexus/service/local/users/admin"
