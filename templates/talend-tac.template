@@ -531,10 +531,9 @@
     "Resources": {
         "TacReady" : {
             "Type" : "AWS::CloudFormation::WaitCondition",
-            "DependsOn" : ["TalendServerInstance"],
             "CreationPolicy" : {
             "ResourceSignal" : {
-                    "Timeout": "PT10M",
+                    "Timeout": "PT15M",
                     "Count"  : "1"
                 }
             }
@@ -1206,16 +1205,9 @@
                                     ]
                                 }
                             },
-                            "11-tac-started": {
+                            "11-tac-ready": {
                                 "command": {
                                     "Fn::Sub": "/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource ${TacReady} --region ${AWS::Region}"
-                                },
-                                "cwd": {
-                                    "Fn::FindInMap": [
-                                        "Talend",
-                                        "cfn",
-                                        "workDir"
-                                    ]
                                 }
                             }
                         }

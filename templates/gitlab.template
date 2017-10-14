@@ -264,6 +264,15 @@
         }
     },
     "Resources": {
+        "GitReady" : {
+            "Type" : "AWS::CloudFormation::WaitCondition",
+            "CreationPolicy" : {
+            "ResourceSignal" : {
+                    "Timeout": "PT15M",
+                    "Count"  : "1"
+                }
+            }
+        },
         "GitInstance": {
             "Type": "AWS::EC2::Instance",
             "Properties": {
@@ -454,6 +463,11 @@
                             "05-install-gitlab": {
                                 "command": "/bin/bash -c \". /home/ubuntu/gitlab-config.sh; . /home/ubuntu/talend-gitlab.sh; gitlab_conf gitlab_init;\""
                             }
+                            "06-git-ready": {
+                                "command": {
+                                    "Fn::Sub": "/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource ${GitReady} --region ${AWS::Region}"
+                                }
+                            }
                         }
                     }
                 }
@@ -461,25 +475,13 @@
         }
     },
     "Outputs": {
-        "AvailabilityZone": {
-            "Description": "Availability Zone of the newly created EC2 instance",
-            "Value": { "Fn::GetAtt": [ "GitInstance", "AvailabilityZone" ] }
-        },
-        "InstanceProfileId": {
-            "Description": "Git server EC2 Instance Profile.",
-            "Value": { "Ref": "InstanceProfile" }
-        },
-        "GitRoleId": {
-            "Description": "Git server EC2 Instance Role.",
-            "Value": { "Ref": "InstanceRole" }
-        },
-        "ServerInstanceId": {
-            "Value": { "Ref": "GitInstance" },
-            "Description": "Git EC2 resource Id",
+        "GitReady": {
+            "Value": { "Ref": "GitReady" },
+            "Description": "Wait condition is set when Git is fully booted and ready",
 			"Export": {
 				"Name": {
-					"Fn::Sub": "${AWS::StackName}:instanceId"
-				}
+					"Fn::Sub": "${AWS::StackName}:gitReady" 
+				} 
 			}
         },
         "publicIp": {
