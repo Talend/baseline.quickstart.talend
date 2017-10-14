@@ -1098,7 +1098,35 @@
                                     ]
                                 }
                             },
-                            "08-project-users": {
+                            "07-git-started": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "baseline",
+                                                    "baselineTarget"
+                                                ]
+                                            },
+                                            "/git/isGitStarted.sh",
+                                            " ", { "Ref": "GitHost" },
+                                            " ", { "Ref": "GitPort" },
+                                            " ", "\"\"",
+                                            " ", "GitLab"
+                                        ]
+                                    ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
+                                }
+                            },
+                            "09-project-users": {
                                 "command": {
                                     "Fn::Join": [
                                         "",
@@ -1123,7 +1151,7 @@
                                     ]
                                 }
                             },
-                            "09-load-git": {
+                            "10-load-git": {
                                 "command": {
                                     "Fn::Sub": [
                                         ". ${baselineTarget}/git/load-git.sh; load_git ${talendRepoDir}/${demo_jobs_path} ${workDir} ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
