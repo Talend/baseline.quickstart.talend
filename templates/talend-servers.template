@@ -506,7 +506,7 @@
             "Type": "AWS::CloudFormation::Stack",
             "Condition": "CreateGitStackCondition",
             "Properties": {
-                "TemplateURL": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}submodules/talend/templates/gitlab.template" },
+                "TemplateURL": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}templates/gitlab.template" },
                 "TimeoutInMinutes": 30,
                 "Parameters": {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
@@ -516,6 +516,7 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
                     "GitSecurityGroupID": { "Ref": "GitSecurityGroup" },
                     "KeyPairName": { "Ref": "KeyName" },
+                    "PrivateSubnet": "public",
                     "VolumeSize": "100",
                     "VolumeType": "gp2",
                     "SubnetId": { "Ref": "PublicSubnetId1" },
@@ -543,7 +544,7 @@
 					"InstanceType": { "Ref": "NexusInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
 					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "false",
+                    "PrivateSubnet": "public",
 					"SecurityGroupIds": { "Ref": "NexusSecurityGroup" },
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
@@ -566,7 +567,7 @@
 					"InstanceType": { "Ref": "LogserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
 					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "false",
+                    "PrivateSubnet": "public",
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" }
 				},
 				"TimeoutInMinutes" : "10"
@@ -588,7 +589,7 @@
 					"InstanceType": { "Ref": "TacInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
 					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "false",
+                    "PrivateSubnet": "public",
 					"SecurityGroupIds": { "Ref": "TacSecurityGroup" },
                     "TacDbHost": { "Ref": "TacDbHost" },
                     "AmcDbHost": { "Ref": "TacDbHost" },
@@ -635,7 +636,7 @@
 					"KeyName": { "Ref": "KeyName" },
 					"SubnetId1": { "Ref": "PrivateSubnetId1" },
 					"SubnetId2": { "Ref": "PrivateSubnetId2" },
-                    "PrivateSubnet": "true",
+                    "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "JobserverSecurityGroup" },
                     "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
                     "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
