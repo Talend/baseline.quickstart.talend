@@ -401,6 +401,15 @@
                                 "mode": "000500",
                                 "authentication": "S3AccessCreds"
                             },
+                            "/home/ubuntu/isGitStarted.sh": {
+                                "source": {
+                                    "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}scripts/git/isGitStarted.sh"
+                                },
+                                "owner": "ubuntu",
+                                "group": "ubuntu",
+                                "mode": "000500",
+                                "authentication": "S3AccessCreds"
+                            },
                             "/home/ubuntu/ec2-metadata": {
                                 "source": {
                                     "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata"
@@ -462,8 +471,13 @@
                             },
                             "05-install-gitlab": {
                                 "command": "/bin/bash -c \". /home/ubuntu/gitlab-config.sh; . /home/ubuntu/talend-gitlab.sh; gitlab_conf gitlab_init;\""
-                            }
-                            "06-git-ready": {
+                            },
+                            "06-git-started": {
+                                "command": {
+                                    "Fn::Sub": "/home/ubuntu/isGitStarted.sh localhost 80 \"\" GitLab /home/ubuntu"
+                                }
+                            },
+                            "07-git-ready": {
                                 "command": {
                                     "Fn::Sub": "/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource ${GitReady} --region ${AWS::Region}"
                                 }
