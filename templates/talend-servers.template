@@ -475,30 +475,6 @@
             "Type": "String",
             "Default": ""
         },
-        "CreateNexusStack": {
-            "Description": "Create Nexus stack.",
-            "Type": "String",
-			"Default": "true",
-            "AllowedValues": [ "true", "false" ]
-        },
-        "CreateLogserverStack": {
-            "Description": "Create Logserver stack.",
-            "Type": "String",
-			"Default": "true",
-            "AllowedValues": [ "true", "false" ]
-        },
-        "CreateTacStack": {
-            "Description": "Create TAC stack.",
-            "Type": "String",
-			"Default": "true",
-            "AllowedValues": [ "true", "false" ]
-        },
-        "CreateJobserverAutoscaleStack": {
-            "Description": "Create JobserverAutoscale stack.",
-            "Type": "String",
-			"Default": "true",
-            "AllowedValues": [ "true", "false" ]
-        },
         "CreateDistantRunStack": {
             "Description": "Create Jobserver stack in public subnet for use by Studio Distant Run capability.",
             "Type": "String",
@@ -515,30 +491,6 @@
     "Mappings": {
     },
     "Conditions": {
-        "CreateNexusStackCondition": {
-            "Fn::Equals": [
-                { "Ref": "CreateNexusStack" },
-                "true"
-            ]
-        },
-        "CreateLogserverStackCondition": {
-            "Fn::Equals": [
-                { "Ref": "CreateLogserverStack" },
-                "true"
-            ]
-        },
-        "CreateTacStackCondition": {
-            "Fn::Equals": [
-                { "Ref": "CreateTacStack" },
-                "true"
-            ]
-        },
-        "CreateJobserverAutoscaleStackCondition": {
-            "Fn::Equals": [
-                { "Ref": "CreateJobserverAutoscaleStack" },
-                "true"
-            ]
-        },
         "CreateDistantRunStackCondition": {
             "Fn::Equals": [
                 { "Ref": "CreateDistantRunStack" },
@@ -546,16 +498,39 @@
             ]
         },
         "CreateGitStackCondition": {
-            "Fn::Equals": [
-                { "Ref": "CreateGitStack" },
-                "true"
-            ]
+            "Fn::Equals": [ "", { "Ref": "GitHost" } ]
         }
     },
     "Resources": {
+        "GitStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Condition": "CreateGitStackCondition",
+            "Properties": {
+                "TemplateURL": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}submodules/talend/templates/gitlab.template" },
+                "TimeoutInMinutes": 30,
+                "Parameters": {
+                    "QSS3BucketName": { "Ref": "QSS3BucketName" },
+                    "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}submodules/talend/" },
+                    "InstanceType": "c4.large",
+                    "InstanceRole": { "Ref": "InstanceRole" },
+                    "InstanceProfile": { "Ref": "InstanceProfile" },
+                    "GitSecurityGroupID": { "Ref": "GitSecurityGroup" },
+                    "KeyPairName": { "Ref": "KeyName" },
+                    "VolumeSize": "100",
+                    "VolumeType": "gp2",
+                    "SubnetId": { "Ref": "PublicSubnetId1" },
+                    "GitAdminUserid": { "Ref": "GitAdminUserid" },
+                    "GitAdminPassword": { "Ref": "GitAdminPassword" },
+                    "GitAdminEmail": { "Ref": "GitAdminEmail" },
+                    "GitTacUserid": { "Ref": "GitTacUserid" },
+                    "GitTacPassword": { "Ref": "GitTacPassword" },
+                    "GitTacEmail": { "Ref": "GitTacEmail" },
+                    "GitRepo": { "Ref": "GitRepo" }
+                }
+            }
+        },
 		"NexusStack": {
 			"Type" : "AWS::CloudFormation::Stack",
-            "Condition" : "CreateNexusStackCondition",
 			"Properties" : {
                 "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-nexus.template" },
 				"Parameters" : {
@@ -579,7 +554,6 @@
 		},
 		"LogserverStack": {
 			"Type" : "AWS::CloudFormation::Stack",
-            "Condition" : "CreateLogserverStackCondition",
 			"Properties" : {
                 "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-logserver.template" },
 				"Parameters" : {
@@ -600,8 +574,7 @@
 		},
 		"TacStack": {
 			"Type" : "AWS::CloudFormation::Stack",
-            "Condition" : "CreateTacStackCondition",
-			"DependsOn": [ "NexusStack", "LogserverStack", "GitStack" ],
+			"DependsOn": [ "GitStack" ],
 			"Properties" : {
                 "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-tac.template" },
 				"Parameters" : {
@@ -648,7 +621,6 @@
 		},
 		"JobserverAutoscaleStack": {
 			"Type" : "AWS::CloudFormation::Stack",
-            "Condition" : "CreateJobserverAutoscaleStackCondition",
 			"DependsOn": [ "TacStack", "LogserverStack" ],
 			"Properties" : {
                 "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
@@ -703,38 +675,10 @@
 				},
 				"TimeoutInMinutes" : "10"
 			}
-		},
-        "GitStack": {
-            "Type": "AWS::CloudFormation::Stack",
-            "Condition": "CreateGitStackCondition",
-            "Properties": {
-                "TemplateURL": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}submodules/talend/templates/gitlab.template" },
-                "TimeoutInMinutes": 30,
-                "Parameters": {
-                    "QSS3BucketName": { "Ref": "QSS3BucketName" },
-                    "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}submodules/talend/" },
-                    "InstanceType": "c4.large",
-                    "InstanceRole": { "Ref": "InstanceRole" },
-                    "InstanceProfile": { "Ref": "InstanceProfile" },
-                    "GitSecurityGroupID": { "Ref": "GitSecurityGroup" },
-                    "KeyPairName": { "Ref": "KeyName" },
-                    "VolumeSize": "100",
-                    "VolumeType": "gp2",
-                    "SubnetId": { "Ref": "PublicSubnetId1" },
-                    "GitAdminUserid": { "Ref": "GitAdminUserid" },
-                    "GitAdminPassword": { "Ref": "GitAdminPassword" },
-                    "GitAdminEmail": { "Ref": "GitAdminEmail" },
-                    "GitTacUserid": { "Ref": "GitTacUserid" },
-                    "GitTacPassword": { "Ref": "GitTacPassword" },
-                    "GitTacEmail": { "Ref": "GitTacEmail" },
-                    "GitRepo": { "Ref": "GitRepo" }
-                }
-            }
-        }
+		}
     },
     "Outputs": {
         "NexusStack": {
-            "Condition": "CreateNexusStackCondition",
             "Value": { "Ref": "NexusStack" },
             "Description": "Nested Nexus stack",
 			"Export": {
@@ -742,7 +686,6 @@
 				} 
         },
         "LogserverStack": {
-            "Condition": "CreateLogserverStackCondition",
             "Value": { "Ref": "LogserverStack" },
             "Description": "Nested Logserver stack",
 			"Export": {
@@ -750,7 +693,6 @@
 			}
         },
         "TacStack": {
-            "Condition": "CreateTacStackCondition",
             "Value": { "Ref": "TacStack" },
             "Description": "Nested TAC stack",
 			"Export": {
@@ -758,15 +700,29 @@
 			}
         },
         "JobserverAutoscaleStack": {
-            "Condition": "CreateJobserverAutoscaleStackCondition",
             "Value": { "Ref": "JobserverAutoscaleStack" },
             "Description": "Nested JobserverAutoscale stack",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:JobserverAutoscale" } 
 			}
         },
+        "GitStack": {
+            "Condition": "CreateGitStackCondition",
+            "Value": { "Ref": "GitStack" },
+            "Description": "Nested Git stack",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:GitStack" } 
+				} 
+        },
+        "GitPublicDnsName": {
+		    "Condition": "CreateGitStackCondition",				
+            "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName"] },
+            "Description": "Git public DNS address",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:GitPublicDnsName" } 
+			}
+        },		
         "TacPrivateIp": {
-            "Condition": "CreateTacStackCondition",
             "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateIp"] },
             "Description": "TAC private IP address",
 			"Export": {
@@ -774,7 +730,6 @@
 			}
         },
         "TacPublicIp": {
-            "Condition": "CreateTacStackCondition",
             "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicIp"] },
             "Description": "TAC public IP address",
 			"Export": {
@@ -782,7 +737,6 @@
 			}
         },
         "TacPublicDnsName": {
-            "Condition": "CreateTacStackCondition",
             "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicDnsName"] },
             "Description": "TAC public DNS",
 			"Export": {
@@ -790,7 +744,6 @@
 			}
         },
         "NexusPublicDnsName": {
-			"Condition": "CreateNexusStackCondition",
             "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.publicDnsName" ] },
             "Description": "Talend public DNS",
 			"Export": {
