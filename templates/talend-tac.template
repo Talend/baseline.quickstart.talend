@@ -529,14 +529,18 @@
         }
     },
     "Resources": {
+        "TacReady" : {
+            "Type" : "AWS::CloudFormation::WaitCondition",
+            "DependsOn" : ["TalendServerInstance"],
+            "CreationPolicy" : {
+            "ResourceSignal" : {
+                    "Timeout": "PT10M",
+                    "Count"  : "1"
+                }
+            }
+        },
         "TalendServerInstance": {
             "Type": "AWS::EC2::Instance",
-            "CreationPolicy": {
-                "ResourceSignal": {
-                    "Count": "2",
-                    "Timeout": "PT10M"
-                }
-            },
             "Properties": {
                 "InstanceType": {
                     "Ref": "InstanceType"
@@ -1204,7 +1208,14 @@
                             },
                             "11-tac-started": {
                                 "command": {
-                                    "Fn::Sub": "/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource TalendServerInstance --region ${AWS::Region}"
+                                    "Fn::Sub": "/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource ${TacReady} --region ${AWS::Region}"
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
                                 }
                             }
                         }
@@ -1221,6 +1232,15 @@
 				"Name": {
 					"Fn::Sub": "${AWS::StackName}:instanceId"
 				}
+			}
+        },
+        "TacReady": {
+            "Value": { "Ref": "TacReady" },
+            "Description": "Wait condition is set when TAC is fully booted and ready",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:tacReady" 
+				} 
 			}
         },
         "publicIp": {
