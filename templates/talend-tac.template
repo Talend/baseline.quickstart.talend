@@ -531,6 +531,12 @@
     "Resources": {
         "TalendServerInstance": {
             "Type": "AWS::EC2::Instance",
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Count": "2",
+                    "Timeout": "PT10M"
+                }
+            }                            }
             "Properties": {
                 "InstanceType": {
                     "Ref": "InstanceType"
@@ -1194,6 +1200,11 @@
                                         "cfn",
                                         "workDir"
                                     ]
+                                }
+                            },
+                            "11-tac-started": {
+                                "command": {
+                                    { "Fn::Sub": "/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource TalendServerInstance --region ${AWS::Region}" }
                                 }
                             }
                         }

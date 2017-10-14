@@ -610,7 +610,13 @@
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] },
                     "LoggingTacPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingTacPort" ] },
                     "LoggingKibanaPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingKibanaPort" ] },
-                    "GitHost": { "Ref": "GitHost" },
+                    "GitHost": {
+                        "Fn::If": [
+                            "CreateGitStackCondition",
+                            { "Fn::GetAtt": [ "GitStack", "Outputs.GitPublicDnsName" ] },
+                            { "Ref": "GitHost" } 
+                        ]
+                    },
                     "GitProtocol": { "Ref": "GitProtocol" },
                     "GitPort": { "Ref": "GitPort" },
                     "GitRepo": { "Ref": "GitRepo" },
