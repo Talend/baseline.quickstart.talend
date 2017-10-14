@@ -45,30 +45,6 @@
         	"Description": "Private Subnet 2",
         	"Type": "AWS::EC2::Subnet::Id"
         },
-		"PrivateNexus": {
-            "Description": "Deploy Nexus to private or public subnet.",
-            "Type": "String",
-			"Default": "public",
-            "AllowedValues": [ "private", "public" ]
-		},
-		"PrivateLogserver": {
-            "Description": "Deploy Logserver to private or public subnet.",
-            "Type": "String",
-			"Default": "public",
-            "AllowedValues": [ "private", "public" ]
-		},
-		"PrivateTac": {
-            "Description": "Deploy TAC to private or public subnet.",
-            "Type": "String",
-			"Default": "public",
-            "AllowedValues": [ "private", "public" ]
-		},
-		"PrivateJobserver": {
-            "Description": "Deploy Jobserver to private or public subnet.",
-            "Type": "String",
-			"Default": "private",
-            "AllowedValues": [ "private", "public" ]
-		},
         "NexusSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup::Id",
             "Description": "Nexus Security Group"
@@ -88,6 +64,10 @@
         "DistantRunSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup::Id",
             "Description": "DistantRun Jobserver Security Group"
+        },
+        "GitSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup::Id",
+            "Description": "Git Security Group"
         },
         "JobserverAutoscaleMinSize": {
             "Description": "Talend Jobserver autoscale minimum size",
@@ -475,6 +455,26 @@
             "Type": "String",
             "NoEcho": "true"
         },
+        "GitAdminEmail": {
+            "Description": "Git admin contact email.",
+            "Type": "String",
+            "Default": ""
+        },
+        "GitTacUserid": {
+            "Description": "Git TAC userid.",
+            "Type": "String",
+            "Default": "tac"
+        },
+        "GitTacPassword": {
+            "Description": "Git TAC password.",
+            "Type": "String",
+            "NoEcho": "true"
+        },
+        "GitTacEmail": {
+            "Description": "TAC contact email.",
+            "Type": "String",
+            "Default": ""
+        },
         "CreateNexusStack": {
             "Description": "Create Nexus stack.",
             "Type": "String",
@@ -501,6 +501,12 @@
         },
         "CreateDistantRunStack": {
             "Description": "Create Jobserver stack in public subnet for use by Studio Distant Run capability.",
+            "Type": "String",
+			"Default": "true",
+            "AllowedValues": [ "true", "false" ]
+        },
+        "CreateGitStack": {
+            "Description": "Create Git stack.",
             "Type": "String",
 			"Default": "true",
             "AllowedValues": [ "true", "false" ]
@@ -539,28 +545,10 @@
                 "true"
             ]
         },
-        "isNexusPrivate": {
+        "CreateGitStackCondition": {
             "Fn::Equals": [
-                { "Ref": "PrivateNexus" },
-                "private"
-            ]
-        },
-        "isLogserverPrivate": {
-            "Fn::Equals": [
-                { "Ref": "PrivateLogserver" },
-                "private"
-            ]
-        },
-        "isTacPrivate": {
-            "Fn::Equals": [
-                { "Ref": "PrivateTac" },
-                "private"
-            ]
-        },
-        "isJobserverPrivate": {
-            "Fn::Equals": [
-                { "Ref": "PrivateJobserver" },
-                "private"
+                { "Ref": "CreateGitStack" },
+                "true"
             ]
         }
     },
@@ -579,8 +567,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "NexusInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Fn::If": [ "isNexusPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
-                    "PrivateSubnet": { "Ref": "PrivateNexus" },
+					"SubnetId": { "Ref": "PublicSubnetId1" },
+                    "PrivateSubnet": "false",
 					"SecurityGroupIds": { "Ref": "NexusSecurityGroup" },
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
@@ -603,8 +591,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "LogserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Fn::If": [ "isLogserverPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
-                    "PrivateSubnet": { "Ref": "PrivateLogserver" },
+					"SubnetId": { "Ref": "PublicSubnetId1" },
+                    "PrivateSubnet": "false",
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" }
 				},
 				"TimeoutInMinutes" : "10"
@@ -613,7 +601,7 @@
 		"TacStack": {
 			"Type" : "AWS::CloudFormation::Stack",
             "Condition" : "CreateTacStackCondition",
-			"DependsOn": [ "NexusStack", "LogserverStack" ],
+			"DependsOn": [ "NexusStack", "LogserverStack", "GitStack" ],
 			"Properties" : {
                 "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-tac.template" },
 				"Parameters" : {
@@ -626,8 +614,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "TacInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Fn::If": [ "isTacPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
-                    "PrivateSubnet": { "Ref": "PrivateTac" },
+					"SubnetId": { "Ref": "PublicSubnetId1" },
+                    "PrivateSubnet": "false",
 					"SecurityGroupIds": { "Ref": "TacSecurityGroup" },
                     "TacDbHost": { "Ref": "TacDbHost" },
                     "AmcDbHost": { "Ref": "TacDbHost" },
@@ -645,13 +633,7 @@
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
                     "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
-                    "LoggingHost": { 
-                        "Fn::If": [ 
-                            "isLogserverPrivate",
-                            { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
-                            { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] }
-                        ] 
-                    },
+                    "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] },
                     "LoggingTacPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingTacPort" ] },
                     "LoggingKibanaPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingKibanaPort" ] },
                     "GitHost": { "Ref": "GitHost" },
@@ -679,9 +661,9 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "JobserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId1": { "Fn::If": [ "isJobserverPrivate", { "Ref": "PrivateSubnetId1" }, { "Ref": "PublicSubnetId1" } ] },
-					"SubnetId2": { "Fn::If": [ "isJobserverPrivate", { "Ref": "PrivateSubnetId2" }, { "Ref": "PublicSubnetId2" } ] },
-                    "PrivateSubnet": { "Ref": "PrivateJobserver" },
+					"SubnetId1": { "Ref": "PrivateSubnetId1" },
+					"SubnetId2": { "Ref": "PrivateSubnetId2" },
+                    "PrivateSubnet": "true",
 					"SecurityGroupIds": { "Ref": "JobserverSecurityGroup" },
                     "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
                     "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
@@ -721,7 +703,34 @@
 				},
 				"TimeoutInMinutes" : "10"
 			}
-		}
+		},
+        "GitStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Condition": "CreateGitStackCondition",
+            "Properties": {
+                "TemplateURL": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}submodules/talend/templates/gitlab.template" },
+                "TimeoutInMinutes": 30,
+                "Parameters": {
+                    "QSS3BucketName": { "Ref": "QSS3BucketName" },
+                    "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}submodules/talend/" },
+                    "InstanceType": "c4.large",
+                    "InstanceRole": { "Ref": "InstanceRole" },
+                    "InstanceProfile": { "Ref": "InstanceProfile" },
+                    "GitSecurityGroupID": { "Ref": "GitSecurityGroup" },
+                    "KeyPairName": { "Ref": "KeyName" },
+                    "VolumeSize": "100",
+                    "VolumeType": "gp2",
+                    "SubnetId": { "Ref": "PublicSubnetId1" },
+                    "GitAdminUserid": { "Ref": "GitAdminUserid" },
+                    "GitAdminPassword": { "Ref": "GitAdminPassword" },
+                    "GitAdminEmail": { "Ref": "GitAdminEmail" },
+                    "GitTacUserid": { "Ref": "GitTacUserid" },
+                    "GitTacPassword": { "Ref": "GitTacPassword" },
+                    "GitTacEmail": { "Ref": "GitTacEmail" },
+                    "GitRepo": { "Ref": "GitRepo" }
+                }
+            }
+        }
     },
     "Outputs": {
         "NexusStack": {
