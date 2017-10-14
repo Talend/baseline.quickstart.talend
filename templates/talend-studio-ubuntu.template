@@ -122,6 +122,16 @@
             "Description": "Path to binary repository in Talend S3 resources bucket.",
             "Type": "String",
             "Default": "/"
+        },
+        "TacStack": {
+            "Description": "TAC Stack handle for getting TacReady reference.",
+            "Type": "String",
+            "Default": ""
+        },
+        "TacReady": {
+            "Description": "Wait Condition handle reference for TAC Ready signal.",
+            "Type": "String",
+            "Default": ""
         }
 	},
     "Mappings": {
@@ -209,6 +219,16 @@
 		}
 	},
     "Resources": {
+        "StudioReady" : {
+            "Type" : "AWS::CloudFormation::WaitCondition",
+            "DependsOn": [ "TalendServerInstance" ],
+            "CreationPolicy" : {
+                "ResourceSignal" : {
+                    "Timeout": "PT15M",
+                    "Count"  : "1"
+                }
+            }
+        },
         "TalendServerInstance": {
             "Type": "AWS::EC2::Instance",
             "Properties": {
@@ -313,6 +333,15 @@
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
                                 "mode": "000444"
+                            },
+                            "/home/ubuntu/waitForResource.sh": {
+                                "source": {
+                                    "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}scripts/cfn/waitForResource.sh"
+                                },
+                                "owner": "ubuntu",
+                                "group": "ubuntu",
+                                "mode": "000500",
+                                "authentication": "S3AccessCreds"
                             }
                         },
                         "commands": {
@@ -652,6 +681,16 @@
                             },
                             "07-install-geany": {
                                 "command": "apt-get install -y gedit"
+                            },
+                            "08-wait-for-tac": {
+                                "command": {
+                                    "Fn::Sub": "/home/ubuntu/waitForResource.sh ${TacStack} ${TacReady}"
+                                }
+                            },
+                            "09-studio-ready": {
+                                "command": {
+                                    "Fn::Sub": "/opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource StudioReady --region ${AWS::Region}"
+                                }
                             }
                         }
                     }

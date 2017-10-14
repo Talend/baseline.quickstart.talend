@@ -266,8 +266,9 @@
     "Resources": {
         "GitReady" : {
             "Type" : "AWS::CloudFormation::WaitCondition",
+            "DependsOn": [ "GitInstance" ],
             "CreationPolicy" : {
-            "ResourceSignal" : {
+                "ResourceSignal" : {
                     "Timeout": "PT15M",
                     "Count"  : "1"
                 }
@@ -479,7 +480,7 @@
                             },
                             "07-git-ready": {
                                 "command": {
-                                    "Fn::Sub": "/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource ${GitReady} --region ${AWS::Region}"
+                                    "Fn::Sub": "/opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource GitReady --region ${AWS::Region}"
                                 }
                             }
                         }

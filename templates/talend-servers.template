@@ -706,6 +706,15 @@
 				"Name": { "Fn::Sub": "${AWS::StackName}:Tac" } 
 			}
         },
+        "TacReady": {
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.TacReady" ] },
+            "Description": "Wait condition is set when TAC is fully booted and ready",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:tacReady" 
+				} 
+			}
+        },
         "JobserverAutoscaleStack": {
             "Value": { "Ref": "JobserverAutoscaleStack" },
             "Description": "Nested JobserverAutoscale stack",
