@@ -411,7 +411,7 @@
                                         "\n",
                                         [
                                             "#!/bin/bash",
-                                            "",
+                                            "", 
                                             "function gitlab_conf() { ",
                                             { "Fn::Sub": "    local git_admin_userid=\"${GitAdminUserid}\"" },
                                             { "Fn::Sub": "    local git_admin_password=\"${GitAdminPassword}\"" },
