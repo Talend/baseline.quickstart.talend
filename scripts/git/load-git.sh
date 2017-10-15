@@ -42,7 +42,7 @@ function load_git() {
     echo "director is ${work_dir}" 1>&2
     cd "${work_dir}"
 
-    echo "clonging ${git_url} to ${project_name}" 1>&2
+    echo "cloning ${git_url} to ${project_name}" 1>&2
     git clone "${git_url}" "${project_name}"
 
     tar -xzf "${source_zip_path}"
