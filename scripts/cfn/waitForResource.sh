@@ -7,6 +7,7 @@ set -u
 declare stack="${1:-}"
 declare resourceId="${2:-}"
 declare region="${3:-}"
+declare maxWait="${4:-900}"
 declare sleepInterval="${4:-20}"
 
 declare usage="./isResourceAvailable <stack> <resourceId> [ <sleepInterval> ]"
@@ -18,8 +19,9 @@ declare usage="./isResourceAvailable <stack> <resourceId> [ <sleepInterval> ]"
 echo "$(date +%Y-%m-%d:%H:%M:%S) --- checking ${stack}:${resourceId} status..." 1>&2
 declare resource_info
 resource_info=$( aws cloudformation describe-stack-resource --stack-name "${stack}" --logical-resource-id "${resourceId}" | jq --raw-output ".StackResourceDetail.ResourceStatus" )
+SECONDS=0
 
-until [ "${resource_info}" == "CREATE_COMPLETE" ] || [ "${resource_info}" == "UPDATE_COMPLETE" ]; do
+until [ "${resource_info}" == "CREATE_COMPLETE" ] || [ "${resource_info}" == "UPDATE_COMPLETE" ] || [ ${SECONDS} -gt "${maxWait}" ]; do
     echo "resource_info=${resource_info}" 1>&2
     echo "$(date +%Y-%m-%d:%H:%M:%S) --- sleeping for ${sleepInterval} seconds before checking ${stack}:${resourceId}" 1>&2
     sleep "${sleepInterval}"
