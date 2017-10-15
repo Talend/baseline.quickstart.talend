@@ -127,11 +127,6 @@
             "Description": "TAC Stack handle for getting TacReady reference.",
             "Type": "String",
             "Default": ""
-        },
-        "TacReady": {
-            "Description": "Wait Condition handle reference for TAC Ready signal.",
-            "Type": "String",
-            "Default": ""
         }
 	},
     "Mappings": {
@@ -221,7 +216,6 @@
     "Resources": {
         "StudioReady" : {
             "Type" : "AWS::CloudFormation::WaitCondition",
-            "DependsOn": [ "TalendServerInstance" ],
             "CreationPolicy" : {
                 "ResourceSignal" : {
                     "Timeout": "PT15M",
@@ -333,15 +327,6 @@
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
                                 "mode": "000444"
-                            },
-                            "/home/ubuntu/waitForResource.sh": {
-                                "source": {
-                                    "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}scripts/cfn/waitForResource.sh"
-                                },
-                                "owner": "ubuntu",
-                                "group": "ubuntu",
-                                "mode": "000500",
-                                "authentication": "S3AccessCreds"
                             }
                         },
                         "commands": {
@@ -389,6 +374,11 @@
                                             "sparkJarsTarget": { "Fn::FindInMap": [ "Talend", "jobserver", "sparkJarsTarget" ] }
                                         }
                                     ]
+                                }
+                            },
+                            "07-install-jq": {
+                                "command": {
+                                    "apt-get instally -y jq"
                                 }
                             }
                         }
@@ -682,9 +672,20 @@
                             "07-install-geany": {
                                 "command": "apt-get install -y gedit"
                             },
-                            "08-wait-for-tac": {
+                            "08-tac-ready": {
                                 "command": {
-                                    "Fn::Sub": "/home/ubuntu/waitForResource.sh ${TacStack} ${TacReady}"
+                                    "Fn::Sub": [
+                                        "${baselineTarget}/cfn/waitForResource.sh ${TacStack} TacReady ${AWS::Region}",
+                                        {
+                                            "baselineTarget": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "baseline",
+                                                    "baselineTarget"
+                                                ]
+                                            }
+                                        }
+                                    ]
                                 }
                             },
                             "09-studio-ready": {

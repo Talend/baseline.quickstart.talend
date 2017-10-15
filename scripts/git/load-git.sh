@@ -45,7 +45,7 @@ function load_git() {
     echo "clonging ${git_url} to ${project_name}" 1>&2
     git clone "${git_url}" "${project_name}"
 
-    tar -xzvf "${source_zip_path}"
+    tar -xzf "${source_zip_path}"
     cd "${project_name}"
     git add .
     git commit -m "initial version" && true

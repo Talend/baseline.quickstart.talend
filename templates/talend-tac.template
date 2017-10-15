@@ -281,11 +281,6 @@
             "Description": "GitStack reference.",
             "Type": "String",
             "Default": ""
-        },
-        "GitReady": {
-            "Description": "GitReady wait condition.",
-            "Type": "String",
-            "Default": ""
         }
 	},
     "Mappings": {
@@ -551,7 +546,6 @@
     "Resources": {
         "TacReady" : {
             "Type" : "AWS::CloudFormation::WaitCondition",
-            "DependsOn": [ "TalendServerInstance" ],
             "CreationPolicy" : {
                 "ResourceSignal" : {
                     "Timeout": "PT15M",
@@ -1131,7 +1125,7 @@
                             "08-git-ready": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "${gitStackFlag} && ${baselineTarget}/cfn/waitForResource.sh ${GitStack} ${GitReady} || true",
+                                        "${gitStackFlag} && ${baselineTarget}/cfn/waitForResource.sh ${GitStack} GitReady ${AWS::Region} || true",
                                         {
                                             "gitStackFlag": {
                                                 "Fn::If": [
@@ -1291,15 +1285,6 @@
 				"Name": {
 					"Fn::Sub": "${AWS::StackName}:instanceId"
 				}
-			}
-        },
-        "TacReady": {
-            "Value": { "Ref": "TacReady" },
-            "Description": "Wait condition is set when TAC is fully booted and ready",
-			"Export": {
-				"Name": {
-					"Fn::Sub": "${AWS::StackName}:tacReady" 
-				} 
 			}
         },
         "publicIp": {

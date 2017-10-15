@@ -266,7 +266,6 @@
     "Resources": {
         "GitReady" : {
             "Type" : "AWS::CloudFormation::WaitCondition",
-            "DependsOn": [ "GitInstance" ],
             "CreationPolicy" : {
                 "ResourceSignal" : {
                     "Timeout": "PT15M",
@@ -490,15 +489,6 @@
         }
     },
     "Outputs": {
-        "GitReady": {
-            "Value": { "Ref": "GitReady" },
-            "Description": "Wait condition is set when Git is fully booted and ready",
-			"Export": {
-				"Name": {
-					"Fn::Sub": "${AWS::StackName}:gitReady" 
-				} 
-			}
-        },
         "publicIp": {
 			"Condition": "isPublicSubnet",
             "Value": { "Fn::GetAtt": [ "GitInstance", "PublicIp" ] },

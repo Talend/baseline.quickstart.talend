@@ -628,13 +628,6 @@
                             { "Ref": "GitStack" },
                             { "Ref" : "AWS::NoValue"} 
                         ]
-                    },
-                    "GitReady": { 
-                        "Fn::If": [
-                            "CreateGitStackCondition",
-                            { "Fn::GetAtt": [ "GitStack", "Outputs.GitReady" ] },
-                            {"Ref" : "AWS::NoValue"} 
-                        ]
                     }
 				},
 				"TimeoutInMinutes" : "10"
@@ -664,8 +657,7 @@
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] },
-                    "TacStack": { "Ref": "TacStack" },
-                    "TacReady": { "Fn::GetAtt": [ "TacStack", "Outputs.TacReady" ] }
+                    "TacStack": { "Ref": "TacStack" }
 				},
 				"TimeoutInMinutes" : "10"
 			}
