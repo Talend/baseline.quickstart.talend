@@ -663,7 +663,9 @@
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
-                    "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
+                    "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] },
+                    "TacStack": { "Ref": "TacStack" },
+                    "TacReady": { "Fn::GetAtt": [ "TacStack", "Outputs.TacReady" ] }
 				},
 				"TimeoutInMinutes" : "10"
 			}

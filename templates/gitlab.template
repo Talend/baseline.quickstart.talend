@@ -475,7 +475,7 @@
                             },
                             "06-git-started": {
                                 "command": {
-                                    "Fn::Sub": "/home/ubuntu/isGitStarted.sh ${GitProtocol}://localhost:${GitPort}/${GitRepo} GitLab /home/ubuntu"
+                                    "Fn::Sub": "/home/ubuntu/isGitStarted.sh http://localhost/${GitRepo} GitLab /home/ubuntu"
                                 }
                             },
                             "07-git-ready": {
