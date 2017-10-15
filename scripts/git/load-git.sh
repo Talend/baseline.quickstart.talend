@@ -2,7 +2,6 @@
 
 set -e
 set -u
-set -x
 
 function load_git() {
 

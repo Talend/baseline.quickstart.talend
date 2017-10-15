@@ -146,7 +146,18 @@
         },
         "TacHost": {
             "Description": "TAC DNS hostname.",
-            "Type": "String"
+            "Type": "String",
+            "Default": ""
+        },
+        "TacStack": {
+            "Description": "TAC Stack reference.",
+            "Type": "String",
+            "Default": ""
+        },
+        "TacReady": {
+            "Description": "TAC wait condition reference.",
+            "Type": "String",
+            "Default": ""
         },
         "LoggingHost": {
             "Description": "Logstash server host DNS.",
@@ -180,6 +191,9 @@
             "s3fs": {
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
                 "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
+            },
+            "cfn": {
+                "workDir": "/home/ec2-user/work"
             },
             "jobserver": {
                 "sparkJarsKeyPrefix": "spark",
@@ -389,6 +403,16 @@
         "SelfRegisterWithTacCondition": {
             "Fn::Not": [
                 { "Fn::Equals": [ "", { "Ref": "TacHost" } ] }
+            ]
+        },
+        "TacStackCondition": {
+            "Fn::Not": [
+                { 
+                    "Fn::Equals": [
+                        "",
+                        { "Ref": "TacStack" }
+                    ]
+                }
             ]
         }
 	},
@@ -806,7 +830,43 @@
                                     ]
                                 }
                             },
-                            "03-tac-started": {
+                            "03-tac-ready": {
+                                "command": {
+                                    "Fn::If": [
+                                        "SelfRegisterWithTacCondition",
+                                        {
+                                            "Fn::Sub": [
+                                                "${tacStackFlag} && ${baselineTarget}/cfn/waitForResource.sh ${TacStack} ${TacReady} || true",
+                                                {
+                                                    "tacStackFlag": {
+                                                        "Fn::If": [
+                                                            "TacStackCondition",
+                                                            "true",
+                                                            "false"
+                                                        ]
+                                                    },
+                                                    "baselineTarget": {
+                                                        "Fn::FindInMap": [
+                                                            "Talend",
+                                                            "baseline",
+                                                            "baselineTarget"
+                                                        ]
+                                                    },
+                                                    "workDir": {
+                                                        "Fn::FindInMap": [
+                                                            "Talend",
+                                                            "cfn",
+                                                            "workDir"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "echo \"Skipping check for TAC Ready status for DistantRun server\""
+                                    ]
+                                }
+                            },
+                            "04-tac-accessible": {
                                 "command": {
                                     "Fn::If": [
                                         "SelfRegisterWithTacCondition",
@@ -826,11 +886,11 @@
                                                 ]
                                             ]
                                         },
-                                        "echo \"Skipping registration with TAC for DistantRun server\""
+                                        "echo \"Skipping TAC accessibility check for DistantRun server\""
                                     ]
                                 }
                             },
-                            "04-install-talend": {
+                            "05-install-talend": {
                                 "command": {
                                     "Fn::Join": [ 
                                         "", 
