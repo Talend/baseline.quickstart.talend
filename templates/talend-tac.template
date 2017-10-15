@@ -761,7 +761,7 @@
                                 }
                             },
                             "07-install-jq": {
-                                "command": "yum instally -y jq"
+                                "command": "yum install -y jq"
                             }
                         }
                     },

@@ -377,7 +377,7 @@
                                 }
                             },
                             "07-install-jq": {
-                                "command": "apt-get instally -y jq"
+                                "command": "apt-get install -y jq"
                             }
                         }
                     },
