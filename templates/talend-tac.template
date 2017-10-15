@@ -759,6 +759,9 @@
                                         ]
                                     ]
                                 }
+                            },
+                            "07-install-jq": {
+                                "command": "yum instally -y jq"
                             }
                         }
                     },
@@ -1139,13 +1142,6 @@
                                                     "Talend",
                                                     "baseline",
                                                     "baselineTarget"
-                                                ]
-                                            },
-                                            "workDir": {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    "cfn",
-                                                    "workDir"
                                                 ]
                                             }
                                         }

@@ -606,6 +606,9 @@
                                         }
                                     ]
                                 }
+                            },
+                            "07-install-jq": {
+                                "command": "apt-get instally -y jq"
                             }
                         }
                     },
@@ -836,7 +839,7 @@
                                         "SelfRegisterWithTacCondition",
                                         {
                                             "Fn::Sub": [
-                                                "${tacStackFlag} && ${baselineTarget}/cfn/waitForResource.sh ${TacStack} ${TacReady} || true",
+                                                "${tacStackFlag} && ${baselineTarget}/cfn/waitForResource.sh ${TacStack} ${TacReady} ${AWS::Region} || true",
                                                 {
                                                     "tacStackFlag": {
                                                         "Fn::If": [
