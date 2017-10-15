@@ -621,7 +621,21 @@
                     "GitPort": { "Ref": "GitPort" },
                     "GitRepo": { "Ref": "GitRepo" },
                     "GitAdminUserid": { "Ref": "GitAdminUserid" },
-                    "GitAdminPassword": { "Ref": "GitAdminPassword" }
+                    "GitAdminPassword": { "Ref": "GitAdminPassword" },
+                    "GitStack": {
+                        "Fn::If": [
+                            "CreateGitStackCondition",
+                            { "Ref": "GitStack" },
+                            { "Ref" : "AWS::NoValue"} 
+                        ]
+                    },
+                    "GitReady": { 
+                        "Fn::If": [
+                            "CreateGitStackCondition",
+                            { "Fn::GetAtt": [ "GitStack", "Outputs.GitReady" ] },
+                            {"Ref" : "AWS::NoValue"} 
+                        ]
+                    }
 				},
 				"TimeoutInMinutes" : "10"
 			}

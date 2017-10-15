@@ -276,6 +276,16 @@
             "Description": "Git password.",
             "Type": "String",
             "NoEcho": "true"
+        },
+        "GitStack": {
+            "Description": "GitStack reference.",
+            "Type": "String",
+            "Default": ""
+        },
+        "GitReady": {
+            "Description": "GitReady wait condition.",
+            "Type": "String",
+            "Default": ""
         }
 	},
     "Mappings": {
@@ -515,6 +525,16 @@
             "Fn::Equals": [
                 { "Ref": "CreateAmcDatabase" },
                 "true"
+            ]
+        },
+        "GitStackCondition": {
+            "Fn::Not": [
+                { 
+                    "Fn::Equals": [
+                        "",
+                        { "Ref": "GitStack" }
+                    ]
+                }
             ]
         },
         "CopyToTalendSourceBucketCondition": {
@@ -1108,11 +1128,18 @@
                                     ]
                                 }
                             },
-                            "07-git-started": {
+                            "08-git-ready": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "${baselineTarget}/git/isGitStarted.sh ${GitProtocol}://${GitHost}:${GitPort}/${GitRepo} GitLab ${workDir}",
+                                        "${gitStackFlag} && ${baselineTarget}/cfn/waitForResource.sh ${GitStack} ${GitReady} || true",
                                         {
+                                            "gitStackFlag": {
+                                                "Fn::If": [
+                                                    "GitStackCondition",
+                                                    "true",
+                                                    "false"
+                                                ]
+                                            },
                                             "baselineTarget": {
                                                 "Fn::FindInMap": [
                                                     "Talend",
@@ -1138,7 +1165,44 @@
                                     ]
                                 }
                             },
-                            "09-project-users": {
+                            "09-git-accessible": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "${gitStackFlag} && ${baselineTarget}/git/isGitStarted.sh ${GitProtocol}://${GitHost}:${GitPort}/${GitRepo} GitLab ${workDir} || true",
+                                        {
+                                            "gitStackFlag": {
+                                                "Fn::If": [
+                                                    "GitStackCondition",
+                                                    "true",
+                                                    "false"
+                                                ]
+                                            },
+                                            "baselineTarget": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "baseline",
+                                                    "baselineTarget"
+                                                ]
+                                            },
+                                            "workDir": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "cfn",
+                                                    "workDir"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        "cfn",
+                                        "workDir"
+                                    ]
+                                }
+                            },
+                            "10-project-users": {
                                 "command": {
                                     "Fn::Join": [
                                         "",
@@ -1163,7 +1227,7 @@
                                     ]
                                 }
                             },
-                            "10-load-git": {
+                            "11-load-git": {
                                 "command": {
                                     "Fn::Sub": [
                                         ". ${baselineTarget}/git/load-git.sh; load_git ${talendRepoDir}/${demo_jobs_path} ${workDir} ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
@@ -1208,7 +1272,7 @@
                                     ]
                                 }
                             },
-                            "11-tac-ready": {
+                            "12-tac-ready": {
                                 "command": {
                                     "Fn::Sub": "/opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource TacReady --region ${AWS::Region}"
                                 }
