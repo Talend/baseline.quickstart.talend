@@ -351,7 +351,7 @@
                                     "Ref": "AWS::Region"
                                 },
                                 "\n",
-                                "/opt/aws/bin/cfn-signal -e $? ",
+                                "cfn-signal -e $? ",
                                 "         --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -475,12 +475,12 @@
                             },
                             "06-git-started": {
                                 "command": {
-                                    "Fn::Sub": "/home/ubuntu/isGitStarted.sh localhost 80 \"\" GitLab /home/ubuntu"
+                                    "Fn::Sub": "/home/ubuntu/isGitStarted.sh ${GitProtocol}://localhost:${GitPort}/${GitRepo} GitLab /home/ubuntu"
                                 }
                             },
                             "07-git-ready": {
                                 "command": {
-                                    "Fn::Sub": "/opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource GitReady --region ${AWS::Region}"
+                                    "Fn::Sub": "cfn-signal -e 0 --stack ${AWS::StackName} --resource GitReady --region ${AWS::Region}"
                                 }
                             }
                         }

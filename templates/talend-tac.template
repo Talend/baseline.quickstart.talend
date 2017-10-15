@@ -1110,22 +1110,24 @@
                             },
                             "07-git-started": {
                                 "command": {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            {
+                                    "Fn::Sub": [
+                                        "${baselineTarget}/git/isGitStarted.sh ${GitProtocol}://${GitHost}:${GitPort}/${GitRepo} GitLab ${workDir}",
+                                        {
+                                            "baselineTarget": {
                                                 "Fn::FindInMap": [
                                                     "Talend",
                                                     "baseline",
                                                     "baselineTarget"
                                                 ]
                                             },
-                                            "/git/isGitStarted.sh",
-                                            " ", { "Ref": "GitHost" },
-                                            " ", { "Ref": "GitPort" },
-                                            " ", "\"\"",
-                                            " ", "GitLab"
-                                        ]
+                                            "workDir": {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "cfn",
+                                                    "workDir"
+                                                ]
+                                            }
+                                        }
                                     ]
                                 },
                                 "cwd": {
