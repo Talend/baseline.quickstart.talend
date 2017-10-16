@@ -510,7 +510,7 @@
                 "TimeoutInMinutes": 30,
                 "Parameters": {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
-                    "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}submodules/talend/" },
+                    "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
                     "InstanceType": "c4.large",
                     "InstanceRole": { "Ref": "InstanceRole" },
                     "InstanceProfile": { "Ref": "InstanceProfile" },
@@ -575,7 +575,7 @@
 		},
 		"TacStack": {
 			"Type" : "AWS::CloudFormation::Stack",
-			"DependsOn": [ "GitStack" ],
+			"DependsOn": [ "NexusStack", "LogserverStack" ],
 			"Properties" : {
                 "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-tac.template" },
 				"Parameters" : {
@@ -665,7 +665,7 @@
 		"DistantRunStack": {
 			"Type" : "AWS::CloudFormation::Stack",
             "Condition" : "CreateDistantRunStackCondition",
-			"DependsOn": [ "TacStack", "LogserverStack" ],
+			"DependsOn": [ "LogserverStack" ],
 			"Properties" : {
                 "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
 				"Parameters" : {
@@ -712,15 +712,6 @@
             "Description": "Nested TAC stack",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:Tac" } 
-			}
-        },
-        "TacReady": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.TacReady" ] },
-            "Description": "Wait condition is set when TAC is fully booted and ready",
-			"Export": {
-				"Name": {
-					"Fn::Sub": "${AWS::StackName}:tacReady" 
-				} 
 			}
         },
         "JobserverAutoscaleStack": {
