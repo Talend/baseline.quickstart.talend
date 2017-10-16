@@ -1126,24 +1126,23 @@
                             },
                             "08-git-ready": {
                                 "command": {
-                                    "Fn::Sub": [
-                                        "${gitStackFlag} && ${baselineTarget}/cfn/waitForResource.sh ${GitStack} GitReady ${AWS::Region} || true",
+                                    "Fn::If": [
+                                        "GitStackCondition",
                                         {
-                                            "gitStackFlag": {
-                                                "Fn::If": [
-                                                    "GitStackCondition",
-                                                    "true",
-                                                    "false"
-                                                ]
-                                            },
-                                            "baselineTarget": {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    "baseline",
-                                                    "baselineTarget"
-                                                ]
-                                            }
-                                        }
+                                            "Fn::Sub": [
+                                                "${baselineTarget}/cfn/waitForResource.sh ${GitStack} GitReady ${AWS::Region}",
+                                                {
+                                                    "baselineTarget": {
+                                                        "Fn::FindInMap": [
+                                                            "Talend",
+                                                            "baseline",
+                                                            "baselineTarget"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "echo Skipping waitForResource on GitStack since external GitHost was provided"
                                     ]
                                 },
                                 "cwd": {

@@ -146,7 +146,7 @@
                                         "cloudformation:List*",
                                         "cloudformation:Get*"
                                     ],
-                                    "Resource": { "Fn::Sub": "${StackRoot}*" }
+                                    "Resource": { "Fn::Sub": "arn:aws:cloudformation:us-east-1:115057027035:stack/${StackRoot}*/*" }
                                 }
                             ]
                         }

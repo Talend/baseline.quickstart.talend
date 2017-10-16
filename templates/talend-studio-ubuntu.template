@@ -210,7 +210,17 @@
         },
 		"isPublicSubnet": {
 			"Fn::Not": [ { "Condition": "isPrivateSubnet" } ]
-		}
+		},
+        "TacStackCondition": {
+            "Fn::Not": [
+                { 
+                    "Fn::Equals": [
+                        "",
+                        { "Ref": "TacStack" }
+                    ]
+                }
+            ]
+        }
 	},
     "Resources": {
         "StudioReady" : {
@@ -671,23 +681,29 @@
                             },
                             "08-tac-ready": {
                                 "command": {
-                                    "Fn::Sub": [
-                                        "${baselineTarget}/cfn/waitForResource.sh ${TacStack} TacReady ${AWS::Region}",
+                                    "Fn::If": [
+                                        "TacStackCondition",
                                         {
-                                            "baselineTarget": {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    "baseline",
-                                                    "baselineTarget"
-                                                ]
-                                            }
-                                        }
+                                            "Fn::Sub": [
+                                                "${baselineTarget}/cfn/waitForResource.sh ${TacStack} TacReady ${AWS::Region}",
+                                                {
+                                                    "baselineTarget": {
+                                                        "Fn::FindInMap": [
+                                                            "Talend",
+                                                            "baseline",
+                                                            "baselineTarget"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "echo Skipping waitForResource on TacStack since no TAC was provided"
                                     ]
                                 }
                             },
                             "09-studio-ready": {
                                 "command": {
-                                    "Fn::Sub": "/opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource StudioReady --region ${AWS::Region}"
+                                    "Fn::Sub": "cfn-signal -e 0 --stack ${AWS::StackName} --resource StudioReady --region ${AWS::Region}"
                                 }
                             }
                         }
