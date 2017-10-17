@@ -446,7 +446,7 @@
                                 }
                             },
                             "07-install-jq": {
-                                "command": "apt-get install -y jq"
+                                "command": "yum install -y jq"
                             }
                         }
                     },

@@ -89,11 +89,10 @@
             "Type": "String"
         },
         "InstanceType": {
+            "Default": "m4.large",
+            "Description": "WebServer EC2 instance type",
+            "Type": "String",
             "AllowedValues": [
-                "t2.medium",
-                "t2.large",
-                "t2.xlarge",
-                "t2.2xlarge",
                 "m4.large",
                 "m4.xlarge",
                 "m4.2xlarge",
@@ -107,10 +106,7 @@
                 "i3.xlarge",
                 "i3.2xlarge"
             ],
-            "ConstraintDescription": "must be a valid EC2 instance type for GitLab CE c4.large is recommended",
-            "Default": "t2.medium",
-            "Description": "WebServer EC2 instance type",
-            "Type": "String"
+            "ConstraintDescription": "must be a valid EC2 instance type for GitLab CE c4.large is recommended"
         },
         "KeyPairName": {
             "ConstraintDescription": "must be the name of an existing EC2 KeyPair.",
