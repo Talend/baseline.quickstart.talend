@@ -260,15 +260,6 @@
         }
     },
     "Resources": {
-        "GitReady" : {
-            "Type" : "AWS::CloudFormation::WaitCondition",
-            "CreationPolicy" : {
-                "ResourceSignal" : {
-                    "Timeout": "PT15M",
-                    "Count"  : "1"
-                }
-            }
-        },
         "GitInstance": {
             "Type": "AWS::EC2::Instance",
             "Properties": {
@@ -471,11 +462,6 @@
                             "06-git-started": {
                                 "command": {
                                     "Fn::Sub": "/home/ubuntu/isGitStarted.sh http://localhost/${GitRepo} GitLab /home/ubuntu"
-                                }
-                            },
-                            "07-git-ready": {
-                                "command": {
-                                    "Fn::Sub": "cfn-signal -e 0 --stack ${AWS::StackName} --resource GitReady --region ${AWS::Region}"
                                 }
                             }
                         }

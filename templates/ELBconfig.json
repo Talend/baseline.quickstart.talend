@@ -1,0 +1,313 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "pDMZSubnetA": {
+            "Description": "DMZ Subnet A",
+            "Type": "AWS::EC2::Subnet::Id"
+        },
+        "pDMZSubnetB": {
+            "Description": "DMZ Subnet B",
+            "Type": "AWS::EC2::Subnet::Id"
+        },
+        "pProductionVPC": {
+            "Description": "Production VPC",
+            "Type": "AWS::EC2::VPC::Id"
+        },
+        "pGitServerid": {
+            "Description": "id of the git server",
+            "Type": "String",
+			"Default": "Null"
+        },
+        "pTACServerid": {
+            "Description": "id of the TAC server",
+            "Type": "String",
+			"Default": "Null"
+        },
+        "pNexusServerid": {
+            "Description": "id of the Nexus server",
+            "Type": "String",
+			"Default": "Null"
+        },
+        "pLogServerid": {
+            "Description": "id of the Log server",
+            "Type": "String",
+			"Default": "Null"
+        },
+		"pStudioServerid": {
+            "Description": "id of the Studio server",
+            "Type": "String",
+			"Default": "Null"
+        }
+    },
+    "Resources": {
+        "rTalendServerELB": {
+            "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+            "Properties": {
+                "Subnets": [
+                    {
+                        "Ref": "pDMZSubnetA"
+                    },
+                    {
+                        "Ref": "pDMZSubnetB"
+                    }
+                ],
+                "SecurityGroups": [
+                    {
+                        "Ref": "rELBSecurityGroup"
+                    }
+                ]
+            }
+        },
+        "rGitListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "LoadBalancerArn": {
+                    "Ref": "rTalendServerELB"
+                },
+                "Port": 80,
+                "Protocol": "HTTP",
+                "DefaultActions": [
+                    {
+                        "Type": "forward",
+                        "TargetGroupArn": {
+                            "Ref": "rGitTG"
+                        }
+                    }
+                ]
+            }
+        },
+        "rGitTG": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "Port": 80,
+                "Protocol": "HTTP",
+                "VpcId": {
+                    "Ref": "pProductionVPC"
+                },
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "pGitServerid"
+                        },
+                        "Port": 80
+                    }
+                ]
+            }
+        },
+        "rTACListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "LoadBalancerArn": {
+                    "Ref": "rTalendServerELB"
+                },
+                "Port": 8080,
+                "Protocol": "HTTP",
+                "DefaultActions": [
+                    {
+                        "Type": "forward",
+                        "TargetGroupArn": {
+                            "Ref": "rTACTG"
+                        }
+                    }
+                ]
+            }
+        },
+        "rTACTG": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "Port": 8080,
+                "Protocol": "HTTP",
+                "VpcId": {
+                    "Ref": "pProductionVPC"
+                },
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "pTACServerid"
+                        },
+                        "Port": 8080
+                    }
+                ]
+            }
+        },
+        "rNexusListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "LoadBalancerArn": {
+                    "Ref": "rTalendServerELB"
+                },
+                "Port": 8081,
+                "Protocol": "HTTP",
+                "DefaultActions": [
+                    {
+                        "Type": "forward",
+                        "TargetGroupArn": {
+                            "Ref": "rNexusTG"
+                        }
+                    }
+                ]
+            }
+        },
+        "rNexusTG": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "Port": 8081,
+                "Protocol": "HTTP",
+                "VpcId": {
+                    "Ref": "pProductionVPC"
+                },
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "pNexusServerid"
+                        },
+                        "Port": 8081
+                    }
+                ]
+            }
+        },
+        "rLogListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "LoadBalancerArn": {
+                    "Ref": "rTalendServerELB"
+                },
+                "Port": 5601,
+                "Protocol": "HTTP",
+                "DefaultActions": [
+                    {
+                        "Type": "forward",
+                        "TargetGroupArn": {
+                            "Ref": "rLogTG"
+                        }
+                    }
+                ]
+            }
+        },
+        "rLogTG": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "Port": 5601,
+                "Protocol": "HTTP",
+                "VpcId": {
+                    "Ref": "pProductionVPC"
+                },
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "pLogServerid"
+                        },
+                        "Port": 5601
+                    }
+                ]
+            }
+        },
+        "rAMCListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "LoadBalancerArn": {
+                    "Ref": "rTalendServerELB"
+                },
+                "Port": 8085,
+                "Protocol": "HTTP",
+                "DefaultActions": [
+                    {
+                        "Type": "forward",
+                        "TargetGroupArn": {
+                            "Ref": "rAMCTG"
+                        }
+                    }
+                ]
+            }
+        },
+        "rAMCTG": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "Port": 8085,
+                "Protocol": "HTTP",
+                "VpcId": {
+                    "Ref": "pProductionVPC"
+                },
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "pTACServerid"
+                        },
+                        "Port": 5601
+                    }
+                ]
+            }
+        },	
+        "rStudioListener": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "LoadBalancerArn": {
+                    "Ref": "rTalendServerELB"
+                },
+                "Port": 22,
+                "Protocol": "HTTP",
+                "DefaultActions": [
+                    {
+                        "Type": "forward",
+                        "TargetGroupArn": {
+                            "Ref": "rStudioTG"
+                        }
+                    }
+                ]
+            }
+        },
+        "rStudioTG": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "Port": 22,
+                "Protocol": "HTTP",
+                "VpcId": {
+                    "Ref": "pProductionVPC"
+                },
+                "Targets": [
+                    {
+                        "Id": {
+                            "Ref": "pStudioServerid"
+                        },
+                        "Port": 5601
+                    }
+                ]
+            }
+        },		
+        "rELBSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "ELB Security Group",
+                "VpcId": {
+                    "Ref": "pProductionVPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "0",
+                        "ToPort": "65535",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "SecurityGroupEgress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "0",
+                        "ToPort": "65535",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ]
+            }
+        }
+    },
+	"Outputs": {
+	"rTalendELBDNS": {
+			
+            "Value": {
+                "Fn::GetAtt": ["rTalendServerELB","DNSName"]
+            }
+			
+			
+        }
+	}
+}

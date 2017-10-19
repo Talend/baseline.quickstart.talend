@@ -440,10 +440,10 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
                     "GitSecurityGroupID": { "Ref": "GitSecurityGroup" },
                     "KeyPairName": { "Ref": "KeyName" },
-                    "PrivateSubnet": "public",
+                    "PrivateSubnet": "private",
                     "VolumeSize": "100",
                     "VolumeType": "gp2",
-                    "SubnetId": { "Ref": "PublicSubnetId1" },
+                    "SubnetId": { "Ref": "PrivateSubnetId1" },
                     "GitAdminUserid": { "Ref": "GitAdminUserid" },
                     "GitAdminPassword": { "Ref": "GitAdminPassword" },
                     "GitAdminEmail": { "Ref": "GitAdminEmail" },
@@ -467,8 +467,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "NexusInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "public",
+					"SubnetId": { "Ref": "PrivateSubnetId1" },
+                    "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "NexusSecurityGroup" },
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
@@ -490,8 +490,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "LogserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "public",
+					"SubnetId": { "Ref": "PrivateSubnetId1" },
+                    "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" }
 				},
 				"TimeoutInMinutes" : "10"
@@ -512,8 +512,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "TacInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "public",
+					"SubnetId": { "Ref": "PrivateSubnetId1" },
+                    "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "TacSecurityGroup" },
                     "TacDbHost": { "Ref": "TacDbHost" },
                     "AmcDbHost": { "Ref": "TacDbHost" },
@@ -531,13 +531,13 @@
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
                     "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
-                    "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] },
+                    "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingTacPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingTacPort" ] },
                     "LoggingKibanaPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingKibanaPort" ] },
                     "GitHost": {
                         "Fn::If": [
                             "CreateGitStackCondition",
-                            { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName" ] },
+                            { "Fn::GetAtt": [ "GitStack", "Outputs.privateDnsName" ] },
                             { "Ref": "GitHost" } 
                         ]
                     },
@@ -655,7 +655,7 @@
         },
         "GitPublicDnsName": {
 		    "Condition": "CreateGitStackCondition",				
-            "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName"] },
+            "Value": "Routed through ELB",
             "Description": "Git public DNS address",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:GitPublicDnsName" } 
@@ -669,21 +669,21 @@
 			}
         },
         "TacPublicIp": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicIp"] },
+            "Value": "Routed through ELB",
             "Description": "TAC public IP address",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:TacPublicIp" } 
 			}
         },
         "TacPublicDnsName": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicDnsName"] },
+            "Value": "Routed through ELB",
             "Description": "TAC public DNS",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:TacPublicDnsName" } 
 			}
         },
         "NexusPublicDnsName": {
-            "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.publicDnsName" ] },
+            "Value": "Routed through ELB",
             "Description": "Talend public DNS",
 			"Export": {
 				"Name": {
