@@ -440,10 +440,10 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
                     "GitSecurityGroupID": { "Ref": "GitSecurityGroup" },
                     "KeyPairName": { "Ref": "KeyName" },
-                    "PrivateSubnet": "public",
+                    "PrivateSubnet": "private",
                     "VolumeSize": "100",
                     "VolumeType": "gp2",
-                    "SubnetId": { "Ref": "PublicSubnetId1" },
+                    "SubnetId": { "Ref": "PrivateSubnetId1" },
                     "GitAdminUserid": { "Ref": "GitAdminUserid" },
                     "GitAdminPassword": { "Ref": "GitAdminPassword" },
                     "GitAdminEmail": { "Ref": "GitAdminEmail" },
@@ -467,8 +467,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "NexusInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "public",
+					"SubnetId": { "Ref": "PrivateSubnetId1" },
+                    "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "NexusSecurityGroup" },
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
@@ -490,8 +490,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "LogserverInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "public",
+					"SubnetId": { "Ref": "PrivateSubnetId1" },
+                    "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" }
 				},
 				"TimeoutInMinutes" : "10"
@@ -512,8 +512,8 @@
                     "InstanceProfile": { "Ref": "InstanceProfile" },
 					"InstanceType": { "Ref": "TacInstanceType" },
 					"KeyName": { "Ref": "KeyName" },
-					"SubnetId": { "Ref": "PublicSubnetId1" },
-                    "PrivateSubnet": "public",
+					"SubnetId": { "Ref": "PrivateSubnetId1" },
+                    "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "TacSecurityGroup" },
                     "TacDbHost": { "Ref": "TacDbHost" },
                     "AmcDbHost": { "Ref": "TacDbHost" },
@@ -653,42 +653,44 @@
 				"Name": { "Fn::Sub": "${AWS::StackName}:GitStack" } 
 				} 
         },
-        "GitPublicDnsName": {
-		    "Condition": "CreateGitStackCondition",				
-            "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName"] },
-            "Description": "Git public DNS address",
-			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:GitPublicDnsName" } 
-			}
-        },		
-        "TacPrivateIp": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateIp"] },
-            "Description": "TAC private IP address",
-			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:TacPrivateIp" } 
-			}
-        },
-        "TacPublicIp": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicIp"] },
-            "Description": "TAC public IP address",
-			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:TacPublicIp" } 
-			}
-        },
-        "TacPublicDnsName": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicDnsName"] },
-            "Description": "TAC public DNS",
-			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:TacPublicDnsName" } 
-			}
-        },
-        "NexusPublicDnsName": {
-            "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.publicDnsName" ] },
-            "Description": "Talend public DNS",
+        "NexusDnsName": {
+            "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.privateDnsName" ] },
+            "Description": "Nexus DNS name",
 			"Export": {
 				"Name": {
-					"Fn::Sub": "${AWS::StackName}:publicDnsName"
+					"Fn::Sub": "${AWS::StackName}:NexusDnsName"
 				}
+			}
+        },
+        "LogserverDnsName": {
+            "Value": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
+            "Description": "Logserver DNS name",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:LogserverDnsName"
+				}
+			}
+        },
+        "GitDnsName": {
+		    "Condition": "CreateGitStackCondition",				
+            "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.privateDnsName"] },
+            "Description": "Git DNS name",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:GitDnsName" } 
+			}
+        },
+        "TacDnsName": {
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName"] },
+            "Description": "TAC DNS name",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:TacDnsName" } 
+			}
+        },
+        "TacIp": {
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateIp"] },
+            "Description": "TAC IP address",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:TacIp" } 
 			}
         }
     }
