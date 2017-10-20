@@ -661,6 +661,10 @@
 									]
 								},
                                 "cwd": "/opt/talend/6.3.1/logserver"
+                            },
+                            "05-finished": {
+                                "command": "echo FINISHED 1>&2"
+                                "cwd": "/opt/talend/6.3.1/logserver"
                             }
                         }
                     }
