@@ -531,13 +531,13 @@
                     "NexusPort": { "Ref": "NexusPort" },
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
                     "NexusAdminPassword": { "Ref": "NexusAdminPassword" },
-                    "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] },
+                    "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingTacPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingTacPort" ] },
                     "LoggingKibanaPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingKibanaPort" ] },
                     "GitHost": {
                         "Fn::If": [
                             "CreateGitStackCondition",
-                            { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName" ] },
+                            { "Fn::GetAtt": [ "GitStack", "Outputs.privateDnsName" ] },
                             { "Ref": "GitHost" } 
                         ]
                     },
