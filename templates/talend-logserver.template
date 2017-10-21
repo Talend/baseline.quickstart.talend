@@ -138,6 +138,12 @@
 				"talendRepoDir": "/opt/repo",
                 "tuiRepo": "/opt/tui/repo"
             },
+            "logserver": {
+                "dir": "/opt/talend/6.3.1/logserver",
+                "elasticSearch": "/opt/talend/6.3.1/logserver/elasticsearch-2.4.0",
+                "kibana": "/opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64",
+                "logstash": "/opt/talend/6.3.1/logserver/logstash-2.4.0"
+            },
             "s3fs": {
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
                 "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
@@ -650,24 +656,52 @@
                                     ]
                                 }
                             },
-                            "04-run": {
-                                "command": {
-									"Fn::Join": [ 
-										"", 
-										[
-											"chmod +x /opt/talend/6.3.1/logserver/elasticsearch-2.4.0/bin/elasticsearch; ",
-                                            "echo \"Starting logserver in background\" >> /home/talend/start_logserver.log; ",
-                                            "cp /home/ec2-user/baseline/logserver/start_logserver.sh /opt/talend/6.3.1/logserver/start_logserver_new.sh; ",
-                                            "chmod +x /opt/talend/6.3.1/logserver/start_logserver_new.sh; ",
-											"sudo -u talend ./start_logserver_new.sh"
-										]
-									]
-								},
-                                "cwd": "/opt/talend/6.3.1/logserver"
+                            "04-start-elastic-search": {
+								"command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "chmod +x /opt/talend/6.3.1/logserver/elasticsearch-2.4.0/bin/elasticsearch;",
+                                            "cp ",
+                                                { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] }, 
+                                                "/logserver/start_elastic_search.sh ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }, ";",
+                                            { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] },
+                                                "/start_elastic_search.sh"
+                                        ]
+                                    ]
+                                },
+                                "cwd": { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }
                             },
-                            "05-finished": {
-                                "command": "echo FINISHED >> /home/ec2-user/logserver.log",
-                                "cwd": "/opt/talend/6.3.1/logserver"
+                            "05-start-kibana": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            { "Fn::FindInMap": [ "Talend", "logserver", "kibana" ] },
+                                                "/bin/kibana &"
+                                        ]
+                                    ]
+                                },
+                                "cwd": { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }
+                            },
+                            "06-start-logstash": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "mkdir -p ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "logstash" ] },
+                                                "/logs;",
+                                            { "Fn::FindInMap": [ "Talend", "logserver", "logstash" ] },
+                                                "/bin/logstash -f logstash-talend.conf >> /var/talend/6.3.1/logserver/logstash/logs/logstash.log 2>&1 &"
+                                        ]
+                                    ]
+                                },
+                                "cwd": { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }
+                            },
+                            "07-finished": {
+                                "command": "echo FINISHED >> /home/ec2-user/logserver.log"
                             }
                         }
                     }
