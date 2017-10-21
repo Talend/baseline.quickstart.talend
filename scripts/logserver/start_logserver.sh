@@ -31,12 +31,12 @@ ES_LOG=/var/talend/6.3.1/logserver/elasticsearch/logs/elasticsearch.log
 
 wait_for_es() {
     unset started
-    for i in {1..30}; do
+    for i in {1..12}; do
         if [ -n "`${CURL} -XGET ${ES_HOST}/_cat/health 2>&1 | grep -e 'green' -e 'yellow' -e 'red'`" ]; then
             started=1
             break;
         fi
-        sleep 2
+        sleep 10
     done
     if [ ${started:-0} = "1" ]; then
         return
@@ -48,12 +48,12 @@ wait_for_es() {
 
 wait_for_index() {
     unset started
-    for i in {1..30}; do
+    for i in {1..12}; do
         if [ -z "`${CURL} -s -XGET ${ES_HOST}/.kibana/_count | grep status | grep 503`" ]; then
             started=1
             break;
         fi
-        sleep 2
+        sleep 10
     done
     if [ ${started:-0} = "1" ]; then
         return
