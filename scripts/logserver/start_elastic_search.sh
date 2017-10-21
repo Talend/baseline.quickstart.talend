@@ -21,8 +21,19 @@ if [ -z "`which curl | grep -e 'no curl'`" ]; then
     CURL=curl
 fi
 
+function parse_metadata_result() {
+    local metadata="${1}"
+    local value="${metadata#*: }"
+    echo "${value}"
+}
+
+declare local_hostname
+local_hostname=$("${es_script_dir}/ec2-metadata" -h)
+local_hostname=$(parse_metadata_result "${local_hostname}")
+
+
 ES_HOME=${es_script_dir}/elasticsearch-2.4.0
-ES_HOST="http://ip-10-0-0-78.ec2.internal:9200"
+ES_HOST="http://${local_hostname}:9200"
 ES_LOG=/var/talend/${talend_version}/logserver/elasticsearch/logs/elasticsearch.log
 
 
@@ -30,7 +41,7 @@ wait_for_es() {
     local nperiods="${1:-30}"
     local sleep_period="${2:-2}"
     unset started
-    for i in {1.."${nperiods}"}; do
+    for i in `seq "${nperiods}"`; do
         if [ -n "`${CURL} -XGET ${ES_HOST}/_cat/health 2>&1 | grep -e 'green' -e 'yellow' -e 'red'`" ]; then
             started=1
             break;
@@ -63,7 +74,7 @@ wait_for_index() {
     local nperiods="${1:-30}"
     local sleep_period="${2:-2}"
     unset started
-    for i in {1.."${nperiods}"}; do
+    for i in `seq "${nperiods}"`; do
         if [ -z "`${CURL} -s -XGET ${ES_HOST}/.kibana/_count | grep status | grep 503`" ]; then
             started=1
             break;
@@ -124,15 +135,3 @@ for f in `find ./kibana-objects/dashboard -name "*.json"`; do
         ${CURL} -v -XPUT ${ES_HOST}/.kibana/dashboard/$name -d @$f >> $ES_LOG 2>&1
     fi
 done
-
-# start kibana
-KIBANA_HOME=${MY_HOME}/kibana-4.6.1-linux-x86_64
-
-${KIBANA_HOME}/bin/kibana &
-
-
-# start logstash
-
-mkdir -p ${LOGSTASH_HOME}/logs
-
-${LOGSTASH_HOME}/bin/logstash -f logstash-talend.conf >> /var/talend/${talend_version}/logserver/logstash/logs/logstash.log 2>&1 &

@@ -663,10 +663,21 @@
                                         [
                                             "chmod +x /opt/talend/6.3.1/logserver/elasticsearch-2.4.0/bin/elasticsearch;",
                                             "cp ",
+                                                { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
+                                                "/bootstrap/ec2-metadata ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }, ";",
+                                            "chown talend:talend ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] },
+                                                "/ec2-metadata;",
+                                            "cp ",
                                                 { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] }, 
                                                 "/logserver/start_elastic_search.sh ",
                                                 { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }, ";",
-                                            { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] },
+                                            "chown talend:talend ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] },
+                                                "/start_elastic_search.sh;",
+                                            "sudo -u talend ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] },
                                                 "/start_elastic_search.sh"
                                         ]
                                     ]
