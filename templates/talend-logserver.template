@@ -656,15 +656,15 @@
 										"", 
 										[
 											"chmod +x /opt/talend/6.3.1/logserver/elasticsearch-2.4.0/bin/elasticsearch; ",
-                                            "echo \"starting logserver in background\" >> /home/ec2-user/logserver.log; ",
-											"sudo -b -u talend ./start_logserver.sh &"
+                                            "echo \"Starting logserver in background\" >> /home/ec2-user/logserver.log; ",
+											"sudo -b -u talend nohup ./start_logserver.sh"
 										] 
 									]
 								},
                                 "cwd": "/opt/talend/6.3.1/logserver"
                             },
                             "05-finished": {
-                                "command": "echo FINISHED 1>&2",
+                                "command": "echo FINISHED >> /home/ec2-user/logserver.log",
                                 "cwd": "/opt/talend/6.3.1/logserver"
                             }
                         }
