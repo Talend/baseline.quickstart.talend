@@ -657,7 +657,7 @@
 										[
 											"chmod +x /opt/talend/6.3.1/logserver/elasticsearch-2.4.0/bin/elasticsearch; ",
                                             "echo \"starting logserver in background\" >> /home/ec2-user/logserver.log; ",
-											"sudo -E -u talend ./start_logserver.sh &"
+											"sudo -b -u talend ./start_logserver.sh &"
 										] 
 									]
 								},
