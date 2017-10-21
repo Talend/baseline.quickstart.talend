@@ -27,8 +27,8 @@ public_hostname=$("${update_hosts_script_dir}/ec2-metadata" -p)
 public_hostname=$(parse_metadata_result "${public_hostname}")
 
 declare private_hostname
-private_hostname=$("${update_hosts_script_dir}/ec2-metadata" -p)
-private_hostname=$(parse_metadata_result "${public_hostname}")
+private_hostname=$("${update_hosts_script_dir}/ec2-metadata" -h)
+private_hostname=$(parse_metadata_result "${private_hostname}")
 
 # update gitlab.rb external url
 
