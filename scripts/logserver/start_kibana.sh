@@ -126,6 +126,8 @@ done
 # start kibana
 ${KIBANA_HOME}/bin/kibana &
 
+# /opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64/node/bin/node "/opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64/src/cli" &
+
 # start logstash
 mkdir -p ${LOGSTASH_HOME}/logs
 ${LOGSTASH_HOME}/bin/logstash -f logstash-talend.conf >> /var/talend/6.3.1/logserver/logstash/logs/logstash.log 2>&1 &

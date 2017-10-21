@@ -686,12 +686,11 @@
                             },
                             "05-start-kibana": {
                                 "command": {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            { "Fn::FindInMap": [ "Talend", "logserver", "kibana" ] },
-                                                "/bin/kibana &"
-                                        ]
+                                    "Fn::Sub": [
+                                        "sudo -u talend ${kibanaDir}/node/bin/node ${kibanaDir}/src/cli &",
+                                        {
+                                            "kibanaDir": { "Fn::FindInMap": [ "Talend", "logserver", "kibana" ] }
+                                        }
                                     ]
                                 },
                                 "cwd": { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }
