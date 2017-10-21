@@ -687,7 +687,7 @@
                             "05-start-kibana": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "sudo -u talend ${kibanaDir}/node/bin/node ${kibanaDir}/src/cli &",
+                                        "sudo -b -u talend nohup ${kibanaDir}/node/bin/node ${kibanaDir}/src/cli",
                                         {
                                             "kibanaDir": { "Fn::FindInMap": [ "Talend", "logserver", "kibana" ] }
                                         }
