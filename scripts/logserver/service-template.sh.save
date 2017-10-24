@@ -1,0 +1,162 @@
+#!/bin/bash
+
+set -e
+set -u
+set -o pipefail
+
+service_path=$(readlink -e "${BASH_SOURCE[0]}")
+service_dir="${service_path%/*}"
+
+. ${service_dir}/functions
+
+
+#Human readable app name
+export SERVICE_NAME
+
+#Pattern used to find pid of app
+export SERVICE_BASE=""
+
+#User which application runs as
+export SERVICE_USER="talend"
+
+#Command to launch service app
+declare SERVICE_START=""
+
+#Command to stop service
+declare SERVICE_STOP=""
+
+#SHUTDOWN_WAIT is wait time in seconds for java proccess to stop
+declare SHUTDOWN_WAIT=60
+
+#Sleep period between checking on process status
+declare KILL_SLEEP_PERIOD=10
+
+#Flag to find JAVA_HOME
+declare JAVA_REQUIRED=true
+declare JDK_REQUIRED=true
+
+function user_exists() {
+    id -u "${1}" >/dev/null 2>&1
+    return "${?}"
+}
+
+
+function get_pid() {
+    ps -fe | grep "${1}" | grep -v grep | tr -s " "|cut -d" " -f2
+}
+
+function pid_exists() {
+    ps -p "${1}"
+    return ${?}
+}
+
+function start() {
+  local pid
+  pid=$(get_pid "${SERVICE_BASE}")
+  if [ -n "${pid}" ]; then
+    echo "${SERVICE_NAME} is already running (pid: ${pid})"
+  else
+    # Start tomcat
+    echo "Starting ${SERVICE_NAME}"
+    # ulimit -n 100000
+    # umask 007
+        if user_exists "${SERVICE_USER}"; then
+                su "${SERVICE_USER}" -c "${SERVICE_START}"
+        else
+                echo "User '${SERVICE_USER}' does not exist. Starting with $(id)"
+                "${SERVICE_START}"
+        fi
+        status
+  fi
+  return 0
+}
+
+function status(){
+    local pid
+    pid=$(get_pid "${SERVICE_BASE}")
+    if [ -n "${pid}" ]; then
+        echo "${SERVICE_NAME} is running (pid: ${pid})"
+    else
+        echo "${SERVICE_NAME} is not running"
+        return 3
+    fi
+}
+
+function terminate() {
+    local pid
+    pid=$(get_pid "${SERVICE_BASE}")
+    if [ -n "${pid}" ]; then
+        echo "Terminating ${SERVICE_NAME}"
+        kill -9 "$(get_pid ${SERVICE_BASE})"
+    else
+        echo "${SERVICE_NAME} (${pid}) is not running"
+    fi
+}
+
+stop() {
+    local pid
+    pid=$(get_pid "${SERVICE_BASE}")
+    if [ -n "${pid}" ]; then
+        echo "Stoping ${SERVICE_NAME}"
+        if user_exists "${SERVICE_USER}"; then
+                su "${SERVICE_USER}" -c "${SERVICE_STOP}"
+        else
+                echo "User '${SERVICE_USER}' does not exist. Stopping with $(id)"
+                "${SERVICE_STOP}"
+        fi
+
+    let kwait=${SHUTDOWN_WAIT}
+    local count=0;
+    until pid_exists "${pid}" || [ "${count}" -gt "${kwait}" ]
+    do
+      echo "Waiting for ${SERVICE_NAME} (${pid}) process to exit";
+      sleep "${KILL_SLEEP_PERIOD}"
+      let count="${count}"+"${KILL_SLEEP_PERIOD}";
+    done
+
+    if [ "${count}" -gt "${kwait}" ]; then
+      echo "${SERVICE_NAME} (${pid}) did not stop after ${SHUTDOWN_WAIT} seconds"
+      terminate
+    fi
+  else
+    echo "${SERVICE_NAME} (${pid}) is not running"
+  fi
+ 
+  return 0
+}
+
+
+
+#Determine JAVA_HOME
+
+if [ "${JAVA_REQUIRED,,}" == "true" ]; then
+    [ -d "${JAVA_HOME:-}" ] || find_java_home || { errorMessage "JAVA_HOME undefined or does not exist '${JAVA_HOME:-}'"; exit 1; }
+fi
+
+#Add Java binary files to PATH
+export PATH="${JAVA_HOME}/bin:${PATH}"
+
+case "${1}" in
+	start)
+	  start
+	;;
+	stop)
+	  stop
+	;;
+	restart)
+	  stop
+	  start
+	;;
+	status)
+		status
+		exit $?
+	;;
+	kill)
+		terminate
+	;;
+	*)
+		echo "${APP_USAGE}"
+	;;
+esac
+
+exit 0

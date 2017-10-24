@@ -50,6 +50,40 @@ function get_java_version() {
 }
 
 
+function find_java_home() {
+    local which_java
+    which_java="$(which java)"
+    local java_exists="${?}"
+    if [ "${java_exists}" == 0 ]; then
+        local java_path
+        java_path=$(readlink -e "${which_java}")
+        local java_bin_dir="${java_path%/*}"
+        local jre_dir="${java_bin_dir%/*}"
+        local jre_folder="${jre_dir##*/}"
+        local java_prefix="${jre_folder:0:3}"
+        if [ "${java_prefix,,}" == "jdk" ]; then
+            JAVA_HOME="${jre_dir}"
+            return 0
+        else
+            local jdk_dir="${jre_dir%/*}"
+            local jdk_folder="${jdk_dir##*/}"
+            local jdk_prefix="${jdk_folder:0:3}"
+            if [ "${jdk_prefix,,}" == "jdk" ]; then
+                JAVA_HOME="${jdk_dir}"
+                return 0
+            elif [ "${JDK_REQUIRED,,}" == "true" ]; then
+                return 1
+            else
+                JAVA_HOME="{jdk_dir}"
+                return 0
+            fi
+        fi
+    else
+        return 1
+    fi
+}
+
+
 function download_java() {
 
     local java_filename_version="${1:-8u144}"

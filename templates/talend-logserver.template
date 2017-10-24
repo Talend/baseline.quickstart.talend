@@ -686,29 +686,31 @@
                             },
                             "05-start-kibana": {
                                 "command": {
-                                    "Fn::Sub": [
-                                        "sudo -b -u talend nohup ${kibanaDir}/node/bin/node ${kibanaDir}/src/cli",
-                                        {
-                                            "kibanaDir": { "Fn::FindInMap": [ "Talend", "logserver", "kibana" ] }
-                                        }
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "cp ",
+                                                { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] }, 
+                                                "/logserver/kibana.service ",
+                                                "/etc/systemd/system/kibana.service;",
+                                            "systemctl start kibana && systemctl enable kibana"
+                                        ]
                                     ]
-                                },
-                                "cwd": { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }
+                                }
                             },
                             "06-start-logstash": {
                                 "command": {
                                     "Fn::Join": [
                                         "",
                                         [
-                                            "mkdir -p ",
-                                                { "Fn::FindInMap": [ "Talend", "logserver", "logstash" ] },
-                                                "/logs;",
-                                            { "Fn::FindInMap": [ "Talend", "logserver", "logstash" ] },
-                                                "/bin/logstash -f logstash-talend.conf >> /var/talend/6.3.1/logserver/logstash/logs/logstash.log 2>&1 &"
+                                            "cp ",
+                                                { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] }, 
+                                                "/logserver/logstash.service ",
+                                                "/etc/systemd/system/logstash.service;",
+                                            "systemctl start logstash && systemctl enable logstash"
                                         ]
                                     ]
-                                },
-                                "cwd": { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }
+                                }
                             },
                             "07-finished": {
                                 "command": "echo FINISHED >> /home/ec2-user/logserver.log"

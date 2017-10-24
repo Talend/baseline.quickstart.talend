@@ -1,0 +1,14 @@
+[Service]
+Type=simple
+BusName=logstash
+ExecStart=/opt/talend/6.3.1/logserver/logstash-2.4.0/bin/logstash -f /opt/talend/6.3.1/logserver/logstash-talend.conf
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=logstash
+User=talend
+Group=talend
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
