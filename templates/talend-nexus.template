@@ -61,7 +61,6 @@
 		"PrivateSubnet": {
             "Description": "Is this is a private subnet.",
             "Type": "String",
-			"Default": "private",
             "AllowedValues": [ "private", "public" ]
 		},
 		"SecurityGroupIds": {

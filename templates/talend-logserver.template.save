@@ -655,17 +655,61 @@
                                     ]
                                 }
                             },
-                            "04-run": {
+                            "04-start-elastic-search": {
+								"command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "chmod +x /opt/talend/6.3.1/logserver/elasticsearch-2.4.0/bin/elasticsearch;",
+                                            "cp ",
+                                                { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
+                                                "/bootstrap/ec2-metadata ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }, ";",
+                                            "chown talend:talend ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] },
+                                                "/ec2-metadata;",
+                                            "cp ",
+                                                { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] }, 
+                                                "/logserver/start_elastic_search.sh ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }, ";",
+                                            "chown talend:talend ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] },
+                                                "/start_elastic_search.sh;",
+                                            "sudo -u talend ",
+                                                { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] },
+                                                "/start_elastic_search.sh"
+                                        ]
+                                    ]
+                                },
+                                "cwd": { "Fn::FindInMap": [ "Talend", "logserver", "dir" ] }
+                            },
+                            "05-start-kibana": {
                                 "command": {
-									"Fn::Join": [ 
-										"", 
-										[
-											"chmod +x /opt/talend/6.3.1/logserver/elasticsearch-2.4.0/bin/elasticsearch; ",
-											"sudo -E -u talend ./start_logserver.sh"
-										] 
-									]
-								},
-                                "cwd": "/opt/talend/6.3.1/logserver"
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "cp ",
+                                                { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] }, 
+                                                "/logserver/kibana.service ",
+                                                "/etc/systemd/system/kibana.service;",
+                                            "systemctl start kibana && systemctl enable kibana"
+                                        ]
+                                    ]
+                                }
+                            },
+                            "06-start-logstash": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "cp ",
+                                                { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] }, 
+                                                "/logserver/logstash.service ",
+                                                "/etc/systemd/system/logstash.service;",
+                                            "systemctl start logstash && systemctl enable logstash"
+                                        ]
+                                    ]
+                                }
                             },
                             "07-finished": {
                                 "command": "echo FINISHED >> /home/ec2-user/logserver.log"
