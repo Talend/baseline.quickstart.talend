@@ -687,7 +687,7 @@
 			}
         },
         "TacIp": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicIp"] },
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateIp"] },
             "Description": "TAC IP address",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:TacIp" } 
