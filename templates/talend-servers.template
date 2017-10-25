@@ -654,7 +654,7 @@
 				} 
         },
         "NexusDnsName": {
-            "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.privateDnsName" ] },
+            "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.publicDnsName" ] },
             "Description": "Nexus DNS name",
 			"Export": {
 				"Name": {
@@ -663,7 +663,7 @@
 			}
         },
         "LogserverDnsName": {
-            "Value": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
+            "Value": { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] },
             "Description": "Logserver DNS name",
 			"Export": {
 				"Name": {
@@ -680,14 +680,14 @@
 			}
         },
         "TacDnsName": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName"] },
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicDnsName"] },
             "Description": "TAC DNS name",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:TacDnsName" } 
 			}
         },
         "TacIp": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateIp"] },
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicIp"] },
             "Description": "TAC IP address",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:TacIp" } 
