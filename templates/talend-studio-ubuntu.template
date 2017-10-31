@@ -226,9 +226,9 @@
                             [
                                 "#!/bin/bash -xe",
                                 "while ! apt-get update -q ; do sleep 10; done",
-                                { "Fn::Sub": "wget ${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata" },
+                                { "Fn::Sub": "wget ${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata" },
 								"chmod +x ec2-metadata",
-                                { "Fn::Sub": "wget ${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}scripts/bootstrap/update_hosts_ubuntu.sh" },
+                                { "Fn::Sub": "wget ${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/update_hosts_ubuntu.sh" },
 								"chmod +x update_hosts_ubuntu.sh",
                                 "./update_hosts_ubuntu.sh",
                                 "while ! apt-get -y install python-pip; do sleep 10; done",
