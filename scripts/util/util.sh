@@ -30,6 +30,11 @@ function infoLog() {
     return 0
 }
 
+function infoVar() {
+    [ -n "${INFO_LOG:-}" ] && echo "INFO: ${FUNCNAME[*]:1} : ${1}=${!1}" 1>&2
+    return 0
+}
+
 function debugLog() {
     [ -n "${DEBUG_LOG:-}" ] && echo "DEBUG: ${FUNCNAME[*]:1} : ${*}" 1>&2
     return 0
