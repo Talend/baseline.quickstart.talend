@@ -323,11 +323,11 @@
                                 "#!/bin/bash -xe\n",
                                 "while ! apt-get update -q ; do sleep 10; done\n",
                                 "wget ",
-                                { "Fn::Sub": "https://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata" },
+                                { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata" },
                                 "\n",
 								"chmod +x ec2-metadata\n",
                                 "wget ",
-                                { "Fn::Sub": "https://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/update_hosts_ubuntu.sh" },
+                                { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/update_hosts_ubuntu.sh" },
                                 "\n",
 								"chmod +x update_hosts_ubuntu.sh\n",
                                 "./update_hosts_ubuntu.sh\n",
@@ -381,7 +381,7 @@
                         "files": {
                             "/home/ubuntu/talend-gitlab.sh": {
                                 "source": {
-                                    "Fn::Sub": "https://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/talend-gitlab.sh"
+                                    "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/talend-gitlab.sh"
                                 },
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
@@ -390,7 +390,7 @@
                             },
                             "/home/ubuntu/talend-gitlab-external-url.sh": {
                                 "source": {
-                                    "Fn::Sub": "https://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/talend-gitlab-external-url.sh"
+                                    "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/talend-gitlab-external-url.sh"
                                 },
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
@@ -399,7 +399,7 @@
                             },
                             "/home/ubuntu/isGitStarted.sh": {
                                 "source": {
-                                    "Fn::Sub": "https://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/isGitStarted.sh"
+                                    "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/isGitStarted.sh"
                                 },
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
@@ -408,7 +408,7 @@
                             },
                             "/home/ubuntu/ec2-metadata": {
                                 "source": {
-                                    "Fn::Sub": "https://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata"
+                                    "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata"
                                 },
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
