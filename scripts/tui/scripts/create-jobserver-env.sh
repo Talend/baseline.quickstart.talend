@@ -24,7 +24,7 @@ TALEND_JOBSERVER_LABEL="${TALEND_JOBSERVER_LABEL#*: }"
 TALEND_JOBSERVER_LABEL="${TALEND_JOBSERVER_LABEL//./_}"
 TALEND_JOBSERVER_LABEL="${TALEND_JOBSERVER_LABEL//-/_}"
 
-local_ipv4=$("${update_hosts_script_dir}/ec2-metadata" -o)
+local_ipv4=$("${script_dir}/ec2-metadata" -o)
 local_ipv4=$(parse_metadata_result "${local_ipv4}")
 
 #TALEND_JOBSERVER_FQDN=$(hostname -f)
