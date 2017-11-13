@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -u
+set -x
 
 user_id=$(id -u)
 

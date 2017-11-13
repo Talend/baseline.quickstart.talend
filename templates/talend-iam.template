@@ -144,7 +144,8 @@
                                     "Action": [
                                         "cloudformation:Describe*",
                                         "cloudformation:List*",
-                                        "cloudformation:Get*"
+                                        "cloudformation:Get*",
+                                        "cloudformation:SignalResource*"
                                     ],
                                     "Resource": { "Fn::Sub": "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackRoot}*/*" }
                                 }
