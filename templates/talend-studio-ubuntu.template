@@ -644,8 +644,7 @@
                                         [
                                             "apt-get -y install --upgrade software-properties-common",
                                             "add-apt-repository -y ppa:x2go/stable",
-                                            "apt-get -y update",
-                                            "apt-get -y upgrade"
+                                            "apt-get -y update"
                                         ]
                                     ]
                                 }
@@ -655,8 +654,7 @@
                                     "Fn::Join": [
                                         ";",
                                         [
-                                            "apt-get -y install --upgrade x2goserver x2goserver-xsession",
-                                            "apt-get -y upgrade"
+                                            "apt-get -y install --upgrade x2goserver x2goserver-xsession"
                                         ]
                                     ]
                                 }
