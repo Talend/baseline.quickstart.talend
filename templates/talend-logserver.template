@@ -332,16 +332,14 @@
                                 "owner": "ec2-user",
                                 "group": "ec2-user",
                                 "mode": "000400"
-                            },
-                            "/home/ec2-user/generated/licenses/license": {
-                                "source": { "Fn::Sub": "https://s3.amazonaws.com/${TalendLicenseBucket}/license" },
-                                "authentication": "S3AccessCreds",
-                                "owner": "ec2-user",
-                                "group": "ec2-user",
-                                "mode": "000400"
                             }
                         },
                         "commands": {
+                            "00-copy-license": {
+                                "command": {
+                                    "Fn::Sub": "aws s3 cp s3://${TalendLicenseBucket}/license /home/ec2-user/generated/licenses/license"
+                                }
+                            },
                             "01-unzip-s3fs": {
                                 "command": "tar xzvpf s3fs.tgz",
                                 "cwd": "/home/ec2-user"

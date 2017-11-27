@@ -130,46 +130,46 @@
         },
         "AwsAmiRegionMap": {
             "ap-northeast-1": {
-                "hvm": "ami-cc4ee2aa"
+                "hvm": "ami-2f2d9c49"
             },
             "ap-northeast-2": {
-                "hvm": "ami-536ab33d"
+                "hvm": "ami-e49e398a"
             },
             "ap-south-1": {
-                "hvm": "ami-df413bb0"
+                "hvm": "ami-46eea129"
             },
             "ap-southeast-1": {
-                "hvm": "ami-f793de94"
+                "hvm": "ami-84a6f3e7"
             },
             "ap-southeast-2": {
-                "hvm": "ami-bcdc32de"
+                "hvm": "ami-4cc8232e"
             },
             "ca-central-1": {
-                "hvm": "ami-a9c27ccd"
+                "hvm": "ami-338b3057"
             },
             "eu-central-1": {
-                "hvm": "ami-3b0d8854"
+                "hvm": "ami-e22aaa8d"
             },
             "eu-west-1": {
-                "hvm": "ami-d53697ac"
+                "hvm": "ami-2e832957"
             },
             "eu-west-2": {
-                "hvm": "ami-03998867"
+                "hvm": "ami-3fc8d75b"
             },
             "sa-east-1": {
-                "hvm": "ami-2e314a42"
+                "hvm": "ami-981550f4"
             },
             "us-east-1": {
-                "hvm": "ami-1dcf6467"
+                "hvm": "ami-c29e1cb8"
             },
             "us-east-2": {
-                "hvm": "ami-dbbd9dbe"
+                "hvm": "ami-f0f8d695"
             },
             "us-west-1": {
-                "hvm": "ami-73447b13"
+                "hvm": "ami-8b90a9eb"
             },
             "us-west-2": {
-                "hvm": "ami-d60ec5ae"
+                "hvm": "ami-25cf1c5d"
             }
         }
     },
@@ -232,14 +232,15 @@
                             "\n",
                             [
                                 "#!/bin/bash -xe",
-                                "apt-get update -q",
+                                "while ! apt-get update -q ; do sleep 10; done\n",
                                 { "Fn::Sub": "wget http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata" },
 								"chmod +x ec2-metadata",
                                 { "Fn::Sub": "wget http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/update_hosts_ubuntu.sh" },
 								"chmod +x update_hosts_ubuntu.sh",
                                 "./update_hosts_ubuntu.sh",
-                                "apt-get -y install --upgrade awscli",
-                                "apt-get -y install --upgrade python-pip",
+                                "curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py",
+                                "python get-pip.py",
+                                "pip install awscli",
                                 "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz",
                                 "cp /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup",
                                 "chmod +x /etc/init.d/cfn-hup",
@@ -294,15 +295,8 @@
                                 "group": "ubuntu",
                                 "mode": "000400"
                             },
-                            "/home/ubuntu/generated/licenses/license": {
-                                "source": { "Fn::Sub": "https://s3.amazonaws.com/${TalendLicenseBucket}/license" },
-                                "authentication": "S3AccessCreds",
-                                "owner": "ubuntu",
-                                "group": "ubuntu",
-                                "mode": "000400"
-                            },
                             "/home/ubuntu/Talend_BigData.png": {
-                                "source": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/images/Talend_BigData.png" },
+                                "source": { "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}scripts/images/Talend_BigData.png" },
                                 "authentication": "S3AccessCreds",
                                 "owner": "ubuntu",
                                 "group": "ubuntu",
@@ -310,6 +304,11 @@
                             }
                         },
                         "commands": {
+                            "00-copy-license": {
+                                "command": {
+                                    "Fn::Sub": "aws --region=${AWS::Region} s3 cp s3://${TalendLicenseBucket}/license /home/ubuntu/generated/licenses/license"
+                                }
+                            },
                             "01-unzip-s3fs": {
                                 "command": "tar xzvpf s3fs.tgz",
                                 "cwd": "/home/ubuntu"
@@ -320,7 +319,7 @@
                             },
                             "03-copy-qss3bucket": {
                                 "command": {
-                                    "Fn::Sub": "aws --region=us-east-1 s3 cp s3://${ScriptBucket}/modules/talend/scripts /home/ubuntu/baseline --recursive"
+                                    "Fn::Sub": "aws --region=${AWS::Region} s3 cp s3://${ScriptBucket}/modules/talend/scripts /home/ubuntu/baseline --recursive"
                                 }
                             },
                             "04-chmod-qss3bucket": {
