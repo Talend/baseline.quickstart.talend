@@ -430,7 +430,7 @@
             "Type": "AWS::CloudFormation::Stack",
             "Condition": "CreateGitStackCondition",
             "Properties": {
-                "TemplateURL": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}templates/gitlab.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/gitlab.template" },
                 "TimeoutInMinutes": 30,
                 "Parameters": {
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
