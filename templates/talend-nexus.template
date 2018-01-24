@@ -344,11 +344,11 @@
                                 }
                             },
                             "01-unzip-s3fs": {
-                                "command": "mkdir s3fs; tar --strip-components=1 -C ./s3fs xzvpf s3fs.tgz",
+                                "command": "mkdir s3fs; tar --strip-components=1 -C ./s3fs -xzvpf s3fs.tgz",
                                 "cwd": "/home/ec2-user"
                             },
                             "02-unzip-tui": {
-                                "command": "mkdir tui; tar --strip-components=1 -C ./tui xvpf tui.tar",
+                                "command": "mkdir tui; tar --strip-components=1 -C ./tui -xvpf tui.tar",
                                 "cwd": "/home/ec2-user"
                             },
                             "03-copy-qss3bucket": {
