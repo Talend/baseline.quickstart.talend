@@ -28,6 +28,16 @@
             "Type": "String",
             "Default": "oodle.quickstart.talend"
         },
+        "TalendVersion": {
+            "Description": "Talend Product Version",
+            "Type": "String",
+            "Default": "6.3.1",
+            "AllowedValues": [
+                "6.3.1",
+                "6.4.1"
+            ],
+            "ConstraintDescription": "must be a valid Talend product version."
+        },
         "TalendLicenseBucket": {
             "Description": "Bucket holding Talend license",
             "Type": "String",
@@ -109,8 +119,32 @@
 	},
     "Mappings": {
         "Talend": {
+            "6.3.1": {
+                "licenseTarget": "/home/ec2-user/tui/licenses/6.3.1"
+                "baselineTarget": "/home/ec2-user/baseline",
+                "generatedTarget": "/home/ec2-user/generated"
+                "profile": "nexus",
+                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
+                "tuiTarget": "/home/ec2-user/tui",
+				"talendRepoDir": "/opt/repo",
+                "tuiRepo": "/opt/tui/repo"
+                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
+                "s3fsTarget": "/home/ec2-user/s3fs"
+            },
+            "6.4.1": {
+                "licenseTarget": "/home/ec2-user/tui/licenses/6.4.1"
+                "baselineTarget": "/home/ec2-user/baseline",
+                "generatedTarget": "/home/ec2-user/generated"
+                "profile": "nexus",
+                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-5.0.9.tar",
+                "tuiTarget": "/home/ec2-user/tui",
+				"talendRepoDir": "/opt/repo",
+                "tuiRepo": "/opt/tui/repo"
+                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
+                "s3fsTarget": "/home/ec2-user/s3fs"
+            },
             "license": {
-                "licenseTarget": "/home/ec2-user/TUI-4.5.2/licenses/6.3.1"
+                "licenseTarget": "/home/ec2-user/tui/licenses/6.3.1"
             },
             "baseline": {
                 "baselineTarget": "/home/ec2-user/baseline",
@@ -119,13 +153,13 @@
             "tui": {
                 "profile": "nexus",
                 "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
-                "tuiTarget": "/home/ec2-user/TUI-4.5.2",
+                "tuiTarget": "/home/ec2-user/tui",
 				"talendRepoDir": "/opt/repo",
                 "tuiRepo": "/opt/tui/repo"
             },
             "s3fs": {
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
-                "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
+                "s3fsTarget": "/home/ec2-user/s3fs"
             }
         },
         "AWSRegionArch2AMI": {
@@ -282,7 +316,7 @@
                                 "source": {
                                     "Fn::FindInMap": [
                                         "Talend",
-                                        "s3fs",
+                                        { "Ref": "TalendVersion" },
                                         "s3fsUrl"
                                     ]
                                 },
@@ -294,7 +328,7 @@
                                 "source": {
                                     "Fn::FindInMap": [
                                         "Talend",
-                                        "tui",
+                                        "{ "Ref": "TalendVersion" }",
                                         "tuiUrl"
                                     ]
                                 },
@@ -310,11 +344,11 @@
                                 }
                             },
                             "01-unzip-s3fs": {
-                                "command": "tar xzvpf s3fs.tgz",
+                                "command": "tar --strip-components=1 -C ./s3fs xzvpf s3fs.tgz",
                                 "cwd": "/home/ec2-user"
                             },
                             "02-unzip-tui": {
-                                "command": "tar xvpf tui.tar",
+                                "command": "tar --strip-components=1 -C ./tui xvpf tui.tar",
                                 "cwd": "/home/ec2-user"
                             },
                             "03-copy-qss3bucket": {
@@ -327,7 +361,7 @@
                                     "Fn::Join": [ "",
                                         [
                                             "find ",
-                                            { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
+                                            { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
                                             " -type f -name \"*.sh\" -exec chmod u+x {} \\;"
                                         ]
                                     ]
@@ -338,7 +372,7 @@
                                     "Fn::Join": [ "",
                                         [
                                             "find ",
-                                            { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
+                                            { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
                                             " -type f -name \"ec2-metadata\" -exec chmod u+x {} \\;"
                                         ]
                                     ]
@@ -359,7 +393,7 @@
                                                     [
                                                         "export TALEND_REPO=",
                                                         {
-                                                            "Fn::FindInMap": [ "Talend", "tui", "talendRepoDir"]
+                                                            "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir"]
                                                         }
                                                     ]
                                                 ]
@@ -415,7 +449,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "baseline",
+                                                    { "Ref": "TalendVersion" },
                                                     "baselineTarget"
                                                 ]
                                             },
@@ -423,7 +457,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "tui",
+                                                    { "Ref": "TalendVersion" },
                                                     "tuiTarget"
                                                 ]
                                             },
@@ -441,7 +475,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "baseline",
+                                                    { "Ref": "TalendVersion" },
                                                     "generatedTarget"
                                                 ]
                                             },
@@ -449,7 +483,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "license",
+                                                    { "Ref": "TalendVersion" },
                                                     "licenseTarget"
                                                 ]
                                             }
@@ -466,7 +500,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "baseline",
+                                                    { "Ref": "TalendVersion" },
                                                     "generatedTarget"
                                                 ]
                                             },
@@ -474,7 +508,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "tui",
+                                                    { "Ref": "TalendVersion" },
                                                     "tuiTarget"
                                                 ]
                                             }
@@ -490,7 +524,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "tui",
+                                                    { "Ref": "TalendVersion" },
                                                     "tuiTarget"
                                                 ]
                                             },
@@ -498,7 +532,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "tui",
+                                                    { "Ref": "TalendVersion" },
                                                     "tuiTarget"
                                                 ]
                                             },
@@ -515,7 +549,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "tui",
+                                                    { "Ref": "TalendVersion" },
                                                     "tuiTarget"
                                                 ]
                                             },
@@ -525,7 +559,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "tui",
+                                                    { "Ref": "TalendVersion" },
                                                     "tuiTarget"
                                                 ]
                                             },
@@ -545,30 +579,30 @@
                                         [
                                             "set -e",
                                             "; source ",
-                                            { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
+                                            { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
                                             "/s3fs/s3fs-util.sh",
                                             "; echo s3fs_build; s3fs_build ",
-                                            { "Fn::FindInMap": [ "Talend", "s3fs", "s3fsTarget" ] },
+                                            { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "s3fsTarget" ] },
                                             "; echo s3fs_config; s3fs_config",
                                             "; echo s3fs_mount; s3fs_mount",
                                             " ", { "Ref": "TalendResourceBucket" },
                                             " ", { "Ref": "TalendResourceBucketRepoPath" },
-                                            " ", { "Fn::FindInMap": [ "Talend", "tui", "talendRepoDir" ] },
+                                            " ", { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir" ] },
                                             "; ",
                                             { "Fn::Sub":
                                                 [
                                                     "${tuiTarget}/scripts/tui-repo.sh '${talendRepoDir}' '${tuiRepo}'",
                                                     {
-                                                        "tuiTarget": { "Fn::FindInMap": [ "Talend", "tui", "tuiTarget" ] },
-                                                        "tuiRepo": { "Fn::FindInMap": [ "Talend", "tui", "tuiRepo" ] },
-                                                        "talendRepoDir": { "Fn::FindInMap": [ "Talend", "tui", "talendRepoDir" ] } 
+                                                        "tuiTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiTarget" ] },
+                                                        "tuiRepo": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiRepo" ] },
+                                                        "talendRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir" ] } 
                                                     }
                                                 ]
                                             }
                                         ]
                                     ]
                                 },
-                                "cwd": { "Fn::FindInMap": [ "Talend", "s3fs", "s3fsTarget" ] }
+                                "cwd": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "s3fsTarget" ] }
                             },
                             "02-install-jre": {
                                 "command": {
@@ -576,7 +610,7 @@
                                         "",
                                         [
                                             "source ",
-                                            { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] },
+                                            { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
                                             "/java/jre-installer.sh;",
                                             "jre_installer_install"
                                         ]
@@ -593,14 +627,14 @@
                                             "source ./instance-env.sh; ",
                                             "source ./server-env.sh; ",
                                             "./install -q ",
-                                            { "Fn::FindInMap": [ "Talend", "tui", "profile" ] }
+                                            { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] }
                                         ] 
                                     ]
                                 },
                                 "cwd": {
                                     "Fn::FindInMap": [
                                         "Talend",
-                                        "tui",
+                                        { "Ref": "TalendVersion" },
                                         "tuiTarget"
                                     ]
                                 }
@@ -609,7 +643,7 @@
                                 "command": {
                                     "Fn::Sub": [
                                         "${baselineDir}/nexus/isNexusStarted.sh",
-                                        { "baselineDir": { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] } }
+                                        { "baselineDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] } }
                                     ]
                                 }
                             },
@@ -617,7 +651,7 @@
                                 "command": {
                                     "Fn::Sub": [
                                         "${baselineDir}/nexus/create-nexus-user.sh \"${NexusAdminUserid}\" \"${NexusAdminPassword}\" \"${NexusAdminEmail}\" ",
-                                        { "baselineDir": { "Fn::FindInMap": [ "Talend", "baseline", "baselineTarget" ] } }
+                                        { "baselineDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] } }
                                     ]
                                 }
                             }
