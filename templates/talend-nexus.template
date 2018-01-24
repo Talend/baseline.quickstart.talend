@@ -120,26 +120,26 @@
     "Mappings": {
         "Talend": {
             "6.3.1": {
-                "licenseTarget": "/home/ec2-user/tui/licenses/6.3.1"
+                "licenseTarget": "/home/ec2-user/tui/licenses/6.3.1",
                 "baselineTarget": "/home/ec2-user/baseline",
-                "generatedTarget": "/home/ec2-user/generated"
+                "generatedTarget": "/home/ec2-user/generated",
                 "profile": "nexus",
                 "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
                 "tuiTarget": "/home/ec2-user/tui",
 				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo"
+                "tuiRepo": "/opt/tui/repo",
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
                 "s3fsTarget": "/home/ec2-user/s3fs"
             },
             "6.4.1": {
-                "licenseTarget": "/home/ec2-user/tui/licenses/6.4.1"
+                "licenseTarget": "/home/ec2-user/tui/licenses/6.4.1",
                 "baselineTarget": "/home/ec2-user/baseline",
-                "generatedTarget": "/home/ec2-user/generated"
+                "generatedTarget": "/home/ec2-user/generated",
                 "profile": "nexus",
                 "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-5.0.9.tar",
                 "tuiTarget": "/home/ec2-user/tui",
 				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo"
+                "tuiRepo": "/opt/tui/repo",
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
                 "s3fsTarget": "/home/ec2-user/s3fs"
             },
@@ -328,7 +328,7 @@
                                 "source": {
                                     "Fn::FindInMap": [
                                         "Talend",
-                                        "{ "Ref": "TalendVersion" }",
+                                        { "Ref": "TalendVersion" },
                                         "tuiUrl"
                                     ]
                                 },
