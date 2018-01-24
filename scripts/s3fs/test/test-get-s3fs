@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+set -o pipefail
+
+script_path=$(readlink -e "${BASH_SOURCE[0]}")
+script_dir="${script_path%/*}"
+
+# shellcheck source=../../util/util.sh
+source ${script_dir}/../../util/util.sh
+# shellcheck source=../s3fs-util.sh
+source ${script_dir}/../s3fs-util.sh
+
+declare git_token="${1:-}"
+declare s3fs_version="${2:-}"
+declare tar_file
+
+required git_token
+
+echo "## expect s3fs download to local directory"
+get_s3fs tar_file "${git_token}" "${s3fs_version}"
+echo "## downloaded s3fs tar file ${tar_file}"
