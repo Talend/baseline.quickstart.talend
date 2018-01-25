@@ -142,8 +142,6 @@ function s3fs_config() {
     local access_key="${1:-${access_key:-${TALEND_FACTORY_ACCESS_KEY:-}}}"
     local secret_key="${2:-${secret_key:-${TALEND_FACTORY_SECRET_KEY:-}}}"
 
-    required access_key secret_key
-
     local credentials_file=~/.passwd-s3fs
     sed -i "s/# user_allow_other/user_allow_other/g" /etc/fuse.conf
 

@@ -21,13 +21,6 @@
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
             "Type": "String"
         },
-        "ScriptBucket": {
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
-            "ConstraintDescription": "Quick Start script bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "Leave this value unchanged.  It is the S3 bucket name for the Quick Start scripts. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Type": "String",
-            "Default": "oodle.quickstart.talend"
-        },
         "TalendVersion": {
             "Description": "Talend Product Version",
             "Type": "String",
@@ -355,7 +348,7 @@
                             },
                             "03-copy-qss3bucket": {
                                 "command": {
-                                    "Fn::Sub": "aws s3 cp s3://${ScriptBucket}/modules/talend/scripts /home/ec2-user/baseline --recursive"
+                                    "Fn::Sub": "aws s3 cp s3://${QSS3BucketName}/modules/talend/scripts /home/ec2-user/baseline --recursive"
                                 }
                             },
                             "04-chmod-qss3bucket": {
