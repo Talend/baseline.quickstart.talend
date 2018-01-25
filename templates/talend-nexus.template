@@ -126,6 +126,7 @@
                 "profile": "nexus",
                 "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
                 "tuiTarget": "/home/ec2-user/tui",
+                "tuiConfigMapping": "/home/ec2-user/tui/conf/6.3.1/tui_config_mappings.sh",
 				"talendRepoDir": "/opt/repo",
                 "tuiRepo": "/opt/tui/repo",
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
@@ -138,6 +139,7 @@
                 "profile": "nexus",
                 "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-5.0.9.tar",
                 "tuiTarget": "/home/ec2-user/tui",
+                "tuiConfigMapping": "/home/ec2-user/tui/conf/6.4.1/tui_config_mappings.sh",
 				"talendRepoDir": "/opt/repo",
                 "tuiRepo": "/opt/tui/repo",
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
@@ -391,6 +393,17 @@
                                                 "Fn::Join": [
                                                     "",
                                                     [
+                                                        "export TALEND_VERSION=",
+                                                        {
+                                                            "Ref": "TalendVersion"
+                                                        }
+                                                    ]
+                                                ]
+                                            },
+                                            {
+                                                "Fn::Join": [
+                                                    "",
+                                                    [
                                                         "export TALEND_REPO=",
                                                         {
                                                             "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir"]
@@ -567,6 +580,30 @@
                                         ]
                                     ]
                                 }
+                            },
+                            "06-load-tui-config-mapping": {
+                                "command": {
+                                    "Fn::Join": [
+                                        " ",
+                                        [
+                                            "cp",
+                                            {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    { "Ref": "TalendVersion" },
+                                                    "tuiConfigMapping"
+                                                ]
+                                            },
+                                            {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    { "Ref": "TalendVersion" },
+                                                    "tuiTarget"
+                                                ]
+                                            }
+                                        ]
+                                    ]
+                                }
                             }
                         }
                     },
@@ -626,6 +663,7 @@
                                             "source ./setenv.sh; ",
                                             "source ./instance-env.sh; ",
                                             "source ./server-env.sh; ",
+                                            "source ./tui_config_mapping.sh;",
                                             "./install -q ",
                                             { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] }
                                         ] 
