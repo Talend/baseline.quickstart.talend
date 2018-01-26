@@ -62,9 +62,9 @@ function s3fs_build_apt() {
 function is_s3fs_installed() {
     if [ -f "/usr/local/bin/s3fs" ]; then
         [ ! -L "/usr/bin/s3fs" ] && ln -s /usr/local/bin/s3fs /usr/bin/s3fs
-        return 0
+        true
     else
-        return 1
+        false
     fi
 }
 
@@ -105,14 +105,19 @@ function get_s3fs() {
 
 function s3fs_build() {
 
-    local git_token="${1:-}"
     local s3fs_dir="${2:-s3fs}"
 
-    required git_token s3fs_dir
+    required s3fs_dir
 
-    if [ is_s3fs_installed ]; then
+    debugVar s3fs_dir
+    
+    if is_s3fs_installed ; then
        debugLog "s3fs already installed"
+       echo "**** s3fs already installed ****"
        return 0
+    else
+       echo "**** installing s3fs"
+       debugLog "installing s3fs"
     fi
 
     $(s3fs_builder yum)
@@ -142,6 +147,10 @@ function s3fs_config() {
     local access_key="${1:-${access_key:-${TALEND_FACTORY_ACCESS_KEY:-}}}"
     local secret_key="${2:-${secret_key:-${TALEND_FACTORY_SECRET_KEY:-}}}"
 
+    echo "**** access_key: ${access_key}"
+    echo "**** secret_key: ${secret_key}"
+    debugVar access_key; debugVar secret_key
+    
     local credentials_file=~/.passwd-s3fs
     sed -i "s/# user_allow_other/user_allow_other/g" /etc/fuse.conf
 
