@@ -35,6 +35,7 @@ function infoLog() {
 function infoVar() {
     [ -n "${INFO_LOG:-}" ] && [ -z "${!1+x}" ] && echo "INFO: ${FUNCNAME[*]:1} : undefined variable '${1}'" && return 0
     [ -n "${INFO_LOG:-}" ] && echo "INFO: ${1}=${!1}" 1>&2 && return 0
+    return 0
 }
 
 
@@ -47,6 +48,7 @@ function debugLog() {
 function debugVar() {
     [ -n "${DEBUG_LOG:-}" ] && [ -z "${!1+x}" ] && echo "DEBUG: ${FUNCNAME[*]:1} : undefined variable '${1}'" && return 0
     [ -n "${DEBUG_LOG:-}" ] && echo "DEBUG: ${FUNCNAME[*]:1} : ${1}=${!1}" 1>&2 && return 0
+    return 0
 }
 
 
@@ -56,6 +58,7 @@ function debugStack() {
         [ "${#}" -gt 0 ] && args=": $*"
         echo "DEBUG: ${FUNCNAME[*]:1}${args}" 1>&2
     fi
+    return 0
 }
 
 
