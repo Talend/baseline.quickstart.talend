@@ -21,13 +21,6 @@
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
             "Type": "String"
         },
-        "ScriptBucket": {
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
-            "ConstraintDescription": "Quick Start script bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "Leave this value unchanged.  It is the S3 bucket name for the Quick Start scripts. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Type": "String",
-            "Default": "oodle.quickstart.talend"
-        },
         "TalendVersion": {
             "Description": "Talend Product Version",
             "Type": "String",
@@ -296,6 +289,7 @@
                 "profile": "tacamc",
                 "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
                 "tuiTarget": "/home/ec2-user/tui",
+                "tuiConfigMapping": "conf/6.3.1/tui_config_mappings.sh",
 				"talendRepoDir": "/opt/repo",
                 "tuiRepo": "/opt/tui/repo",
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
@@ -310,6 +304,7 @@
                 "profile": "tacamc",
                 "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-5.0.9.tar",
                 "tuiTarget": "/home/ec2-user/tui",
+                "tuiConfigMapping": "conf/6.4.1/tui_config_mappings.sh",
 				"talendRepoDir": "/opt/repo",
                 "tuiRepo": "/opt/tui/repo",
                 "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
@@ -598,7 +593,7 @@
                             },
                             "03-copy-qss3bucket": {
                                 "command": {
-                                    "Fn::Sub": "aws s3 cp s3://${ScriptBucket}/modules/talend/scripts /home/ec2-user/baseline --recursive"
+                                    "Fn::Sub": "aws s3 cp s3://${QSS3BucketName}/modules/talend/scripts /home/ec2-user/baseline --recursive"
                                 }
                             },
                             "04-copy-demo-data": {
@@ -816,6 +811,18 @@
                                         ]
                                     ]
                                 }
+                            },
+                            "06-load-tui-config-mapping": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "cp ${baselineTarget}/tui/${tuiConfigMapping} ${tuiTarget}",
+                                        {
+                                            "baselineTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
+                                            "tuiConfigMapping": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiConfigMapping" ] },
+                                            "tuiTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiTarget" ] }
+                                        }
+                                    ]
+                                }
                             }
                         }
                     },
@@ -830,10 +837,10 @@
                                             "; source ",
                                             { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
                                             "/s3fs/s3fs-util.sh",
-                                            "; echo s3fs_build; s3fs_build ",
-                                            { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "s3fsTarget" ] },
-                                            "; echo s3fs_config; s3fs_config",
-                                            "; echo s3fs_mount; s3fs_mount",
+                                            "; s3fs_build",
+                                            " ", { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "s3fsTarget" ] },
+                                            "; s3fs_config",
+                                            "; s3fs_mount",
                                             " ", { "Ref": "TalendResourceBucket" },
                                             " ", { "Ref": "TalendResourceBucketRepoPath" },
                                             " ", { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir" ] },
@@ -966,6 +973,15 @@
                                             "source ./setenv.sh; ",
                                             "source ./instance-env.sh; ",
                                             "source ./server-env.sh; ",
+                                            {
+                                                "Fn::Sub": [
+                                                    "source ${tuiTarget}/${tuiConfigMapping}; ",
+                                                    {
+                                                        "tuiTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiTarget" ] },
+                                                        "tuiConfigMapping": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiConfigMapping" ] }
+                                                    }
+                                                ] 
+                                            },
                                             "./install -q ",
                                             { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] }
                                         ] 

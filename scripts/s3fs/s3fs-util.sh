@@ -114,7 +114,8 @@ function get_s3fs() {
 function s3fs_build() {
     debugLog "BEGIN"
     
-    local s3fs_dir="${1:-s3fs}"
+    local s3fs_dir="${1:-}"
+    local package_manager="${2:-yum}"
 
     required s3fs_dir
 
@@ -127,7 +128,7 @@ function s3fs_build() {
        debugLog "installing s3fs"
     fi
 
-    s3fs_builder yum
+    s3fs_builder "${package_manager}"
 
     debugLog "pushd"
     true && pushd "${s3fs_dir}"
@@ -210,7 +211,7 @@ function s3fs_mount() {
     local s3_mount_root="${4:-${s3_mount_dir}}"
     local s3fs_umask="${5:-037}"
     local iam_role="${6:-auto}"
-    local target_owner="${7:-${target_owner:-ec2-user}}"
+    local target_owner="${7:-ec2-user}"
 
     required s3_bucket s3_path s3_mount_dir s3_mount_root s3fs_umask target_owner
 
