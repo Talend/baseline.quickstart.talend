@@ -7,11 +7,15 @@ set -u
 export UTIL_FLAG=1
 
 
+#
+# always be sure to quote both arguments when invoking this function, otherwise only the first token of value may be assigned to !_var
+#
 function assign() {
-    local var="${1}"
+    local _var="${1}"
     local value="${2}"
-    required var value
-    printf -v "${var}" '%s' "${value}"
+    required _var value
+    [ -z "${!_var+x}" ] && errorMessage "indirect reference variable '${_var}' is not defined prior to use"
+    printf -v "${_var}" '%s' "${value}"
 }
 
 

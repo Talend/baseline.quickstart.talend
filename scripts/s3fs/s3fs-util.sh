@@ -113,14 +113,14 @@ function get_s3fs() {
 
 function s3fs_build() {
     debugLog "BEGIN"
-    
+
     local s3fs_dir="${1:-}"
     local package_manager="${2:-yum}"
 
     required s3fs_dir
 
     debugVar s3fs_dir
- 
+
     if is_s3fs_installed ; then
        debugLog "s3fs already installed"
        return 0
@@ -131,8 +131,7 @@ function s3fs_build() {
     s3fs_builder "${package_manager}"
 
     debugLog "pushd"
-    true && pushd "${s3fs_dir}"
-    if [ "${?}" == 0 ]; then
+    if pushd "${s3fs_dir}"; then
         debugLog "pushd success: current dir: ${PWD}"
     else
         errorMessage "invalid s3fs directory ${s3fs_dir}"
@@ -152,13 +151,12 @@ function s3fs_build() {
     ln -s /usr/local/bin/s3fs /usr/bin/s3fs
 
     debugLog "popd"
-    true && popd
-    if [ "${?}" == 0 ]; then
+    if popd; then
         debugLog "popd success: current dir: ${PWD}"
     else
         debugLog "FAILURE in popd"
         return 1
-     fi
+    fi
     debugLog "END"
     return 0
 }
@@ -172,21 +170,19 @@ function s3fs_build() {
 
 function s3fs_config() {
     debugLog "BEGIN"
-    
-    local access_key="${1:-${access_key:-${TALEND_FACTORY_ACCESS_KEY:-}}}"
-    local secret_key="${2:-${secret_key:-${TALEND_FACTORY_SECRET_KEY:-}}}"
 
-    echo "**** access_key: ${access_key}"
-    echo "**** secret_key: ${secret_key}"
+    local access_key="${1:-${TALEND_FACTORY_ACCESS_KEY:-}}"
+    local secret_key="${2:-${TALEND_FACTORY_SECRET_KEY:-}}"
+
     debugVar access_key; debugVar secret_key
-    
+
     local credentials_file=~/.passwd-s3fs
     sed -i "s/# user_allow_other/user_allow_other/g" /etc/fuse.conf
 
     if [ -n "${access_key}" ] && [ -n "${secret_key}" ]; then
         echo "${access_key}:${secret_key}" > "${credentials_file}"
         chmod 600 "${credentials_file}"
-        debugLog "credential file ${credential_file} created"
+        debugLog "credential file ${credentials_file} created"
     elif [ ! -f "${credentials_file}" ]; then
         warningLog "Credential file ${credentials_file} not set."
     else
@@ -265,7 +261,7 @@ function s3fs_file_attrib() {
 
 function s3fs_dir_attrib() {
 
-    local target_owner="${1:-${target_owner:-ec2-user}}"
+    local target_owner="${1:-ec2-user}}"
     local mount_dir="${2:-/opt/repo}"
 
     local mydir_list
