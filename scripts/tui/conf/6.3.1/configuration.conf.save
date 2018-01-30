@@ -33,20 +33,20 @@ amc {
 
     // Credential for the application server (For Tomcat, update conf/tomcat-users.xml file)
     credentials {
-      user = ENV['TUI_CONFIG_amc_app__server_credentials_user'] ?: "admin"
-      password = ENV['TUI_CONFIG_amc_app__server_credentials_password'] ?: "admin"
+      user = ENV['TALEND_AMC_TOMCAT_MANAGER_USER'] ?: "admin"
+      password = ENV['TALEND_AMC_TOMCAT_MANAGER_PASSWORD'] ?: "admin"
     }
 
     instance {
-      name = ENV['TUI_CONFIG_amc_app__server_instance_name'] ?: "amc"
+      name = ENV['TALEND_AMC_NAME'] ?: "amc"
       // !! IMPORTANT: If the 'host' value is not defined, the current server hostname or IP address will be used.
       host = "${HOSTS.monitoring?.host}"
-      port = ENV['TUI_CONFIG_amc_app__server_instance_port'] ?: 8085
+      port = ENV['TALEND_AMC_PORT'] ?: 8085
       port_ajp = 8409
 
 
       webapp {
-        name = ENV['TUI_CONFIG_amc_app__server_webapp_name'] ?: "amc"
+        name = ENV['TALEND_AMC_WEBAPP_NAME'] ?: "amc"
       }
 
       // Logs folder location. Set value to "" blank to use the default location (usually under the instance folder)
@@ -105,14 +105,14 @@ amc {
       ]
 
       //!! Important: The database schema must exist when tac starts the first time
-      schema = "${(HOSTS.monitoring?.database.schema_service) ?: ENV['TUI_CONFIG_amc_database_mariadb_schema'] ?: 'amc'}"
+      schema = "${(HOSTS.monitoring?.database.schema_service) ?: ENV['TALEND_AMC_DB_SCHEMA'] ?: 'amc'}"
 
-      host = "${(HOSTS.monitoring?.database.host) ?: ENV['TUI_CONFIG_amc_database_mariadb_host'] ?: 'localhost'}"
-      port = (HOSTS.monitoring?.database.port) ?: ENV['TUI_CONFIG_amc_database_mariadb_port'] ?: 3306
-      username = "${(HOSTS.monitoring?.database.user) ?: ENV['TUI_CONFIG_amc_database_mariadb_username'] ?: 'admin'}"
+      host = "${(HOSTS.monitoring?.database.host) ?: ENV['TALEND_AMC_DB_HOST'] ?: 'localhost'}"
+      port = (HOSTS.monitoring?.database.port) ?: ENV['TALEND_AMC_DB_PORT'] ?: 3306
+      username = "${(HOSTS.monitoring?.database.user) ?: ENV['TALEND_AMC_DB_USER'] ?: 'admin'}"
 
       // Default password: 'admin'
-      password = "${(HOSTS.monitoring?.database.password) ?: ENV['TUI_CONFIG_amc_database_mariadb_password'] ?: 'admin'}"
+      password = "${(HOSTS.monitoring?.database.password) ?: ENV['TALEND_AMC_DB_PASSWORD'] ?: 'admin'}"
 
       connect_timeout = "${(HOSTS.monitoring?.database.connect_loggin_timeout) ?: 5}"
 
@@ -126,14 +126,14 @@ amc {
       ]
 
       //!! Important: The database schema must exist when tac starts the first time
-      schema = "${(HOSTS.monitoring?.database.schema_service) ?: ENV['TUI_CONFIG_amc_database_mysql_schema'] ?: 'amc'}"
+      schema = "${(HOSTS.monitoring?.database.schema_service) ?: ENV['TALEND_AMC_DB_SCHEMA'] ?: 'amc'}"
 
-      host = "${(HOSTS.monitoring?.database.host) ?: ENV['TUI_CONFIG_amc_database_mysql_host'] ?: 'localhost'}"
-      port = (HOSTS.monitoring?.database.port) ?: ENV['TUI_CONFIG_amc_database_mysql_port'] ?: 3306
-      username = "${(HOSTS.monitoring?.database.user) ?: ENV['TUI_CONFIG_amc_database_mysql_username'] ?: 'admin'}"
+      host = "${(HOSTS.monitoring?.database.host) ?: ENV['TALEND_AMC_DB_HOST'] ?: 'localhost'}"
+      port = (HOSTS.monitoring?.database.port) ?: ENV['TALEND_AMC_DB_PORT'] ?: 3306
+      username = "${(HOSTS.monitoring?.database.user) ?: ENV['TALEND_AMC_DB_USER'] ?: 'admin'}"
 
       // Default password: 'admin'
-      password = "${(HOSTS.monitoring?.database.password) ?: ENV['TUI_CONFIG_amc_database_mysql_password'] ?: 'admin'}"
+      password = "${(HOSTS.monitoring?.database.password) ?: ENV['TALEND_AMC_DB_PASSWORD'] ?: 'admin'}"
 
       connect_timeout = "${(HOSTS.monitoring?.database.connect_loggin_timeout) ?: 5}"
 
@@ -226,7 +226,7 @@ cmdline {
     logstach {
       host = "${HOSTS.logging?.host}"
       // port = 8056
-      port = ENV["TUI_CONFIG_cmdline_logging_logstach_port"] ?: 8056
+      port = ENV["TALEND_LOGSTASH_CMDLINE_PORT"] ?: 8056
     }
   }
 
@@ -268,7 +268,7 @@ cmdline_s {
       // !! IMPORTANT: If the 'host' value is not defined, the current server hostname or IP address will be used.
       host = "${HOSTS.logging?.host}"
       // port = 8056
-      port = ENV["TUI_CONFIG_cmdline_s_logging_logstach_port"] ?: 8056
+      port = ENV["TALEND_LOGSTASH_CMDLINE_PORT"] ?: 8056
     }
   }
 
@@ -325,7 +325,7 @@ cmdline_ci {
       // !! IMPORTANT: If the 'host' value is not defined, the current server hostname or IP address will be used.
       host = "${HOSTS.logging?.host}"
       // port = 8056
-      port = ENV["TUI_CONFIG_cmdline_ci_logging_logstach_port"] ?: 8056
+      port = ENV["TALEND_LOGSTASH_CMDLINE_PORT"] ?: 8056
     }
   }
 }
@@ -342,15 +342,15 @@ studio {
 
 nexus {
   // !! IMPORTANT: If the 'host' value is not defined, the current server hostname or IP address will be used.
-  host = ENV["TUI_CONFIG_nexus_host"] ?: ""
-  port = ENV["TUI_CONFIG_nexus_port"] ?: 8081
+  host = ENV["TALEND_NEXUS_HOST"] ?: ""
+  port = ENV["TALEND_NEXUS_PORT"] ?: 8081
 
   url = "http://$host:$port/nexus"
 
   // username = "admin"
   // password = "Talend123"
-  username = ENV["TUI_CONFIG_nexus_username"] ?: "admin"
-  password = ENV["TUI_CONFIG_nexus_password"] ?: "Talend123"
+  username = ENV["TALEND_NEXUS_ADMIN"] ?: "admin"
+  password = ENV["TALEND_NEXUS_PASSWORD"] ?: "Talend123"
 
   releases = "releases"
   snapshots = "snapshots"
@@ -387,20 +387,20 @@ tac {
 
     // Credential for the application server (For Tomcat, update conf/tomcat-users.xml file)
     credentials {
-      user = ENV["TUI_CONFIG_tac_app__server_credentials_user"] ?: "admin"
-      password = ENV["TUI_CONFIG_tac_app__server_credentials_password"] ?: "admin"
+      user = ENV["TALEND_TAC_TOMCAT_MANAGER_USER"] ?: "admin"
+      password = ENV["TALEND_TAC_TOMCAT_MANAGER_PASSWORD"] ?: "admin"
     }
 
     instance {
-      name = ENV["TUI_CONFIG_tac_app__server_instance_name"] ?: "tac"
+      name = ENV["TALEND_TAC_NAME"] ?: "tac"
       // !! IMPORTANT: If the 'host' value is not defined, the current server hostname or IP address will be used.
       host = "${HOSTS.admin?.host}"
-      port = ENV['TUI_CONFIG_tac_app__server_instance_port'] ?: 8080
+      port = ENV['TALEND_TAC_PORT'] ?: 8080
       port_ajp = 8009
 
       webapp {
         // name = "org.talend.administrator"
-        name = ENV['TUI_CONFIG_tac_app__server_instance_webapp_name'] ?: "tac"
+        name = ENV['TALEND_TAC_WEBAPP_NAME'] ?: "tac"
       }
 
       // Logs folder location. Set value to "" blank to use the default location (usually under the instance folder)
@@ -493,12 +493,12 @@ tac {
       ]
 
       //!! Important: The database schema must exist when tac starts the first time
-      schema = "${(HOSTS.admin?.database.schema_service) ?: ENV['TUI_CONFIG_tac_database_mysql_schema'] ?: 'tac'}"
+      schema = "${(HOSTS.admin?.database.schema_service) ?: ENV['TALEND_TAC_DB_SCHEMA'] ?: 'tac'}"
 
-      host = "${(HOSTS.admin?.database.host) ?: ENV['TUI_CONFIG_tac_database_mysql_host'] ?: 'localhost'}"
-      port = (HOSTS.admin?.database.port) ?: ENV['TUI_CONFIG_tac_database_mysql_port'] ?: 3306
-      username = "${(HOSTS.admin?.database.user) ?: ENV['TUI_CONFIG_tac_database_mysql_username'] ?: 'admin'}"
-      password = "${(HOSTS.admin?.database.password) ?: ENV['TUI_CONFIG_tac_database_mysql_password'] ?: 'admin'}"
+      host = "${(HOSTS.admin?.database.host) ?: ENV['TALEND_TAC_DB_HOST'] ?: 'localhost'}"
+      port = (HOSTS.admin?.database.port) ?: ENV['TALEND_TAC_DB_PORT'] ?: 3306
+      username = "${(HOSTS.admin?.database.user) ?: ENV['TALEND_TAC_DB_USER'] ?: 'admin'}"
+      password = "${(HOSTS.admin?.database.password) ?: ENV['TALEND_TAC_DB_PASSWORD'] ?: 'admin'}"
 
       connect_timeout = "${(HOSTS.admin?.database.connect_loggin_timeout) ?: 5}"
 
@@ -605,7 +605,7 @@ tac {
       // !! IMPORTANT: If the 'host' value is blank, the current server hostname or IP address will be used.
       host = "${HOSTS.logging?.host}"
       // port = 5601
-      port = ENV["TUI_CONFIG_tac_monitoring_kibana_port"] ?: 5601
+      port = ENV["TALEND_LOGSTASH_KIBANA_PORT"] ?: 5601
     }
   }
 
@@ -664,7 +664,7 @@ tac {
       // !! IMPORTANT: If the 'host' value is not defined, the current server hostname or IP address will be used.
       host = "${HOSTS.logging?.host}"
       // port = 8050
-      port = ENV["TUI_CONFIG_tac_logging_logstach_port"] ?: 8050
+      port = ENV["TALEND_LOGSTASH_TAC_PORT"] ?: 8050
     }
   }
 
@@ -718,16 +718,16 @@ tac {
   }
 
   git {
-    host = ENV["TUI_CONFIG_tac_git_host"] ?: "localhost"
-    port = ENV["TUI_CONFIG_tac_git_port"] ?: 80
+    host = ENV["TALEND_GIT_HOST"] ?: "localhost"
+    port = ENV["TALEND_GIT_PORT"] ?: 80
 
-    repository = ENV["TUI_CONFIG_tac_git_repository"] ?: "talend"
-    repository_owner = ENV["TUI_CONFIG_tac_git_repository_owner"] ?: "tadmin"
-    protocol = ENV["TUI_CONFIG_tac_git_protocol"] ?: "http"
+    repository = ENV["TALEND_GIT_REPO"] ?: "talend"
+    repository_owner = ENV["TALEND_GIT_USER"] ?: "tadmin"
+    protocol = ENV["TALEND_GIT_PROTOCOL"] ?: "http"
 
     url = "$protocol://$host:$port/$repository_owner/$repository"
-    username = ENV["TUI_CONFIG_tac_git_username"] ?: "tadmin"
-    password = ENV["TUI_CONFIG_tac_git_password"] ?: "tadminPassword"
+    username = ENV["TALEND_GIT_USER"] ?: "tadmin"
+    password = ENV["TALEND_GIT_PASSWORD"] ?: "tadminPassword"
     commit.log.pattern = "{0}"
 
     whiteListBranches = true
@@ -803,7 +803,10 @@ tac {
 jobserver {
   // !! IMPORTANT: If the 'host' value is not defined, the current server hostname or IP address will be used.
   //   host = ""
-  host = ENV["TUI_CONFIG_jobserver_host"]
+  // only set the host to fqdn if the jobserver and tac are in the same subnet, otherwise it will not resolve
+  //   host = ENV["TALEND_JOBSERVER_FQDN"] ?: ""
+  // explicitly set using ENV since default override with TUI_CONFIG_jobserver_host does not seem to work
+  host = ENV["LOCAL_IPV4"]
   
   ports {
     command = 8000
@@ -857,7 +860,7 @@ jobserver {
       // !! IMPORTANT: If the 'host' value is not defined, the current server hostname or IP address will be used.
       host = "${HOSTS.logging?.host}"
       // port = 8055
-      port = ENV["TUI_CONFIG_jobserver_logging_logstach_port"] ?: 8055
+      port = ENV["TALEND_LOGSTASH_JOBSERVER_PORT"] ?: 8055
     }
   }
 
@@ -875,7 +878,7 @@ jobserver {
     }
 
     // !! IMPORTANT: If Blank, The value will be the concatenation of the hostname and the constant '_jobserver'
-    label = ENV["TUI_CONFIG_jobserver_tac__registration_label"] ?: ""
+    label = ENV["TALEND_JOBSERVER_LABEL"] ?: ""
     // !! IMPORTANT: If value is blank, the value will be the timezone of the machine where the installer runs.
     timezone = ""
 
@@ -1080,7 +1083,7 @@ logserver {
     // path.logs = "$INSTALL_DATA_FOLDER/logserver/elasticsearch/logs"
 
     network.host = "${HOSTS.logging?.host}"
-    http.port = ENV["TUI_CONFIG_logserver_elasticsearch_http_port"] ?: 9200
+    http.port = ENV["TALEND_LOGSTASH_ELASTIC_SEARCH_PORT"] ?: 9200
     cluster.name = "talend-log-central"
     path.data = "$INSTALL_DATA_FOLDER/logserver/elasticsearch/data"
     path.logs = "$INSTALL_DATA_FOLDER/logserver/elasticsearch/logs"
@@ -1109,7 +1112,7 @@ logserver {
   kibana {
     server.host = "0.0.0.0"
     // server.port = tac.monitoring.kibana.port
-    server.port = ENV["TUI_CONFIG_logserver_kibana_server_port"] ?: tac.monitoring.kibana.port ?: 5601
+    server.port = ENV["TALEND_LOGSTASH_KIBANA_PORT"] ?: tac.monitoring.kibana.port ?: 5601
     es.url = "http://${logserver.elasticsearch.network.host}:${logserver.elasticsearch.http.port}"
 
     path.logs = "$INSTALL_DATA_FOLDER/logserver/kibana/logs"

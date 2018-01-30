@@ -79,40 +79,12 @@
             "Type": "AWS::EC2::SecurityGroup::Id",
             "Description": "Git Security Group"
         },
-        "JobserverAutoscaleMinSize": {
-            "Description": "Talend Jobserver autoscale minimum size",
-            "Type": "Number",
-            "MinValue": "1",
-            "MaxValue": "10",
-            "Default": "1"
-        },
-        "JobserverAutoscaleMaxSize": {
-            "Description": "Talend Jobserver autoscale maximum size",
-            "Type": "Number",
-            "MinValue": "1",
-            "MaxValue": "10",
-            "Default": "5"
-        },
         "JobserverAutoscaleDesiredCapacity": {
             "Description": "Talend Jobserver autoscale maximum size",
             "Type": "Number",
             "MinValue": "1",
             "MaxValue": "10",
             "Default": "2"
-        },
-        "DistantRunAutoscaleMinSize": {
-            "Description": "Talend DistantRun autoscale minimum size",
-            "Type": "Number",
-            "MinValue": "1",
-            "MaxValue": "10",
-            "Default": "1"
-        },
-        "DistantRunAutoscaleMaxSize": {
-            "Description": "Talend DistantRun autoscale maximum size",
-            "Type": "Number",
-            "MinValue": "1",
-            "MaxValue": "10",
-            "Default": "5"
         },
         "DistantRunAutoscaleDesiredCapacity": {
             "Description": "Talend DistantRun autoscale maximum size",
@@ -590,8 +562,8 @@
 					"SubnetId2": { "Ref": "PrivateSubnetId2" },
                     "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "JobserverSecurityGroup" },
-                    "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
-                    "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
+                    "JobserverAutoscaleMinSize": "1",
+                    "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleDesiredCapacity" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
@@ -621,8 +593,8 @@
 					"SubnetId2": { "Ref": "PublicSubnetId2" },
                     "PrivateSubnet": "public",
 					"SecurityGroupIds": { "Ref": "DistantRunSecurityGroup" },
-                    "JobserverAutoscaleMinSize": { "Ref": "DistantRunAutoscaleMinSize" },
-                    "JobserverAutoscaleMaxSize": { "Ref": "DistantRunAutoscaleMaxSize" },
+                    "JobserverAutoscaleMinSize": "1",
+                    "JobserverAutoscaleMaxSize": { "Ref": "DistantRunAutoscaleDesiredCapacity" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "DistantRunAutoscaleDesiredCapacity" },
 					"TacHost": "",
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
