@@ -73,7 +73,7 @@ function debugStack() {
 
 
 function errorMessage() {
-    echo "ERROR: ${BASH_SOURCE[-2]##*/} ${BASH_LINENO[-2]} : ${0} : ${FUNCNAME[$
+    echo "ERROR: ${BASH_SOURCE[-2]##*/} ${BASH_LINENO[-2]} : ${0} : ${FUNCNAME[*]:1} : ${*}" 1>&2
 }
 
 
