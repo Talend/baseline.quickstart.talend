@@ -14,11 +14,11 @@ function assign() {
     local _var="${1}"
     local value="${2}"
     if ! required _var value; then
-        echo "ERROR: ${BASH_SOURCE[1]##*/} ${BASH_LINENO[1]} : error in require$
+        echo "ERROR: ${BASH_SOURCE[1]##*/} ${BASH_LINENO[1]} : error in required parameters of function assign : ${FUNCNAME[*]:1}" 1>&2
         return 1
     fi
     if [ -z "${!_var+x}" ]; then
-        echo "ERROR: ${BASH_SOURCE[1]##*/} ${BASH_LINENO[1]} : assign reference$
+        echo "ERROR: ${BASH_SOURCE[1]##*/} ${BASH_LINENO[1]} : assign reference variable '${_var}' not defined prior to use : ${FUNCNAME[*]:1}" 1>&2
         return 1
     fi
     printf -v "${_var}" '%s' "${value}"
