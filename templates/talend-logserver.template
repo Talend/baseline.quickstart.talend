@@ -166,30 +166,6 @@
                 "elasticSearch": "/opt/talend/6.3.1/logserver/elasticsearch-2.4.0",
                 "kibana": "/opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64",
                 "logstash": "/opt/talend/6.3.1/logserver/logstash-2.4.0"
-            },
-            "license": {
-                "licenseTarget": "/home/ec2-user/TUI-4.5.2/licenses/6.3.1"
-            },
-            "baseline": {
-                "baselineTarget": "/home/ec2-user/baseline",
-                "generatedTarget": "/home/ec2-user/generated"
-            },
-            "tui": {
-                "profile": "logserver",
-                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
-                "tuiTarget": "/home/ec2-user/TUI-4.5.2",
-				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo"
-            },
-            "logserver": {
-                "dir": "/opt/talend/6.3.1/logserver",
-                "elasticSearch": "/opt/talend/6.3.1/logserver/elasticsearch-2.4.0",
-                "kibana": "/opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64",
-                "logstash": "/opt/talend/6.3.1/logserver/logstash-2.4.0"
-            },
-            "s3fs": {
-                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
-                "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
             }
         },
         "AWSRegionArch2AMI": {

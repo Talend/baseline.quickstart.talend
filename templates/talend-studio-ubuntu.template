@@ -136,31 +136,6 @@
                 "installDir": "/opt/talend/6.3.1/studio/studio",
                 "sparkJarsKeyPrefix": "spark",
                 "sparkJarsTarget": "/var/lib/spark/jars"
-            },
-            "license": {
-                "licenseTarget": "/home/ubuntu/TUI-4.5.2/licenses/6.3.1"
-            },
-            "baseline": {
-                "baselineTarget": "/home/ubuntu/baseline",
-                "generatedTarget": "/home/ubuntu/generated"
-            },
-            "tui": {
-                "profile": "studio",
-                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
-                "tuiTarget": "/home/ubuntu/TUI-4.5.2",
-				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo"
-            },
-            "s3fs": {
-                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
-                "s3fsTarget": "/home/ubuntu/s3fs-fuse-1.82"
-            },
-            "studio": {
-                "installDir": "/opt/talend/6.3.1/studio/studio"
-            },
-            "jobserver": {
-                "sparkJarsKeyPrefix": "spark",
-                "sparkJarsTarget": "/var/lib/spark/jars"
             }
         },
         "AwsAmiRegionMap": {

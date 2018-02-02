@@ -202,31 +202,6 @@
                 "workDir": "/home/ec2-user/work",
                 "sparkJarsKeyPrefix": "spark",
                 "sparkJarsTarget": "/var/lib/spark/jars"
-            },
-            "license": {
-                "licenseTarget": "/home/ec2-user/TUI-4.5.2/licenses/6.3.1"
-            },
-            "baseline": {
-                "baselineTarget": "/home/ec2-user/baseline",
-                "generatedTarget": "/home/ec2-user/generated"
-            },
-            "tui": {
-                "profile": "jobserver",
-                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
-                "tuiTarget": "/home/ec2-user/TUI-4.5.2",
-				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo"
-            },
-            "s3fs": {
-                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
-                "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
-            },
-            "cfn": {
-                "workDir": "/home/ec2-user/work"
-            },
-            "jobserver": {
-                "sparkJarsKeyPrefix": "spark",
-                "sparkJarsTarget": "/var/lib/spark/jars"
             }
         },
         "AWSRegionArch2AMI": {

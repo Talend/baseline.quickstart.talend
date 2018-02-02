@@ -311,30 +311,6 @@
                 "s3fsTarget": "/home/ec2-user/s3fs",
                 "workDir": "/home/ec2-user/work",
                 "demo_jobs_path": "demo_jobs/oodlejobs.tgz"
-            },
-            "license": {
-                "licenseTarget": "/home/ec2-user/TUI-4.5.2/licenses/6.3.1"
-            },
-            "baseline": {
-                "baselineTarget": "/home/ec2-user/baseline",
-                "generatedTarget": "/home/ec2-user/generated"
-            },
-            "tui": {
-                "profile": "tacamc",
-                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
-                "tuiTarget": "/home/ec2-user/TUI-4.5.2",
-				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo"
-            },
-            "s3fs": {
-                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
-                "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
-            },
-            "cfn": {
-                "workDir": "/home/ec2-user/work"
-            },
-            "demojobs": {
-                "path": "demo_jobs/oodlejobs.tgz"
             }
         },
         "AWSRegionArch2AMI": {
