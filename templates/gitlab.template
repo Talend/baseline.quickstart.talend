@@ -334,6 +334,7 @@
                                 "while ! apt-get update -q ; do sleep 10; done",
                                 { "Fn::Sub": "wget http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata" },
 								"chmod +x ec2-metadata",
+                                "cp ec2-metadata /home/ubuntu",
                                 { "Fn::Sub": "wget http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/update_hosts_ubuntu.sh" },
 								"chmod +x update_hosts_ubuntu.sh",
                                 "./update_hosts_ubuntu.sh",
@@ -368,42 +369,18 @@
                         ]
                     },
                     "Download": {
-                        "files": {
-                            "/home/ubuntu/talend-gitlab.sh": {
-                                "source": {
-                                    "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/talend-gitlab.sh"
-                                },
-                                "owner": "ubuntu",
-                                "group": "ubuntu",
-                                "mode": "000500",
-                                "authentication": "S3AccessCreds"
+                        "commands": {
+                            "01-download-talend-gitlab": {
+                                "command": { "Fn::Sub": "wget http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/talend-gitlab.sh; chown ubuntu:ubuntu talend-gitlab.sh; chmod 500 talend-gitlab.sh" },
+                                "cwd": "/home/ubuntu"
                             },
-                            "/home/ubuntu/talend-gitlab-external-url.sh": {
-                                "source": {
-                                    "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/talend-gitlab-external-url.sh"
-                                },
-                                "owner": "ubuntu",
-                                "group": "ubuntu",
-                                "mode": "000500",
-                                "authentication": "S3AccessCreds"
+                            "02-download-talend-gitlab-external-url": {
+                                "command": { "Fn::Sub": "wget http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/talend-gitlab-external-url.sh; chown ubuntu:ubuntu talend-gitlab-external-url.sh; chmod 500 talend-gitlab-external-url.sh" },
+                                "cwd": "/home/ubuntu"
                             },
-                            "/home/ubuntu/isGitStarted.sh": {
-                                "source": {
-                                    "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/isGitStarted.sh"
-                                },
-                                "owner": "ubuntu",
-                                "group": "ubuntu",
-                                "mode": "000500",
-                                "authentication": "S3AccessCreds"
-                            },
-                            "/home/ubuntu/ec2-metadata": {
-                                "source": {
-                                    "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata"
-                                },
-                                "owner": "ubuntu",
-                                "group": "ubuntu",
-                                "mode": "000500",
-                                "authentication": "S3AccessCreds"
+                            "03-download-isGitStarted": {
+                                "command": { "Fn::Sub": "wget http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/git/isGitStarted.sh; chown ubuntu:ubuntu isGitStarted.sh; chmod 500 isGitStarted.sh" },
+                                "cwd": "/home/ubuntu"
                             }
                         }
                     },
