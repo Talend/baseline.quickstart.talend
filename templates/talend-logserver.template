@@ -586,7 +586,7 @@
                                                 ]
                                             },
 											"/scripts/create-",
-											{ "Fn::FindInMap": [ "Talend", "tui", "profile" ] },
+											{ "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] },
 											"-env.sh ",
                                             {
                                                 "Fn::FindInMap": [
