@@ -138,14 +138,14 @@
                 "baselineTarget": "/home/ec2-user/baseline",
                 "generatedTarget": "/home/ec2-user/generated",
                 "profile": "logserver",
-                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
+                "repoTuiPath": "tui/TUI-4.5.2.tar",
+                "repoS3fsPath": "s3fs/v1.82.tar.gz",
                 "tuiTarget": "/home/ec2-user/tui",
-                "tuiConfigMapping": "conf/6.3.1/tui_config_mappings.sh",
-				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo",
-                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
                 "s3fsTarget": "/home/ec2-user/s3fs",
-                "dir": "/opt/talend/6.3.1/logserver",
+                "tuiConfigMapping": "conf/6.3.1/tui_config_mappings.sh",
+                "tuiConfigOverrideOption": "",
+				"talendRepoDir": "/opt/repo",
+                "tuiRepoDir": "/opt/tui/repo",
                 "elasticSearch": "/opt/talend/6.3.1/logserver/elasticsearch-2.4.0",
                 "kibana": "/opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64",
                 "logstash": "/opt/talend/6.3.1/logserver/logstash-2.4.0"
@@ -155,17 +155,17 @@
                 "baselineTarget": "/home/ec2-user/baseline",
                 "generatedTarget": "/home/ec2-user/generated",
                 "profile": "logserver",
-                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-5.0.9.tar",
+                "repoTuiPath": "tui/TUI-5.4.0.tar",
+                "repoS3fsPath": "s3fs/v1.82.tar.gz",
                 "tuiTarget": "/home/ec2-user/tui",
-                "tuiConfigMapping": "conf/6.4.1/tui_config_mappings.sh",
-				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo",
-                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
                 "s3fsTarget": "/home/ec2-user/s3fs",
-                "dir": "/opt/talend/6.3.1/logserver",
-                "elasticSearch": "/opt/talend/6.3.1/logserver/elasticsearch-2.4.0",
-                "kibana": "/opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64",
-                "logstash": "/opt/talend/6.3.1/logserver/logstash-2.4.0"
+                "tuiConfigMapping": "conf/6.4.1/tui_config_mappings.sh",
+                "tuiConfigOverrideOption": "-oc",
+				"talendRepoDir": "/opt/repo",
+                "tuiRepoDir": "/opt/tui/repo",
+                "elasticSearch": "/opt/talend/6.4.1/logserver/elasticsearch-2.4.0",
+                "kibana": "/opt/talend/6.4.1/logserver/kibana-4.6.1-linux-x86_64",
+                "logstash": "/opt/talend/6.4.1/logserver/logstash-2.4.0"
             }
         },
         "AWSRegionArch2AMI": {
@@ -321,52 +321,46 @@
                         ]
                     },
                     "Download": {
-                        "files": {
-                            "/home/ec2-user/s3fs.tgz": {
-                                "source": {
-                                    "Fn::FindInMap": [
-                                        "Talend",
-                                        { "Ref": "TalendVersion" },
-                                        "s3fsUrl"
-                                    ]
-                                },
-                                "owner": "ec2-user",
-                                "group": "ec2-user",
-                                "mode": "000400"
-                            },
-                            "/home/ec2-user/tui.tar": {
-                                "source": {
-                                    "Fn::FindInMap": [
-                                        "Talend",
-                                        { "Ref": "TalendVersion" },
-                                        "tuiUrl"
-                                    ]
-                                },
-                                "owner": "ec2-user",
-                                "group": "ec2-user",
-                                "mode": "000400"
-                            }
-                        },
                         "commands": {
                             "00-copy-license": {
                                 "command": {
                                     "Fn::Sub": "aws s3 cp s3://${TalendLicenseBucket}/license /home/ec2-user/generated/licenses/license"
                                 }
                             },
-                            "01-unzip-s3fs": {
+                            "01-download-qss3bucket": {
+                                "command": {
+                                    "Fn::Sub": "aws --region=${AWS::Region} s3 cp s3://${QSS3BucketName}/modules/talend/scripts /home/ec2-user/baseline --recursive"
+                                }
+                            },
+                            "02-download-tui": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "aws --region=${AWS::Region} s3 cp s3://${TalendResourceBucket}/${repoTuiPath} /home/ec2-user/tui.tar; chmod 400 /home/ec2-user/tui.tar; chown ec2-user:ec2-user /home/ec2-user/tui.tar",
+                                        {
+                                            "repoTuiPath": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "repoTuiPath" ] }
+                                        }
+                                    ]
+                                }
+                            },
+                            "03-download-s3fs": {
+                                "command": {
+                                    "Fn::Sub": [
+                                        "aws --region=${AWS::Region} s3 cp s3://${TalendResourceBucket}/${repoS3fsPath} /home/ec2-user/s3fs.tgz; chmod 400 /home/ec2-user/s3fs.tgz; chown ec2-user:ec2-user /home/ec2-user/s3fs.tgz",
+                                        {
+                                            "repoS3fsPath": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "repoS3fsPath" ] }
+                                        }
+                                    ]
+                                }
+                            },
+                            "04-unzip-s3fs": {
                                 "command": "mkdir s3fs; tar --strip-components=1 -C s3fs -xzvpf s3fs.tgz",
                                 "cwd": "/home/ec2-user"
                             },
-                            "02-unzip-tui": {
+                            "05-unzip-tui": {
                                 "command": "mkdir tui; tar --strip-components=1 -C tui -xvpf tui.tar",
                                 "cwd": "/home/ec2-user"
                             },
-                            "03-copy-qss3bucket": {
-                                "command": {
-                                    "Fn::Sub": "aws s3 cp s3://${QSS3BucketName}/modules/talend/scripts /home/ec2-user/baseline --recursive"
-                                }
-                            },
-                            "04-chmod-qss3bucket": {
+                            "06-chmod-qss3bucket": {
                                 "command": {
                                     "Fn::Join": [ "",
                                         [
@@ -377,7 +371,7 @@
                                     ]
                                 }
                             },
-                            "05-chmod-ec2-metadata": {
+                            "07-chmod-ec2-metadata": {
                                 "command": {
                                     "Fn::Join": [ "",
                                         [
@@ -635,10 +629,10 @@
                                             "; ",
                                             { "Fn::Sub":
                                                 [
-                                                    "${tuiTarget}/scripts/tui-repo.sh '${talendRepoDir}' '${tuiRepo}'",
+                                                    "${tuiTarget}/scripts/tui-repo.sh '${talendRepoDir}' '${tuiRepoDir}'",
                                                     {
                                                         "tuiTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiTarget" ] },
-                                                        "tuiRepo": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiRepo" ] },
+                                                        "tuiRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiRepoDir" ] },
                                                         "talendRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir" ] } 
                                                     }
                                                 ]
@@ -679,8 +673,15 @@
                                                     }
                                                 ] 
                                             },
-                                            "./install -q ",
-                                            { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] }
+                                            {
+                                                "Fn::Sub": [
+                                                    "./install -q ${tuiConfigOverrideOption} ${TalendVersion} ${profile}; ",
+                                                    {
+                                                        "profile": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] },
+                                                        "tuiConfigOverrideOption": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiConfigOverrideOption" ] }
+                                                    }
+                                                ]
+                                            }
                                         ] 
                                     ]
                                 },
