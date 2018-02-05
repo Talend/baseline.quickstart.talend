@@ -818,11 +818,11 @@
                                             "; ",
                                             { "Fn::Sub":
                                                 [
-                                                    "${tuiTarget}/scripts/tui-repo.sh '${talendRepoDir}' '${tuiRepoDir}'",
+                                                    "${tuiTarget}/scripts/tui-repo.sh '${talendRepoDir}' '${tuiRepoDir}' '${TalendVersion}'",
                                                     {
                                                         "tuiTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiTarget" ] },
                                                         "tuiRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiRepoDir" ] },
-                                                        "talendRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir" ] } 
+                                                        "talendRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir" ] }
                                                     }
                                                 ]
                                             }

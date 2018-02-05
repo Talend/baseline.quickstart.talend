@@ -148,7 +148,9 @@
                 "tuiRepoDir": "/opt/tui/repo",
                 "elasticSearch": "/opt/talend/6.3.1/logserver/elasticsearch-2.4.0",
                 "kibana": "/opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64",
-                "logstash": "/opt/talend/6.3.1/logserver/logstash-2.4.0"
+                "logstash": "/opt/talend/6.3.1/logserver/logstash-2.4.0",
+                "elasticSearchVersion": "2.4.0",
+                "startLogserver": "start_logserver.sh"
             },
             "6.4.1": {
                 "licenseTarget": "/home/ec2-user/tui/licenses/6.4.1",
@@ -165,7 +167,9 @@
                 "tuiRepoDir": "/opt/tui/repo",
                 "elasticSearch": "/opt/talend/6.4.1/logserver/elasticsearch-2.4.0",
                 "kibana": "/opt/talend/6.4.1/logserver/kibana-4.6.1-linux-x86_64",
-                "logstash": "/opt/talend/6.4.1/logserver/logstash-2.4.0"
+                "logstash": "/opt/talend/6.4.1/logserver/logstash-2.4.0",
+                "elasticSearchVersion": "2.4.0",
+                "startLogserver": "start"
             }
         },
         "AWSRegionArch2AMI": {
@@ -228,7 +232,16 @@
         },
 		"isPublicSubnet": {
 			"Fn::Not": [ { "Condition": "isPrivateSubnet" } ]
-		}
+		},
+        "is631": {
+            "Fn::Equals": [
+                { "Ref": "TalendVersion" },
+                "6.3.1"
+            ]
+        },
+        "isLogserverService": {
+			"Fn::Not": [ { "Condition": "is631" } ]
+        }
 	},
     "Resources": {
         "TalendServerInstance": {
@@ -629,11 +642,11 @@
                                             "; ",
                                             { "Fn::Sub":
                                                 [
-                                                    "${tuiTarget}/scripts/tui-repo.sh '${talendRepoDir}' '${tuiRepoDir}'",
+                                                    "${tuiTarget}/scripts/tui-repo.sh '${talendRepoDir}' '${tuiRepoDir}' '${TalendVersion}'",
                                                     {
                                                         "tuiTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiTarget" ] },
                                                         "tuiRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiRepoDir" ] },
-                                                        "talendRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir" ] } 
+                                                        "talendRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir" ] }
                                                     }
                                                 ]
                                             }
@@ -695,15 +708,21 @@
                             },
                             "04-run": {
                                 "command": {
-									"Fn::Join": [ 
-										"", 
-										[
-											"chmod +x /opt/talend/6.3.1/logserver/elasticsearch-2.4.0/bin/elasticsearch; ",
-											"sudo -E -u talend ./start_logserver.sh"
-										] 
-									]
+                                    "Fn::If": [
+                                        "isLogserverService",
+                                        "echo 'Elastic Search started as a service by TUI'",
+                                        { "Fn::Sub":
+                                            [ 
+                                                "chmod +x /opt/talend/${TalendVersion}/logserver/elasticsearch-${elasticSearchVersion}/bin/elasticsearch; sudo -E -u talend ./${startLogserver}.sh",
+                                                {
+                                                    "elasticSearchVersion": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "elasticSearchVersion" ] },
+                                                    "startLogserver": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "startLogserver" ] }
+                                                }
+                                            ]
+                                        }
+                                    ]
 								},
-                                "cwd": "/opt/talend/6.3.1/logserver"
+                                "cwd": { "Fn::Sub": "/opt/talend/${TalendVersion}/logserver" }
                             },
                             "07-finished": {
                                 "command": "echo FINISHED >> /home/ec2-user/logserver.log"
