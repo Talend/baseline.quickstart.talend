@@ -29,8 +29,10 @@ public_ipv4=$(./ec2-metadata -v)
 public_ipv4=$(parse_metadata_result "${public_ipv4}")
 
 if [ -z "${public_ipv4}" ] || [ "${public_ipv4}" == "not available" ] || [ -z "${public_hostname}" ] || [ "${public_hostname}" == "not available" ]; then
+    echo export TALEND_TAC_HOST="${internal_hostname}" >> "${target_path}"
     echo export TALEND_MONITORING_HOST="${internal_hostname}" >> "${target_path}"
 else
+    echo export TALEND_TAC_HOST="${public_hostname}" >> "${target_path}"
     echo export TALEND_MONITORING_HOST="${public_hostname}" >> "${target_path}"
 fi
 

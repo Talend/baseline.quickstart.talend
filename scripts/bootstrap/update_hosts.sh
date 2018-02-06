@@ -41,12 +41,23 @@ if [ -z "${public_ipv4}" ] || [ "${public_ipv4}" == "not available" ] || [ -z "$
     public_hostname=""
 fi
 
+echo "--------- before -----------" >> "/home/${user}/update_hosts.log"
+
+echo "hostname=$(hostname)" | tee -a "/home/${user}/update_hosts.log"
+echo "hostname -i=$(hostname -i)" | tee -a "/home/${user}/update_hosts.log"
+echo "hostname -I=$(hostname -I)" | tee -a "/home/${user}/update_hosts.log"
+echo "hostname -f=$(hostname -f)" | tee -a "/home/${user}/update_hosts.log"
+echo "hostname -A=$(hostname -A)" | tee -a "/home/${user}/update_hosts.log"
+
+
 echo "${local_ipv4}    ${private_dns} ${public_hostname}" >> /etc/hosts
 
 sed -i "s/HOSTNAME=.*/HOSTNAME=${private_dns}/g" /etc/sysconfig/network
 sudo hostname "${private_dns}"
 
 sudo service network restart
+
+echo "--------- after -----------" >> "/home/${user}/update_hosts.log"
 
 echo "hostname=$(hostname)" | tee -a "/home/${user}/update_hosts.log"
 echo "hostname -i=$(hostname -i)" | tee -a "/home/${user}/update_hosts.log"

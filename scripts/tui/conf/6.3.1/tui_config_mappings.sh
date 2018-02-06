@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -x
-
 export TUI_CONFIG_amc_app__server_credentials_user=$TALEND_AMC_TOMCAT_MANAGER_USER
 export TUI_CONFIG_amc_app__server_credentials_password=$TALEND_AMC_TOMCAT_MANAGER_PASSWORD
 export TUI_CONFIG_amc_app__server_instance_name=$TALEND_AMC_NAME

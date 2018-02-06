@@ -623,6 +623,19 @@
                                                     { "talendRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir"] } }
                                                 ]
                                             },
+                                            "export TALEND_TAC_NAME=tac",
+                                            "export TALEND_TAC_WEBAPP_NAME=tac",
+                                            "export TALEND_TAC_TOMCAT_MANAGER_USER=tadmin",
+                                            { "Fn::Sub": "export TALEND_TAC_TOMCAT_MANAGER_PASSWORD=${TacPassword}" },
+                                            "export TALEND_TAC_PORT=8080",
+                                            "export TALEND_AMC_NAME=amc",
+                                            "export TALEND_AMC_WEBAPP_NAME=amc",
+                                            "export TALEND_AMC_TOMCAT_MANAGER_USER=tadmin",
+                                            { "Fn::Sub": "export TALEND_AMC_TOMCAT_MANAGER_PASSWORD=${TacPassword}" },
+                                            "export TALEND_AMC_PORT=8085",
+                                            "export TALEND_LOGSTASH_CMDLINE_PORT=8056",
+                                            "export TALEND_LOGSTASH_JOBSERVER_PORT=8055",
+                                            "export TALEND_LOGSTASH_ELASTIC_SEARCH_PORT=9200",
                                             { "Fn::Sub": "export TALEND_TAC_DB_HOST=${TacDbHost}" },
                                             { "Fn::Sub": "export TALEND_TAC_DB_PORT=${TacDbPort}" },
                                             { "Fn::Sub": "export TALEND_TAC_DB_SCHEMA=${TacDbSchema}" },
@@ -953,9 +966,14 @@
                                                     }
                                                 ] 
                                             },
+                                            "echo TALEND_TAC_NAME=${TALEND_TAC_NAME};",
+                                            "echo TALEND_TAC_WEBAPP_NAME=${TALEND_TAC_WEBAPP_NAME};",
+                                            "echo TALEND_AMC_NAME=${TALEND_AMC_NAME};",
+                                            "echo TALEND_AMC_WEBAPP_NAME=${TALEND_AMC_WEBAPP_NAME};",
+                                            "echo TALEND_TAC_HOST=${TALEND_TAC_HOST};",
                                             {
                                                 "Fn::Sub": [
-                                                    "./install -q ${tuiConfigOverrideOption} ${TalendVersion} ${profile}; ",
+                                                    "./install -q ${tuiConfigOverrideOption} ${TalendVersion} ${profile} --debug; ",
                                                     {
                                                         "profile": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] },
                                                         "tuiConfigOverrideOption": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiConfigOverrideOption" ] }
@@ -1077,6 +1095,8 @@
                                                 ]
                                             },
                                             "/tac/create-tac-project-users.sh ",
+                                            { "Ref": "TalendVersion" },
+                                            " ",
                                             { "Ref": "TacPassword" }
                                         ]
                                     ]

@@ -6,8 +6,9 @@ set -x
 script_path=$(readlink -e "${BASH_SOURCE[0]}")
 script_dir="${script_path%/*}"
 
-declare tac_password="${1:-}"
-declare project_users_file="${2:-${script_dir}/project-users.data}"
+declare talend_version="${1:-}"
+declare tac_password="${2:-}"
+declare project_users_file="${3:-${script_dir}/project-users.data}"
 
 declare usage="create-tac-project-users.sh <project_users_file>"
 
@@ -18,7 +19,7 @@ declare usage="create-tac-project-users.sh <project_users_file>"
 [ ! -f "${project_users_file}" ] && echo "project users data file argument '${projects_users_file}' does not exist" && exit 1
 
 declare tac_url="http://localhost:8080/tac"
-declare metaservlet_path="/opt/talend/6.3.1/tac/webapps/tac/WEB-INF/classes/MetaServletCaller.sh"
+declare metaservlet_path="/opt/talend/${talend_version}/tac/webapps/tac/WEB-INF/classes/MetaServletCaller.sh"
 chmod 750 "${metaservlet_path}"
 
 # todo: refactor to function
