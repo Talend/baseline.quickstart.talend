@@ -295,7 +295,8 @@
 				"talendRepoDir": "/opt/repo",
                 "tuiRepoDir": "/opt/tui/repo",
                 "workDir": "/home/ec2-user/work",
-                "demoJobsPath": "demo_jobs/oodlejobs.tgz"
+                "demoJobsPath": "demo_jobs/oodlejobs.tgz",
+                "debugOption": ""
             },
             "6.4.1": {
                 "licenseTarget": "/home/ec2-user/tui/licenses/6.4.1",
@@ -311,7 +312,8 @@
 				"talendRepoDir": "/opt/repo",
                 "tuiRepoDir": "/opt/tui/repo",
                 "workDir": "/home/ec2-user/work",
-                "demoJobsPath": "demo_jobs/oodlejobs.tgz"
+                "demoJobsPath": "demo_jobs/oodlejobs.tgz",
+                "debugOption": "--debug"
             }
         },
         "AWSRegionArch2AMI": {
@@ -973,10 +975,11 @@
                                             "echo TALEND_TAC_HOST=${TALEND_TAC_HOST};",
                                             {
                                                 "Fn::Sub": [
-                                                    "./install -q ${tuiConfigOverrideOption} ${TalendVersion} ${profile} --debug; ",
+                                                    "./install -q ${tuiConfigOverrideOption} ${TalendVersion} ${profile} ${debugOption}; ",
                                                     {
                                                         "profile": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] },
-                                                        "tuiConfigOverrideOption": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiConfigOverrideOption" ] }
+                                                        "tuiConfigOverrideOption": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tuiConfigOverrideOption" ] },
+                                                        "debugOption": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "debugOption" ] }
                                                     }
                                                 ]
                                             }
