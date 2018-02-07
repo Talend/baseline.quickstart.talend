@@ -133,7 +133,7 @@
             "Default": "true"
         },
         "TacPassword": {
-            "Description": "TAC application password for tadmin account.",
+            "Description": "TAC application password for tadmin@talend.com account.",
             "Type": "String",
             "NoEcho": "true"
         },
@@ -627,6 +627,8 @@
                                             },
                                             "export TALEND_TAC_NAME=tac",
                                             "export TALEND_TAC_WEBAPP_NAME=tac",
+                                            "export TALEND_TAC_USERID=tadmin@talend.com",
+                                            { "Fn::Sub": "export TALEND_TAC_PASSWORD=${TacPassword}" },
                                             "export TALEND_TAC_TOMCAT_MANAGER_USER=tadmin",
                                             { "Fn::Sub": "export TALEND_TAC_TOMCAT_MANAGER_PASSWORD=${TacPassword}" },
                                             "export TALEND_TAC_PORT=8080",
