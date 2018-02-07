@@ -285,9 +285,9 @@
                                     "Fn::Sub": "aws --region=${AWS::Region} s3 cp s3://${TalendLicenseBucket}/license /home/ubuntu/generated/licenses/license"
                                 }
                             },
-                            "01-download-qss3bucket": {
+                            "01-download-scripts": {
                                 "command": {
-                                    "Fn::Sub": "aws --region=${AWS::Region} s3 cp s3://${QSS3BucketName}/modules/talend/scripts /home/ubuntu/baseline --recursive"
+                                    "Fn::Sub": "aws --region=${AWS::Region} s3 cp s3://${TalendResourceBucket}/scripts /home/ubuntu/baseline --recursive"
                                 }
                             },
                             "02-download-tui": {
