@@ -296,7 +296,9 @@
                 "tuiRepoDir": "/opt/tui/repo",
                 "workDir": "/home/ec2-user/work",
                 "demoJobsPath": "demo_jobs/oodlejobs.tgz",
-                "debugOption": ""
+                "debugOption": "",
+                "tacDefaultUser": "admin@company.com",
+                "tacDefaultPassword": "admin"
             },
             "6.4.1": {
                 "licenseTarget": "/home/ec2-user/tui/licenses/6.4.1",
@@ -313,7 +315,9 @@
                 "tuiRepoDir": "/opt/tui/repo",
                 "workDir": "/home/ec2-user/work",
                 "demoJobsPath": "demo_jobs/oodlejobs.tgz",
-                "debugOption": "--debug"
+                "debugOption": "--debug",
+                "tacDefaultUser": "security@company.com",
+                "tacDefaultPassword": "admin"
             }
         },
         "AWSRegionArch2AMI": {
@@ -1089,21 +1093,13 @@
                             },
                             "10-project-users": {
                                 "command": {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    { "Ref": "TalendVersion" },
-                                                    "baselineTarget"
-                                                ]
-                                            },
-                                            "/tac/create-tac-project-users.sh ",
-                                            { "Ref": "TalendVersion" },
-                                            " ",
-                                            { "Ref": "TacPassword" }
-                                        ]
+                                    "Fn::Sub": [
+                                        "${baselineTarget}/tac/create-tac-project-users.sh '${TalendVersion}' '${TacPassword}' '${tacDefaultUser}' '${tacDefaultPassword}'",
+                                        {
+                                            "baselineTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
+                                            "tacDefaultUser": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tacDefaultUser" ] },
+                                            "tacDefaultPassword": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tacDefaultPassword" ] }
+                                        }
                                     ]
                                 },
                                 "cwd": {
