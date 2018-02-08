@@ -10,7 +10,7 @@ declare talend_version="${1:-}"
 declare tac_password="${2:-}"
 declare project_users_file="${3:-${script_dir}/project-users.data}"
 
-declare usage="create-tac-project-users.sh <project_users_file>"
+declare usage="create-tac-project-users.sh <talend_version> <tac_password> <project_users_file>"
 
 [ -z "${tac_password}" ] && echo "tac_password required: usage: ${usage}" && exit 1
 
@@ -24,6 +24,9 @@ chmod 750 "${metaservlet_path}"
 
 # todo: refactor to function
 
+default_account_user="security@company.com"
+default_account_password="admin"
+
 # create tadmin with password from environment
 
 USER_FNAME="Talend"
@@ -31,7 +34,8 @@ USER_LNAME="Administrator"
 USER_LOGIN="tadmin@talend.com"
 USER_PASSWD="${tac_password}"
 USER_TYPE="DI"
-JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
+#JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
+JSON={"actionName":"createUser","authPass":"${default_account_password}","authUser":"${default_account_user}","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
 "${metaservlet_path}" --tac-url "${tac_url}" --json-params="${JSON}"
 echo "tadmin added: result $?"
 
