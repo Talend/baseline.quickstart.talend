@@ -12,7 +12,7 @@ declare default_account_user="${3:-}"
 declare default_account_password="${4:-}"
 declare project_users_file="${5:-${script_dir}/project-users.data}"
 
-declare usage="create-tac-project-users.sh <talend_version> <tac_password> <project_users_file>"
+declare usage="create-tac-project-users.sh <talend_version> <tac_password> <default_account_user> <default_account_password> [ <project_users_file> ]"
 
 [ -z "${tac_password}" ] && echo "tac_password required: usage: ${usage}" && exit 1
 
@@ -37,7 +37,7 @@ USER_LOGIN="tadmin@talend.com"
 USER_PASSWD="${tac_password}"
 USER_TYPE="DI"
 #JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
-JSON={"actionName":"createUser","authPass":"${default_account_password}","authUser":"${default_account_user}","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
+JSON={"actionName":"createUser","authPass":"${default_account_password}","authUser":"${default_account_user}","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer","Security Administrator"],"userType":"$USER_TYPE"}
 "${metaservlet_path}" --tac-url "${tac_url}" --json-params="${JSON}"
 echo "tadmin added: result $?"
 
