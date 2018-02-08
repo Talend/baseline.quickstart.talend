@@ -23,7 +23,7 @@ if [ -z "`which curl | grep -e 'no curl'`" ]; then
 fi
 
 ES_HOME=${MY_HOME}/elasticsearch-2.4.0
-ES_HOST="http://:9200"
+ES_HOST="http://localhost:9200"
 KIBANA_HOME=${MY_HOME}/kibana-4.6.1-${PLAT}
 LOGSTASH_HOME=${MY_HOME}/logstash-2.4.0
 
@@ -67,7 +67,7 @@ wait_for_index() {
 # start ES
 export ES_JAVA_OPTS="-Dmapper.allow_dots_in_name=true"
 chmod u=rwx,g=rx,o=r ${ES_HOME}/bin/elasticsearch
-#${ES_HOME}/bin/elasticsearch -d
+${ES_HOME}/bin/elasticsearch -d
 wait_for_es
 
 # create/update template for logstash-* indices
