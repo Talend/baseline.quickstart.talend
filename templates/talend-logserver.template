@@ -169,7 +169,7 @@
                 "kibana": "/opt/talend/6.4.1/logserver/kibana-4.6.1-linux-x86_64",
                 "logstash": "/opt/talend/6.4.1/logserver/logstash-2.4.0",
                 "elasticSearchVersion": "2.4.0",
-                "startLogserver": "start"
+                "startLogserver": "start-logerver-6.4.1.sh"
             }
         },
         "AWSRegionArch2AMI": {
@@ -241,6 +241,12 @@
         },
         "isLogserverService": {
 			"Fn::Not": [ { "Condition": "is631" } ]
+        },
+        "trueCondition": {
+            "Fn::Equals": [ "1", "1" ]
+        },
+        "falseCondition": {
+            "Fn::Equals": [ "1", "2" ]
         }
 	},
     "Resources": {
@@ -709,11 +715,19 @@
                             "04-run": {
                                 "command": {
                                     "Fn::If": [
-                                        "isLogserverService",
-                                        "echo 'Elastic Search started as a service by TUI'",
+                                        "is631",
                                         { "Fn::Sub":
                                             [ 
-                                                "chmod +x /opt/talend/${TalendVersion}/logserver/elasticsearch-${elasticSearchVersion}/bin/elasticsearch; sudo -E -u talend ./${startLogserver}.sh",
+                                                "chmod +x /opt/talend/${TalendVersion}/logserver/elasticsearch-${elasticSearchVersion}/bin/elasticsearch; sudo -E -u talend ./${startLogserver}",
+                                                {
+                                                    "elasticSearchVersion": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "elasticSearchVersion" ] },
+                                                    "startLogserver": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "startLogserver" ] }
+                                                }
+                                            ]
+                                        },
+                                        { "Fn::Sub":
+                                            [
+                                                "cp ${baselineTarget}/logserver/${startLogserver} /opt/talend/${TalendVersion}/logserver; sudo -E -u talend ./${startLogserver}",
                                                 {
                                                     "elasticSearchVersion": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "elasticSearchVersion" ] },
                                                     "startLogserver": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "startLogserver" ] }

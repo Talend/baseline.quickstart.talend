@@ -338,7 +338,7 @@
                                 { "Fn::Sub": "wget http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/update_hosts_ubuntu.sh" },
 								"chmod +x update_hosts_ubuntu.sh",
                                 "./update_hosts_ubuntu.sh",
-                                "apt-get install -y python-pip",
+                                "while ! apt-get install -y python-pip ; do sleep 10; done",
                                 "pip install --upgrade pip",
                                 "pip install awscli",
                                 "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz",
