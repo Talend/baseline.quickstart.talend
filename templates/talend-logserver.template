@@ -729,6 +729,7 @@
                                             [
                                                 "cp ${baselineTarget}/logserver/${startLogserver} /opt/talend/${TalendVersion}/logserver; sudo -E -u talend ./${startLogserver}",
                                                 {
+                                                    "baselineTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
                                                     "elasticSearchVersion": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "elasticSearchVersion" ] },
                                                     "startLogserver": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "startLogserver" ] }
                                                 }
