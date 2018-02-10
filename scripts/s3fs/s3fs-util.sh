@@ -84,17 +84,17 @@ function is_s3fs_installed() {
 #--------------
 
 function get_s3fs() {
-    local tar_file_ref="${1:-}"
+    local _tar_file="${1:-}"
     local git_token="${2:-}"
     local s3fs_version="${3:-1.82}"
 
-    required tar_file_ref git_token s3fs_version
+    required _tar_file git_token s3fs_version
 
     local organization="s3fs-fuse"
     local repo_name="s3fs-fuse"
     local branch="v${s3fs_version}"
     local out_file="${branch}.tar.gz"
-    assign "${tar_file_ref}" "${out_file}"
+    assign "${_tar_file}" "${out_file}"
 
     wget -O "${out_file}" \
         --header="Authorization: token ${git_token}" \
@@ -261,7 +261,7 @@ function s3fs_file_attrib() {
 
 function s3fs_dir_attrib() {
 
-    local target_owner="${1:-ec2-user}}"
+    local target_owner="${1:-ec2-user}"
     local mount_dir="${2:-/opt/repo}"
 
     local mydir_list

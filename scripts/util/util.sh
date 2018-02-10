@@ -1,26 +1,48 @@
 #!/usr/bin/env bash
 
+set -e
 set -u
 
 [ "${UTIL_FLAG:-0}" -gt 0 ] && return 0
 
 export UTIL_FLAG=1
 
+util_script_path=$(readlink -e "${BASH_SOURCE[0]}")
+util_script_dir="${util_script_path%/*}"
 
-#
-# always be sure to quote both arguments when invoking this function, otherwise$
-#
+# shellcheck source=./string_util.sh
+source "${util_script_dir}/string_util.sh"
+
+
+function get_stack() {
+    local _stack="${1:-}"
+    local stack_offset="${2:-1}"
+
+    local stack_out=""
+    local stack_index="${stack_offset}"
+    for current_source in "${BASH_SOURCE[@]:${stack_offset}}"; do
+        local source_index=$((stack_index - 1))
+        stack_out+="${FUNCNAME[${source_index}]}[${current_source##*/}#${BASH_LINENO[${source_index}]}] "
+        stack_index=$((stack_index + 1))
+    done
+
+    [ -z "${_stack}" ] && echo "ERROR : ${0} : '_stack' argument required : ${stack_out}" 1>&2 && return 1
+    [ -z "${stack_offset}" ] && echo "ERROR : ${0} : 'stack_offset' argument required : ${stack_out}" 1>&2 && return 1
+    [ -z "${!_stack+x}" ] && echo "ERROR : ${0} : reference variable _stack['${_stack}'] not defined prior to use : ${stack_out}" 1>&2 && return 1
+
+    printf -v "${_stack}" '%s' "${stack_out}"
+    return 0
+}
+
+
 function assign() {
-    local _var="${1}"
+    local _var="${1:-}"
     local value="${2}"
-    if ! required _var value; then
-        echo "ERROR: ${BASH_SOURCE[1]##*/} ${BASH_LINENO[1]} : error in required parameters of function assign : ${FUNCNAME[*]:1}" 1>&2
-        return 1
-    fi
-    if [ -z "${!_var+x}" ]; then
-        echo "ERROR: ${BASH_SOURCE[1]##*/} ${BASH_LINENO[1]} : assign reference variable '${_var}' not defined prior to use : ${FUNCNAME[*]:1}" 1>&2
-        return 1
-    fi
+    local stack=""
+    get_stack stack 2
+
+    [ -z "${_var}" ] && echo "ERROR : ${0} : '_var' argument required : ${stack}" 1>&2 && return 1
+    [ -z "${!_var+x}" ] && echo "ERROR: ${0} : reference variable _var['${_var}'] not defined prior to use : ${stack}" 1>&2 && return 1
     printf -v "${_var}" '%s' "${value}"
 }
 
@@ -30,66 +52,139 @@ define(){
 }
 
 
+function indent() {
+    local _indent="${1}"
+
+    local indent_out=""
+    local depth=${#FUNCNAME[@]}
+    local depth=$((depth - 2))
+    local depth=$((depth * 2))
+    string_repeat indent_out " " "${depth}"
+    printf -v "${_indent}" "%s" "${indent_out}"
+}
+
+
 function warningLog() {
-    [ -n "${WARNING_LOG:-}" ] && echo "WARNING: ${*} : ${FUNCNAME[*]:1}" 1>&2
+    local stack=""
+    get_stack stack 2
+
+    local spaces=""
+    indent spaces
+    [ -n "${WARNING_LOG:-}" ] && echo "${spaces}WARNING: ${*} : ${stack}" 1>&2
+    return 0
+}
+
+
+function infoStack() {
+    local stack=""
+    get_stack stack 2
+
+    local spaces=""
+    indent spaces
+    [ -n "${INFO_LOG:-}" ] && echo "${spaces}INFO: ${*} : ${stack}" 1>&2
     return 0
 }
 
 
 function infoLog() {
-    [ -n "${INFO_LOG:-}" ] && echo "INFO: ${*} : ${FUNCNAME[*]:1}" 1>&2
+
+    local spaces=""
+    indent spaces
+    [ -n "${INFO_LOG:-}" ] && echo "${spaces}INFO: ${*}" 1>&2
     return 0
 }
 
 
 function infoVar() {
-    [ -n "${INFO_LOG:-}" ] && [ -z "${!1+x}" ] && echo "INFO: ${FUNCNAME[*]:1} : undefined variable '${1}'" && return 0
-    [ -n "${INFO_LOG:-}" ] && echo "INFO: ${1}=${!1}" 1>&2 && return 0
-    return 0
-}
+    local _varname="${1:-}"
+    local show_stack="${2:-}"
 
+    local stack=""
 
-function debugLog() {
-    [ -n "${DEBUG_LOG:-}" ] && echo "DEBUG: ${FUNCNAME[*]:1} : ${*}" 1>&2
-    return 0
-}
+    if [ -z "${_varname}" ]; then
+        get_stack stack 2
+        echo "ERROR: debugVar missing varname argument: ${stack}"
+        return 0
+    fi
 
+    [ "${show_stack}" == "true" ] && get_stack stack 2
 
-function debugVar() {
-    [ -n "${DEBUG_LOG:-}" ] && [ -z "${!1+x}" ] && echo "DEBUG: ${FUNCNAME[*]:1} : undefined variable '${1}'" && return 0
-    [ -n "${DEBUG_LOG:-}" ] && echo "DEBUG: ${FUNCNAME[*]:1} : ${1}=${!1}" 1>&2 && return 0
+    local spaces=""
+    indent spaces
+    [ -n "${INFO_LOG:-}" ] && [ -z "${!_varname+x}" ] && echo "${spaces}INFO: undefined variable '${_varname}' : ${stack}" && return 0
+    [ -n "${INFO_LOG:-}" ] && echo "${spaces}INFO: VAR: ${FUNCNAME[1]}: ${_varname}=${!_varname} : ${stack}" 1>&2 && return 0
     return 0
 }
 
 
 function debugStack() {
-    if [ -n "${DEBUG_LOG:-}" ] ; then
-        local args
-        [ "${#}" -gt 0 ] && args=": $*"
-        echo "DEBUG: ${FUNCNAME[*]:1}${args}" 1>&2
+    local stack=""
+    get_stack stack 2
+
+    local spaces=""
+    indent spaces
+    [ -n "${DEBUG_LOG:-}" ] && echo "${spaces}DEBUG: ${*} : ${stack}" 1>&2
+    return 0
+}
+
+
+function debugLog() {
+
+    local spaces=""
+    indent spaces
+    [ -n "${DEBUG_LOG:-}" ] && echo "${spaces}DEBUG: ${*}" 1>&2
+    return 0
+}
+
+
+function debugVar() {
+    local _varname="${1:-}"
+    local show_stack="${2:-}"
+
+    local stack=""
+
+    if [ -z "${_varname}" ]; then
+        get_stack stack 2
+        echo "ERROR: debugVar missing varname argument: ${stack}"
+        return 0
     fi
+
+    [ "${show_stack}" == "true" ] && get_stack stack 2
+
+    local spaces=""
+    indent spaces
+    [ -n "${DEBUG_LOG:-}" ] && [ -z "${!_varname+x}" ] && echo "${spaces}DEBUG: undefined variable '${_varname}' : ${stack}" && return 0
+    [ -n "${DEBUG_LOG:-}" ] && echo "${spaces}DEBUG: VAR: ${FUNCNAME[1]}: ${_varname}=${!_varname} : ${stack}" 1>&2 && return 0
     return 0
 }
 
 
 function errorMessage() {
-    echo "ERROR: ${BASH_SOURCE[-2]##*/} ${BASH_LINENO[-2]} : ${0} : ${FUNCNAME[*]:1} : ${*}" 1>&2
+    local message="${1:-}"
+    local stack_offset="${2:-2}"
+
+    local stack=""
+    get_stack stack "${stack_offset}"
+
+    local spaces=""
+    indent spaces
+    echo "${spaces}ERROR: ${message} : ${stack}" 1>&2
 }
 
 
 function defined() {
     local arg
     local error_message=""
+
     for arg in "${@}"; do
         if [ -z "${!arg+x}" ]; then
-            error_message="${error_message} undefined ${arg}"
+            error_message="${error_message} : undefined ${arg}"
         else
             debugLog "'${arg}' passed"
         fi
     done
     [ -n "${error_message}" ] \
-        && error_message="missing required arguments:${error_message}" \
-        && echo "$0: ${FUNCNAME[*]:1}: ${error_message}" 1>&2 \
+        && errorMessage "undefined variables${error_message}" \
         && return 1
     return 0
 }
@@ -129,19 +224,18 @@ function defined() {
 function required() {
     local arg
     local error_message=""
+
     for arg in "${@}"; do
         if [ -z "${!arg+x}" ]; then
-            error_message="${error_message} undefined ${arg}"
+            error_message="${error_message} : undefined ${arg}"
         elif [ -z "${!arg}" ]; then
-            error_message="${error_message} empty ${arg}"
+            error_message="${error_message} : empty ${arg}"
         else
             debugLog "'${arg}' passed"
         fi
     done
     [ -n "${error_message}" ] \
-        && error_message="missing required arguments:${error_message}" \
-        && echo "$0: ${FUNCNAME[*]:1}: ${error_message}" 1>&2 \
-        && debugLog "FAILED" \
+        && errorMessage "missing required arguments${error_message}" \
         && return 1
     return 0
 }
@@ -151,7 +245,7 @@ function required() {
 function validate() {
     local usage="validate <variable_ref> [ <allowed_values> ... ]"
     if [ "${#}" == 0 ]; then
-        echo "${FUNCNAME[*]:1} : required: missing arguments: ${usage}" 1>&2
+        errorMessage "missing arguments : ${usage}" 1>&2
         return 1
     elif [ "${#}" == 1 ]; then
         [ -z "${!1+x}" ] && errorMessage "undefined variable '${1}'" && return 1
@@ -173,7 +267,7 @@ function validate() {
 
 
 function die() {
-    echo "$0: ${FUNCNAME[*]:1} : ${*}" 1>&2
+    errorMessage "${1}" 2 1>&2
     exit 111
 }
 
@@ -184,7 +278,7 @@ function try() {
     done
     [ "${#}" -lt 1 ] && die "empty try statement"
 
-    ! "$@" && echo "ERROR: $0: ${FUNCNAME[*]:1}: cannot execute: ${*}" 1>&2 && exit 111
+    ! "$@" && errorMessage "cannot execute: ${*}" 2 1>&2 && exit 111
 
     return 0
 }
