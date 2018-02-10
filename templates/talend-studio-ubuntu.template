@@ -430,9 +430,9 @@
                                             "Type=Application",
                                             "Name=Talend Studio",
                                             "Comment=",
-                                            "Exec=/opt/talend/6.3.1/studio/studio/Talend-Studio-linux-gtk-x86_64 -clean",
+                                            { "Fn::Sub": "Exec=/opt/talend/${TalendVersion}/studio/studio/Talend-Studio-linux-gtk-x86_64 -clean" },
                                             "Icon=/home/ubuntu/Talend_BigData.png",
-                                            "Path=/opt/talend/6.3.1/studio/studio",
+                                            { "Fn::Sub": "Path=/opt/talend/${TalendVersion}/studio/studio" },
                                             "Terminal=false",
                                             "StartupNotify=false"
                                         ]
@@ -684,7 +684,7 @@
                                                 ]
                                             },
                                             "chown -R ubuntu:ubuntu /opt/talend;",
-                                            "chmod u+x /opt/talend/6.3.1/studio/studio/Talend-Studio-linux-gtk-x86_64",
+                                            { "Fn::Sub": "chmod u+x /opt/talend/${TalendVersion}/studio/studio/Talend-Studio-linux-gtk-x86_64" },
                                             "\""
                                         ] 
                                     ]

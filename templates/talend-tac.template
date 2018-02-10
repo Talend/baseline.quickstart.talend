@@ -974,11 +974,6 @@
                                                     }
                                                 ] 
                                             },
-                                            "echo TALEND_TAC_NAME=${TALEND_TAC_NAME};",
-                                            "echo TALEND_TAC_WEBAPP_NAME=${TALEND_TAC_WEBAPP_NAME};",
-                                            "echo TALEND_AMC_NAME=${TALEND_AMC_NAME};",
-                                            "echo TALEND_AMC_WEBAPP_NAME=${TALEND_AMC_WEBAPP_NAME};",
-                                            "echo TALEND_TAC_HOST=${TALEND_TAC_HOST};",
                                             {
                                                 "Fn::Sub": [
                                                     "./install -q ${tuiConfigOverrideOption} ${TalendVersion} ${profile} ${debugOption}; ",

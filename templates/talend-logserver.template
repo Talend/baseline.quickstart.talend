@@ -169,7 +169,7 @@
                 "kibana": "/opt/talend/6.4.1/logserver/kibana-4.6.1-linux-x86_64",
                 "logstash": "/opt/talend/6.4.1/logserver/logstash-2.4.0",
                 "elasticSearchVersion": "2.4.0",
-                "startLogserver": "start-logserver-6.4.1.sh"
+                "startLogserver": "start.sh"
             }
         },
         "AWSRegionArch2AMI": {
@@ -232,22 +232,7 @@
         },
 		"isPublicSubnet": {
 			"Fn::Not": [ { "Condition": "isPrivateSubnet" } ]
-		},
-        "is631": {
-            "Fn::Equals": [
-                { "Ref": "TalendVersion" },
-                "6.3.1"
-            ]
-        },
-        "isLogserverService": {
-			"Fn::Not": [ { "Condition": "is631" } ]
-        },
-        "trueCondition": {
-            "Fn::Equals": [ "1", "1" ]
-        },
-        "falseCondition": {
-            "Fn::Equals": [ "1", "2" ]
-        }
+		}
 	},
     "Resources": {
         "TalendServerInstance": {
@@ -410,70 +395,16 @@
                                     "Fn::Join": [
                                         "\n",
                                         [
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_REPO=",
-                                                        {
-                                                            "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir"]
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGSTASH_TAC_PORT=",
-                                                        {
-                                                            "Ref": "TalendLoggingTacPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGSTASH_JOBSERVER_PORT=",
-                                                        {
-                                                            "Ref": "TalendLoggingJobserverPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGSTASH_CMDLINE_PORT=",
-                                                        {
-                                                            "Ref": "TalendLoggingCmdlinePort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGSTASH_ELASTIC_SEARCH_PORT=",
-                                                        {
-                                                            "Ref": "TalendLoggingElasticSearchPort"
-                                                        }
-                                                    ]
-                                                ]
-                                            },
-                                            {
-                                                "Fn::Join": [
-                                                    "",
-                                                    [
-                                                        "export TALEND_LOGSTASH_KIBANA_PORT=",
-                                                        {
-                                                            "Ref": "TalendLoggingKibanaPort"
-                                                        }
-                                                    ]
+                                            { "Fn::Sub": "export TALEND_LOGSTASH_TAC_PORT=${TalendLoggingTacPort}" },
+                                            { "Fn::Sub": "export TALEND_LOGSTASH_JOBSERVER_PORT=${TalendLoggingJobserverPort}" },
+                                            { "Fn::Sub": "export TALEND_LOGSTASH_CMDLINE_PORT=${TalendLoggingCmdlinePort}" },
+                                            { "Fn::Sub": "export TALEND_LOGSTASH_ELASTIC_SEARCH_PORT=${TalendLoggingElasticSearchPort}" },
+                                            { "Fn::Sub": "export TALEND_LOGSTASH_KIBANA_PORT=${TalendLoggingKibanaPort}" },
+                                            { "Fn::Sub": [
+                                                    "export TALEND_REPO=${talendRepoDir}",
+                                                    {
+                                                        "talendRepoDir": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "talendRepoDir"] }
+                                                    }
                                                 ]
                                             }
                                         ]
@@ -714,26 +645,11 @@
                             },
                             "04-run": {
                                 "command": {
-                                    "Fn::If": [
-                                        "is631",
-                                        { "Fn::Sub":
-                                            [ 
-                                                "chmod +x /opt/talend/${TalendVersion}/logserver/elasticsearch-${elasticSearchVersion}/bin/elasticsearch; sudo -E -u talend ./${startLogserver}",
-                                                {
-                                                    "elasticSearchVersion": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "elasticSearchVersion" ] },
-                                                    "startLogserver": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "startLogserver" ] }
-                                                }
-                                            ]
-                                        },
-                                        { "Fn::Sub":
-                                            [
-                                                "chmod +x ${baselineTarget}/logserver/${startLogserver}; cp ${baselineTarget}/logserver/${startLogserver} /opt/talend/${TalendVersion}/logserver; sudo -E -u talend ./${startLogserver}",
-                                                {
-                                                    "baselineTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
-                                                    "elasticSearchVersion": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "elasticSearchVersion" ] },
-                                                    "startLogserver": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "startLogserver" ] }
-                                                }
-                                            ]
+                                    "Fn::Sub": [ 
+                                        "chmod +x /opt/talend/${TalendVersion}/logserver/elasticsearch-${elasticSearchVersion}/bin/elasticsearch; sudo -E -u talend ./${startLogserver}",
+                                        {
+                                            "elasticSearchVersion": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "elasticSearchVersion" ] },
+                                            "startLogserver": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "startLogserver" ] }
                                         }
                                     ]
 								},
