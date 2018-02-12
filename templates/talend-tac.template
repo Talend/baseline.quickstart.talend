@@ -296,9 +296,7 @@
                 "tuiRepoDir": "/opt/tui/repo",
                 "workDir": "/home/ec2-user/work",
                 "demoJobsPath": "demo_jobs/oodlejobs.tgz",
-                "debugOption": "",
-                "tacDefaultUser": "admin@company.com",
-                "tacDefaultPassword": "admin"
+                "debugOption": ""
             },
             "6.4.1": {
                 "licenseTarget": "/home/ec2-user/tui/licenses/6.4.1",
@@ -315,9 +313,7 @@
                 "tuiRepoDir": "/opt/tui/repo",
                 "workDir": "/home/ec2-user/work",
                 "demoJobsPath": "demo_jobs/oodlejobs.tgz",
-                "debugOption": "--debug",
-                "tacDefaultUser": "security@company.com",
-                "tacDefaultPassword": "admin"
+                "debugOption": "--debug"
             }
         },
         "AWSRegionArch2AMI": {
@@ -1089,11 +1085,9 @@
                             "10-project-users": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "${baselineTarget}/tac/create-tac-project-users.sh '${TalendVersion}' '${TacPassword}' '${tacDefaultUser}' '${tacDefaultPassword}'",
+                                        "${baselineTarget}/tac/create-tac-project-users.sh '${TalendVersion}' '${TacPassword}'",
                                         {
-                                            "baselineTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] },
-                                            "tacDefaultUser": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tacDefaultUser" ] },
-                                            "tacDefaultPassword": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "tacDefaultPassword" ] }
+                                            "baselineTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] }
                                         }
                                     ]
                                 },
