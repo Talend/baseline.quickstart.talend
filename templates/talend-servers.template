@@ -4,8 +4,8 @@
         "QSS3URL": {
             "Description": "Encapsulate variation in s3 root url for commercial or gov-cloud",
             "Type": "String",
-            "Default": "https://s3.amazonaws.com",
-            "AllowedValues": [ "https://s3.amazonaws.com", "https://s3-us-gov-west-1.amazonaws.com" ]
+            "Default": "s3.amazonaws.com",
+            "AllowedValues": [ "s3.amazonaws.com", "s3-us-gov-west-1.amazonaws.com" ]
         },
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
@@ -20,6 +20,16 @@
             "Default": "",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
             "Type": "String"
+        },
+        "TalendVersion": {
+            "Description": "Talend Product Version",
+            "Type": "String",
+            "Default": "6.3.1",
+            "AllowedValues": [
+                "6.3.1",
+                "6.4.1"
+            ],
+            "ConstraintDescription": "must be a valid Talend product version."
         },
         "InstanceRole": {
             "Description": "Talend Server EC2 IAM Role",
@@ -69,40 +79,12 @@
             "Type": "AWS::EC2::SecurityGroup::Id",
             "Description": "Git Security Group"
         },
-        "JobserverAutoscaleMinSize": {
-            "Description": "Talend Jobserver autoscale minimum size",
-            "Type": "Number",
-            "MinValue": "1",
-            "MaxValue": "10",
-            "Default": "1"
-        },
-        "JobserverAutoscaleMaxSize": {
-            "Description": "Talend Jobserver autoscale maximum size",
-            "Type": "Number",
-            "MinValue": "1",
-            "MaxValue": "10",
-            "Default": "5"
-        },
         "JobserverAutoscaleDesiredCapacity": {
             "Description": "Talend Jobserver autoscale maximum size",
             "Type": "Number",
             "MinValue": "1",
             "MaxValue": "10",
             "Default": "2"
-        },
-        "DistantRunAutoscaleMinSize": {
-            "Description": "Talend DistantRun autoscale minimum size",
-            "Type": "Number",
-            "MinValue": "1",
-            "MaxValue": "10",
-            "Default": "1"
-        },
-        "DistantRunAutoscaleMaxSize": {
-            "Description": "Talend DistantRun autoscale maximum size",
-            "Type": "Number",
-            "MinValue": "1",
-            "MaxValue": "10",
-            "Default": "5"
         },
         "DistantRunAutoscaleDesiredCapacity": {
             "Description": "Talend DistantRun autoscale maximum size",
@@ -430,9 +412,10 @@
             "Type": "AWS::CloudFormation::Stack",
             "Condition": "CreateGitStackCondition",
             "Properties": {
-                "TemplateURL": { "Fn::Sub": "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}templates/gitlab.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/gitlab.template" },
                 "TimeoutInMinutes": 30,
                 "Parameters": {
+                    "TalendVersion": { "Ref": "TalendVersion" },
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
                     "InstanceType": { "Ref": "GitInstanceType" },
@@ -457,8 +440,9 @@
 		"NexusStack": {
 			"Type" : "AWS::CloudFormation::Stack",
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-nexus.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-nexus.template" },
 				"Parameters" : {
+                    "TalendVersion": { "Ref": "TalendVersion" },
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
 					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
@@ -480,8 +464,9 @@
 		"LogserverStack": {
 			"Type" : "AWS::CloudFormation::Stack",
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-logserver.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-logserver.template" },
 				"Parameters" : {
+                    "TalendVersion": { "Ref": "TalendVersion" },
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
 					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
@@ -501,8 +486,9 @@
 			"Type" : "AWS::CloudFormation::Stack",
 			"DependsOn": [ "NexusStack", "LogserverStack" ],
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-tac.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-tac.template" },
 				"Parameters" : {
+                    "TalendVersion": { "Ref": "TalendVersion" },
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
 					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
@@ -561,8 +547,9 @@
 			"Type" : "AWS::CloudFormation::Stack",
 			"DependsOn": [ "TacStack", "LogserverStack" ],
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
 				"Parameters" : {
+                    "TalendVersion": { "Ref": "TalendVersion" },
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
 					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
@@ -575,8 +562,8 @@
 					"SubnetId2": { "Ref": "PrivateSubnetId2" },
                     "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "JobserverSecurityGroup" },
-                    "JobserverAutoscaleMinSize": { "Ref": "JobserverAutoscaleMinSize" },
-                    "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
+                    "JobserverAutoscaleMinSize": "1",
+                    "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleDesiredCapacity" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
@@ -591,8 +578,9 @@
             "Condition" : "CreateDistantRunStackCondition",
 			"DependsOn": [ "LogserverStack" ],
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "${QSS3URL}/${QSS3BucketName}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
 				"Parameters" : {
+                    "TalendVersion": { "Ref": "TalendVersion" },
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
                     "QSS3KeyPrefix": { "Fn::Sub": "${QSS3KeyPrefix}" },
 					"TalendLicenseBucket":  { "Ref": "TalendLicenseBucket" },
@@ -605,8 +593,8 @@
 					"SubnetId2": { "Ref": "PublicSubnetId2" },
                     "PrivateSubnet": "public",
 					"SecurityGroupIds": { "Ref": "DistantRunSecurityGroup" },
-                    "JobserverAutoscaleMinSize": { "Ref": "DistantRunAutoscaleMinSize" },
-                    "JobserverAutoscaleMaxSize": { "Ref": "DistantRunAutoscaleMaxSize" },
+                    "JobserverAutoscaleMinSize": "1",
+                    "JobserverAutoscaleMaxSize": { "Ref": "DistantRunAutoscaleDesiredCapacity" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "DistantRunAutoscaleDesiredCapacity" },
 					"TacHost": "",
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
@@ -653,42 +641,69 @@
 				"Name": { "Fn::Sub": "${AWS::StackName}:GitStack" } 
 				} 
         },
+<<<<<<< HEAD
         "GitPublicDnsName": {
 		    "Condition": "CreateGitStackCondition",				
             "Value": "Routed through ELB",
             "Description": "Git public DNS address",
+=======
+        "NexusDnsName": {
+            "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.publicDnsName" ] },
+            "Description": "Nexus DNS name",
+>>>>>>> 3469b5edc9211ddebad3731fd486d687399ace76
 			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:GitPublicDnsName" } 
-			}
-        },		
-        "TacPrivateIp": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateIp"] },
-            "Description": "TAC private IP address",
-			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:TacPrivateIp" } 
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:NexusDnsName"
+				}
 			}
         },
+        "LogserverDnsName": {
+            "Value": { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] },
+            "Description": "Logserver DNS name",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:LogserverDnsName"
+				}
+			}
+        },
+<<<<<<< HEAD
         "TacPublicIp": {
             "Value": "Routed through ELB",
             "Description": "TAC public IP address",
+=======
+        "GitDnsName": {
+		    "Condition": "CreateGitStackCondition",				
+            "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName"] },
+            "Description": "Git DNS name",
+>>>>>>> 3469b5edc9211ddebad3731fd486d687399ace76
 			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:TacPublicIp" } 
+				"Name": { "Fn::Sub": "${AWS::StackName}:GitDnsName" } 
 			}
         },
+<<<<<<< HEAD
         "TacPublicDnsName": {
             "Value": "Routed through ELB",
             "Description": "TAC public DNS",
+=======
+        "TacDnsName": {
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicDnsName"] },
+            "Description": "TAC DNS name",
+>>>>>>> 3469b5edc9211ddebad3731fd486d687399ace76
 			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:TacPublicDnsName" } 
+				"Name": { "Fn::Sub": "${AWS::StackName}:TacDnsName" } 
 			}
         },
+<<<<<<< HEAD
         "NexusPublicDnsName": {
             "Value": "Routed through ELB",
             "Description": "Talend public DNS",
+=======
+        "TacIp": {
+            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateIp"] },
+            "Description": "TAC IP address",
+>>>>>>> 3469b5edc9211ddebad3731fd486d687399ace76
 			"Export": {
-				"Name": {
-					"Fn::Sub": "${AWS::StackName}:publicDnsName"
-				}
+				"Name": { "Fn::Sub": "${AWS::StackName}:TacIp" } 
 			}
         }
     }

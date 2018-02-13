@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+set -o pipefail
+
+script_path=$(readlink -e "${BASH_SOURCE[0]}")
+script_dir="${script_path%/*}"
+
+# shellcheck source=../../util/util.sh
+source ${script_dir}/../../util/util.sh
+# shellcheck source=../s3fs-util.sh
+source ${script_dir}/../s3fs-util.sh
+
+declare INFO_LOG="true"
+declare DEBUG_LOG="true"
+
+declare bucket="${1:-}"
+
+required bucket
+
+echo "## expect bucket ${bucket} mounted to /opt/repo"
+s3fs_mount "${bucket}" "/" "/opt/repo" "/opt/repo" "037" "none" "ec2-user"

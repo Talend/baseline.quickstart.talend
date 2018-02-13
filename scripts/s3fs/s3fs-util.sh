@@ -13,69 +13,168 @@ s3fs_util_script_dir="${s3fs_util_script_path%/*}"
 source "${s3fs_util_script_dir}/../util/util.sh"
 
 
-s3fs_builder() {
+#--------------
+#
+# selects s3fs pre-req installer, either yum or apt
+#
+#--------------
+
+function s3fs_builder() {
+    debugLog "BEGIN"
+
     local package_manager="${1}"
-    
+
     required package_manager
 
     [ ! "${package_manager}" == "yum" ] && [ ! "${package_manager}" == "apt" ] && errorMessage "invalid argument: package_manager valid values are yum or apt" && return 1
 
-    s3fs_packages="s3fs_build_${package_manager}"
+    "s3fs_build_${package_manager}"
+
+    debugLog "END"
 }
+
+
+#--------------
+#
+# s3fs pre-req yum installer
+#
+#--------------
 
 function s3fs_build_yum() {
+    debugLog "BEGIN"
     yum -y install automake fuse fuse-devel gcc-c++ git libcurl-devel libxml2-devel make openssl-devel
+    debugLog "END"
 }
+
+
+#--------------
+#
+# s3fs pre-req apt installer
+#
+#--------------
 
 function s3fs_build_apt() {
+    debugLog "BEGIN"
     apt-get -y install build-essential libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support automake libtool
     apt-get -y install pkg-config libssl-dev
+    debugLog "END"
 }
 
-function s3fs_build() {
 
-    local s3fs_dir="${1:-${s3fs_dir:-}}"
+#--------------
+#
+# return true (0) if s3fs is installed, else return false (1)
+#
+#--------------
 
+function is_s3fs_installed() {
     if [ -f "/usr/local/bin/s3fs" ]; then
         [ ! -L "/usr/bin/s3fs" ] && ln -s /usr/local/bin/s3fs /usr/bin/s3fs
-        return 0
-    fi
-
-    "${s3fs_packages:-s3fs_build_yum}"
-
-    local pushed=false
-    if [ -n "${s3fs_dir}" ]; then
-        try pushd "${s3fs_dir}"
-        pushed=true
-    elif [ ! -f autogen.sh ]; then
-        if [ -d s3fs-fuse ]; then
-            try pushd s3fs-fuse
-            pushed=true
-        else
-            git clone https://github.com/s3fs-fuse/s3fs-fuse.git
-            try pushd s3fs-fuse
-            pushed=true
-        fi
+        true
     else
-        debugLog "INFO: s3fs found"
+        false
+    fi
+}
+
+
+#--------------
+#
+# retrieve specified version of s3fs from git release and unzip
+#
+#--------------
+
+function get_s3fs() {
+    local _tar_file="${1:-}"
+    local git_token="${2:-}"
+    local s3fs_version="${3:-1.82}"
+
+    required _tar_file git_token s3fs_version
+
+    local organization="s3fs-fuse"
+    local repo_name="s3fs-fuse"
+    local branch="v${s3fs_version}"
+    local out_file="${branch}.tar.gz"
+    assign "${_tar_file}" "${out_file}"
+
+    wget -O "${out_file}" \
+        --header="Authorization: token ${git_token}" \
+        --header="Accept:application/vnd.github.v3.raw" \
+        "https://api.github.com/repos/${organization}/${repo_name}/tarball/${branch}"
+    mkdir -p s3fs
+    tar --strip-components=1 -C ./s3fs -xzvf "${out_file}"
+}
+
+
+#--------------
+#
+# build s3fs from source
+#
+#--------------
+
+function s3fs_build() {
+    debugLog "BEGIN"
+
+    local s3fs_dir="${1:-}"
+    local package_manager="${2:-yum}"
+
+    required s3fs_dir
+
+    debugVar s3fs_dir
+
+    if is_s3fs_installed ; then
+       debugLog "s3fs already installed"
+       return 0
+    else
+       debugLog "installing s3fs"
     fi
 
+    s3fs_builder "${package_manager}"
+
+    debugLog "pushd"
+    if pushd "${s3fs_dir}"; then
+        debugLog "pushd success: current dir: ${PWD}"
+    else
+        errorMessage "invalid s3fs directory ${s3fs_dir}"
+        return 1
+    fi
+
+    debugLog "autogen"
     ./autogen.sh
+    debugLog "configure"
     ./configure
+    debugLog "make"
     make
+    debugLog "make install"
     make install
 
+    debugLog "create symbolic link"
     ln -s /usr/local/bin/s3fs /usr/bin/s3fs
 
-    [ "${pushed}" == "true" ] && popd
+    debugLog "popd"
+    if popd; then
+        debugLog "popd success: current dir: ${PWD}"
+    else
+        debugLog "FAILURE in popd"
+        return 1
+    fi
+    debugLog "END"
     return 0
 }
 
 
-function s3fs_config() {
+#--------------
+#
+# configure s3fs with S3 credentials
+#
+#--------------
 
-    local access_key="${1:-${access_key:-${TALEND_FACTORY_ACCESS_KEY:-}}}"
-    local secret_key="${2:-${secret_key:-${TALEND_FACTORY_SECRET_KEY:-}}}"
+function s3fs_config() {
+    debugLog "BEGIN"
+
+    local access_key="${1:-${TALEND_FACTORY_ACCESS_KEY:-}}"
+    local secret_key="${2:-${TALEND_FACTORY_SECRET_KEY:-}}"
+
+    debugVar access_key; debugVar secret_key
 
     local credentials_file=~/.passwd-s3fs
     sed -i "s/# user_allow_other/user_allow_other/g" /etc/fuse.conf
@@ -83,16 +182,22 @@ function s3fs_config() {
     if [ -n "${access_key}" ] && [ -n "${secret_key}" ]; then
         echo "${access_key}:${secret_key}" > "${credentials_file}"
         chmod 600 "${credentials_file}"
+        debugLog "credential file ${credentials_file} created"
     elif [ ! -f "${credentials_file}" ]; then
         warningLog "Credential file ${credentials_file} not set."
-        return 0
     else
         # credentials_file will be generated by cloud formation
         debugLog "Credential file ${credentials_file} found."
     fi
-
+    debugLog "END"
 }
 
+
+#--------------
+#
+# mount an s3 bucket using s3fs
+#
+#--------------
 
 function s3fs_mount() {
 
@@ -102,30 +207,36 @@ function s3fs_mount() {
     local s3_mount_root="${4:-${s3_mount_dir}}"
     local s3fs_umask="${5:-037}"
     local iam_role="${6:-auto}"
-    local target_owner="${7:-${target_owner:-ec2-user}}"
+    local target_owner="${7:-ec2-user}"
 
-    required s3_bucket s3_path s3_mount_dir s3_mount_root s3fs_umask
+    required s3_bucket s3_path s3_mount_dir s3_mount_root s3fs_umask target_owner
 
-    debugVar s3_bucket; debugVar s3_path; debugVar s3_mount_dir; debugVar s3_mount_root; debugVar s3fs_umask; debugVar iam_role
+    debugVar s3_bucket; debugVar s3_path; debugVar s3_mount_dir; debugVar s3_mount_root; debugVar s3fs_umask; debugVar iam_role; debugVar target_owner
 
-    mkdir -p "${s3_mount_dir}"
+    try mkdir -p "${s3_mount_dir}"
 
     chown -R "${target_owner}:${target_owner}" "${s3_mount_root}"
 
     [ -n "${s3_path}" ] && [ "${s3_path:0:1}" != "/" ] && s3_path="/${s3_path}"
     [ -n "${s3_path}" ] && s3_path=":${s3_path}"
 
+    debugVar s3_path
+
     if [ "${iam_role}" == "none" ]; then
         debugLog "s3fs ${s3_bucket}${s3_path} ${s3_mount_dir} -o allow_other -o mp_umask=${s3fs_umask}"
-        try s3fs "${s3_bucket}${s3_path}" "${s3_mount_dir}" -o allow_other 
-        # -o mp_umask="${s3fs_umask}"
+        try s3fs "${s3_bucket}${s3_path}" "${s3_mount_dir}" -o allow_other -o mp_umask="${s3fs_umask}"
     else
-        debugLog "s3fs ${s3_bucket}${s3_path} ${s3_mount_dir} -o iam_role=auto -o allow_other -o mp_umask=${s3fs_umask}"
-        try s3fs "${s3_bucket}${s3_path}" "${s3_mount_dir}" -o iam_role="${iam_role}" -o allow_other 
-        # -o mp_umask="${s3fs_umask}"
+        debugLog "s3fs ${s3_bucket}${s3_path} ${s3_mount_dir} -o iam_role=auto -o allow_other -o mp_umask=${s3fs_umask} -ouse_cache=/tmp"
+        try s3fs "${s3_bucket}${s3_path}" "${s3_mount_dir}" -o iam_role="${iam_role}" -o allow_other -o mp_umask="${s3fs_umask}" -ouse_cache=/tmp
     fi
 }
 
+
+#--------------
+#
+# set file attributes for files on an s3fs mount
+#
+#--------------
 
 function s3fs_file_attrib() {
 
@@ -142,9 +253,15 @@ function s3fs_file_attrib() {
 }
 
 
+#--------------
+#
+# set directory attributes for directories on an s3fs mount
+#
+#--------------
+
 function s3fs_dir_attrib() {
 
-    local target_owner="${1:-${target_owner:-ec2-user}}"
+    local target_owner="${1:-ec2-user}"
     local mount_dir="${2:-/opt/repo}"
 
     local mydir_list

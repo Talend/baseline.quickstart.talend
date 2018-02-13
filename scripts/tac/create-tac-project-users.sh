@@ -6,10 +6,11 @@ set -x
 script_path=$(readlink -e "${BASH_SOURCE[0]}")
 script_dir="${script_path%/*}"
 
-declare tac_password="${1:-}"
-declare project_users_file="${2:-${script_dir}/project-users.data}"
+declare talend_version="${1:-}"
+declare tac_password="${2:-}"
+declare project_users_file="${3:-${script_dir}/project-users.data}"
 
-declare usage="create-tac-project-users.sh <project_users_file>"
+declare usage="create-tac-project-users.sh <talend_version> <tac_password> [ <project_users_file> ]"
 
 [ -z "${tac_password}" ] && echo "tac_password required: usage: ${usage}" && exit 1
 
@@ -18,10 +19,20 @@ declare usage="create-tac-project-users.sh <project_users_file>"
 [ ! -f "${project_users_file}" ] && echo "project users data file argument '${projects_users_file}' does not exist" && exit 1
 
 declare tac_url="http://localhost:8080/tac"
-declare metaservlet_path="/opt/talend/6.3.1/tac/webapps/tac/WEB-INF/classes/MetaServletCaller.sh"
+declare metaservlet_path="/opt/talend/${talend_version}/tac/webapps/tac/WEB-INF/classes/MetaServletCaller.sh"
 chmod 750 "${metaservlet_path}"
 
-# todo: refactor to function
+
+# specify default roles for tadmin
+if [ "${talend_version}" == "6.3.1" ]; then
+    declare default_account_user="admin@company.com"
+    declare default_account_password="admin"
+    declare default_account_roles='"Administrator","Operation Manager","Designer"'
+else
+    declare default_account_user="security@company.com"
+    declare default_account_password="admin"
+    declare default_account_roles='"Administrator","Operation Manager","Designer","Security Administrator"'
+fi
 
 # create tadmin with password from environment
 
@@ -30,7 +41,8 @@ USER_LNAME="Administrator"
 USER_LOGIN="tadmin@talend.com"
 USER_PASSWD="${tac_password}"
 USER_TYPE="DI"
-JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
+#JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
+JSON={"actionName":"createUser","authPass":"${default_account_password}","authUser":"${default_account_user}","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["${default_account_roles}"],"userType":"$USER_TYPE"}
 "${metaservlet_path}" --tac-url "${tac_url}" --json-params="${JSON}"
 echo "tadmin added: result $?"
 

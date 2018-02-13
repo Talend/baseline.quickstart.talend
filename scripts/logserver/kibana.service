@@ -1,0 +1,14 @@
+[Service]
+Type=simple
+BusName=kibana
+ExecStart=/opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64/bin/kibana /opt/talend/6.3.1/logserver/kibana-4.6.1-linux-x86_64/src/cli
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=kibana
+User=talend
+Group=talend
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

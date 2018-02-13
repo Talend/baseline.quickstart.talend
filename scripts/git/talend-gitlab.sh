@@ -35,10 +35,11 @@ function gitlab_init() {
 
     # need to confirm that the gitlab-rails runner will accept unquoted arguments.  the outer quote needs to use double quotes in order
     # for bash parameter expansion to work
-    echo "creating git admin user"
+    echo ""
+    echo "creating git admin user: '${git_admin_userid}', email: '${git_admin_email}'"
     gitlab-rails runner "User.create!(username: \"${git_admin_userid}\", email: \"${git_admin_email}\", password: \"${git_admin_password}\", password_confirmation: \"${git_admin_password}\", name: \"${git_admin_userid}\", admin: \"true\")"
 
-    echo "creating git tac user"
+    echo "creating git tac user: '${git_tac_userid}', email: '${git_tac_email}'"
     gitlab-rails runner "User.create!(username: \"${git_tac_userid}\", email: \"${git_tac_email}\", password: \"${git_tac_password}\", password_confirmation: \"${git_tac_password}\", name: \"${git_tac_userid}\")"
 
     # This next section puts the ip in as the first variable and the access token as the second

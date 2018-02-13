@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+set -o pipefail
+
+script_path=$(readlink -e "${BASH_SOURCE[0]}")
+script_dir="${script_path%/*}"
+
+# shellcheck source=../../util/util.sh
+source ${script_dir}/../../util/util.sh
+# shellcheck source=../s3fs-util.sh
+source ${script_dir}/../s3fs-util.sh
+
+declare INFO_LOG="true"
+declare DEBUG_LOG="true"
+
+declare target_dir="${1:-}"
+
+required target_dir
+
+echo "## expect attributes of files and directories to be recursively set in ${target_dir}"
+s3fs_dir_attrib "ec2-user" "${target_dir}"
