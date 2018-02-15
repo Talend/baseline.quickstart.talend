@@ -547,7 +547,7 @@
 			"Type" : "AWS::CloudFormation::Stack",
 			"DependsOn": [ "TacStack", "LogserverStack" ],
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale-packer.template" },
 				"Parameters" : {
                     "TalendVersion": { "Ref": "TalendVersion" },
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
@@ -566,6 +566,7 @@
                     "JobserverAutoscaleMaxSize": { "Ref": "JobserverAutoscaleDesiredCapacity" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
 					"TacHost": { "Fn::GetAtt": [ "TacStack", "Outputs.privateDnsName" ] },
+					"TacPassword": { "Ref": "TacPassword" },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] },
                     "TacStack": { "Ref": "TacStack" }
@@ -578,7 +579,7 @@
             "Condition" : "CreateDistantRunStackCondition",
 			"DependsOn": [ "LogserverStack" ],
 			"Properties" : {
-                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale.template" },
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/talend-jobserver-autoscale-packer.template" },
 				"Parameters" : {
                     "TalendVersion": { "Ref": "TalendVersion" },
                     "QSS3BucketName": { "Ref": "QSS3BucketName" },
@@ -597,6 +598,7 @@
                     "JobserverAutoscaleMaxSize": { "Ref": "DistantRunAutoscaleDesiredCapacity" },
                     "JobserverAutoscaleDesiredCapacity": { "Ref": "DistantRunAutoscaleDesiredCapacity" },
 					"TacHost": "",
+					"TacPassword": { "Ref": "TacPassword" },
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
 				},
