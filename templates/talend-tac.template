@@ -137,6 +137,12 @@
             "Type": "String",
             "NoEcho": "true"
         },
+        "TacUserType": {
+            "Description": "User Type for TAC accounts.  Accept DI default unless using your own commercial license.",
+            "Type": "String",
+            "AllowedValues": [ "DI", "DQ", "MDM" ],
+            "Default": "DI"
+        },
         "MasterDbUser": {
             "Description": "The master or root user used to create TAC and AMC databases and the TAC user.  Only needed if creating the TAC or AMC databases.",
             "Type": "String",
@@ -1085,7 +1091,7 @@
                             "10-project-users": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "${baselineTarget}/tac/create-tac-project-users.sh '${TalendVersion}' '${TacPassword}'",
+                                        "${baselineTarget}/tac/create-tac-project-users.sh '${TalendVersion}' '${TacPassword}' '${TacUserType}'",
                                         {
                                             "baselineTarget": { "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "baselineTarget" ] }
                                         }
