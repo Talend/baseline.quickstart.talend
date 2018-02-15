@@ -1,0 +1,505 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "This template will deploy a Jobserver instance into an existing VPC subnet.  **WARNING** This template creates Amazon EC2 instance and related resources. You will be billed for the AWS resources used if you create a stack from this template. QS(9999)",
+    "Parameters": {
+        "QSS3URL": {
+            "Description": "Encapsulate variation in s3 root url for commercial or gov-cloud",
+            "Type": "String",
+            "Default": "s3.amazonaws.com",
+            "AllowedValues": [ "s3.amazonaws.com", "s3-us-gov-west-1.amazonaws.com" ]
+        },
+        "QSS3BucketName": {
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Type": "String"
+        },
+        "ScriptBucket": {
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start script bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Description": "Leave this value unchanged.  It is the S3 bucket name for the Quick Start scripts. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Type": "String",
+            "Default": "oodle.quickstart.talend"
+        },
+        "QSS3KeyPrefix": {
+            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
+            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
+            "Default": "",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).  Prefix cannot start with a slash but must end with a slash unless it is the empty string.",
+            "Type": "String"
+        },
+        "TalendLicenseBucket": {
+            "Description": "Bucket holding Talend license",
+            "Type": "String",
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-) or period (.)."
+        },
+        "InstanceRole": {
+            "Description": "Talend Server EC2 IAM Role",
+            "Type": "String"
+        },
+        "InstanceProfile": {
+            "Description": "Talend Server EC2 Instance Profile",
+            "Type": "String"
+        },
+        "JobserverAutoscaleMinSize": {
+            "Description": "Talend Jobserver autoscale minimum size",
+            "Type": "Number",
+            "MinValue": "1",
+            "MaxValue": "10",
+            "Default": "1"
+        },
+        "JobserverAutoscaleMaxSize": {
+            "Description": "Talend Jobserver autoscale maximum size",
+            "Type": "Number",
+            "MinValue": "1",
+            "MaxValue": "10",
+            "Default": "5"
+        },
+        "JobserverAutoscaleDesiredCapacity": {
+            "Description": "Talend Jobserver autoscale maximum size",
+            "Type": "Number",
+            "MinValue": "1",
+            "MaxValue": "10",
+            "Default": "1"
+        },
+        "InstanceType": {
+            "Description": "Talend Server EC2 instance type",
+            "Type": "String",
+            "Default": "t2.large",
+            "AllowedValues": [
+                "t2.medium",
+                "t2.large",
+                "t2.xlarge",
+                "t2.2xlarge",
+                "m4.large",
+                "m4.xlarge",
+                "m4.2xlarge",
+                "m4.4xlarge",
+                "m4.10xlarge",
+                "m4.16xlarge",
+                "c4.large",
+                "c4.xlarge",
+                "c4.2xlarge",
+                "c4.4xlarge",
+                "c4.8xlarge",
+                "x1.16xlarge",
+                "x1.32xlarge",
+                "x1e.32xlarge",
+                "r4.large",
+                "r4.xlarge",
+                "r4.2xlarge",
+                "r4.4xlarge",
+                "r4.8xlarge",
+                "r4.16xlarge",
+                "d2.xlarge",
+                "d2.2xlarge",
+                "d2.4xlarge",
+                "d2.8xlarge",
+                "i3.large",
+                "i3.xlarge",
+                "i3.2xlarge",
+                "i3.4xlarge",
+                "i3.8xlarge",
+                "i3.16xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
+        },
+        "KeyName": {
+            "Description": "Name of an EC2 KeyPair to enable SSH access to the Talend Server instance.",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
+        },
+		"SubnetId1": {
+            "Description": "Talend Server subnet id 1.",
+            "Type": "AWS::EC2::Subnet::Id"
+		},
+		"SubnetId2": {
+            "Description": "Talend Server subnet id 2.",
+            "Type": "AWS::EC2::Subnet::Id"
+		},
+		"PrivateSubnet": {
+            "Description": "Is this is a private subnet.",
+            "Type": "String",
+			"Default": "private",
+            "AllowedValues": [ "private", "public" ]
+		},
+		"SecurityGroupIds": {
+            "Description": "Talend Server Security Group.",
+            "Type": "CommaDelimitedList"
+		},
+        "TalendResourceBucket": {
+            "Description": "Talend S3 resources bucket.",
+            "Type": "String",
+            "Default": "repo-quickstart-talend"
+        },  
+        "TalendResourceBucketRepoPath": {
+            "Description": "Path to binary repository in Talend S3 resources bucket.",
+            "Type": "String",
+            "Default": "/"
+        },
+        "TacHost": {
+            "Description": "TAC DNS hostname.",
+            "Type": "String",
+            "Default": ""
+        },
+        "TacPassword": {
+            "Description": "TAC application password for tadmin account.",
+            "Type": "String",
+            "NoEcho": "true"
+        },
+        "TacStack": {
+            "Description": "TAC Stack reference.",
+            "Type": "String",
+            "Default": ""
+        },
+        "TacReady": {
+            "Description": "TAC wait condition reference.",
+            "Type": "String",
+            "Default": ""
+        },
+        "LoggingHost": {
+            "Description": "Logstash server host DNS.",
+            "Type": "String",
+            "Default": "localhost"
+        },
+        "LoggingJobserverPort": {
+            "Description": "Logstash Jobserver input port.",
+            "Type": "Number",
+            "Default": "8055",
+            "MinValue": "1",
+            "MaxValue": "65535"
+        }
+	},
+    "Mappings": {
+        "Talend": {
+            "license": {
+                "licenseTarget": "/home/ec2-user/TUI-4.5.2/licenses/6.3.1"
+            },
+            "baseline": {
+                "baselineTarget": "/home/ec2-user/baseline",
+                "generatedTarget": "/home/ec2-user/generated"
+            },
+            "tui": {
+                "profile": "jobserver",
+                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
+                "tuiTarget": "/home/ec2-user/TUI-4.5.2",
+				"talendRepoDir": "/opt/repo",
+                "tuiRepo": "/opt/tui/repo"
+            },
+            "s3fs": {
+                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
+                "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
+            },
+            "cfn": {
+                "workDir": "/home/ec2-user/work"
+            },
+            "jobserver": {
+                "sparkJarsKeyPrefix": "spark",
+                "sparkJarsTarget": "/var/lib/spark/jars"
+            },
+            "tac": {
+                "tacadmin": "tadmin@talend.com"
+            }
+        },
+        "AWSRegionArch2AMI": {
+        }
+    },
+	"Conditions": {
+        "isPrivateSubnet": {
+            "Fn::Equals": [
+                { "Ref": "PrivateSubnet" },
+                "private"
+            ]
+        },
+		"isPublicSubnet": {
+			"Fn::Not": [ { "Condition": "isPrivateSubnet" } ]
+		},
+        "SelfRegisterWithTacCondition": {
+            "Fn::Not": [
+                { "Fn::Equals": [ "", { "Ref": "TacHost" } ] }
+            ]
+        },
+        "TacStackCondition": {
+            "Fn::Not": [
+                { 
+                    "Fn::Equals": [
+                        "",
+                        { "Ref": "TacStack" }
+                    ]
+                }
+            ]
+        }
+	},
+    "Resources": {
+        "JobserverAutoscaling": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "LaunchConfigurationName": {
+                    "Ref": "JobserverLaunchConfig"
+                },
+                "MinSize": { "Ref": "JobserverAutoscaleMinSize" },
+                "MaxSize": { "Ref": "JobserverAutoscaleMaxSize" },
+                "DesiredCapacity": { "Ref": "JobserverAutoscaleDesiredCapacity" },
+                "HealthCheckGracePeriod": "120",
+                "VPCZoneIdentifier": [ { "Ref": "SubnetId1" }, { "Ref": "SubnetId2" } ]
+            }
+        },
+        "JobserverLaunchConfig": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Properties": {
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSRegionArch2AMI",
+                        { "Ref": "AWS::Region" },
+                        "HVM64"
+                    ]
+                },
+                "KeyName": { "Ref": "KeyName" },
+				"SecurityGroups": { "Ref": "SecurityGroupIds" },
+                "IamInstanceProfile": { "Ref": "InstanceProfile" },
+                "BlockDeviceMappings" : [
+                   {
+                      "DeviceName" : "/dev/xvda",
+                      "Ebs" : { "VolumeSize" : "100" }
+                   }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash -xe\n",
+								"yum -y update\n",
+								"#fix ec2 hostname resolution\n",
+                                "wget ",
+                                { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/ec2-metadata" },
+                                "\n",
+								"chmod +x ec2-metadata\n",
+                                "wget ",
+                                { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}scripts/bootstrap/update_hosts.sh" },
+                                "\n",
+								"chmod +x update_hosts.sh\n",
+                                "./update_hosts.sh\n",
+                                "# Install the files and packages from the metadata\n",
+                                "/opt/aws/bin/cfn-init -v ",
+                                "         --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "         --resource JobserverLaunchConfig ",
+                                "         --configsets All ",
+                                "         --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "# Signal the status from cfn-init\n",
+                                "/opt/aws/bin/cfn-signal -e $? ",
+                                "         --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "         --resource JobserverLaunchConfig ",
+                                "         --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n"
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Authentication": {
+                    "S3AccessCreds": {
+                        "type": "S3",
+                        "roleName": { "Ref": "InstanceRole" }
+                    }
+                },
+                "AWS::CloudFormation::Init": {
+                    "configSets": {
+                        "All": [
+							"Download",
+							"Configure",
+							"Install",
+                            "PostInstall"
+                        ]
+                    },
+                    "Download": {
+                        "commands": {
+                            "01-copy-license": {
+                                "command": {
+                                    "Fn::Sub": "aws s3 cp s3://${TalendLicenseBucket}/license /home/ec2-user/generated/licenses/license"
+                                }
+                            }
+                        }
+                    },
+                    "Configure": {
+                        "commands": {
+                            "01-load-license": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "cp ",
+                                            {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "baseline",
+                                                    "generatedTarget"
+                                                ]
+                                            },
+											"/licenses/* ",
+                                            {
+                                                "Fn::FindInMap": [
+                                                    "Talend",
+                                                    "license",
+                                                    "licenseTarget"
+                                                ]
+                                            }
+                                        ]
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "Install": {
+                        "commands": {
+                            "02-tac-ready": {
+                                "command": {
+                                    "Fn::If": [
+                                        "SelfRegisterWithTacCondition",
+                                        {
+                                            "Fn::Sub": [
+                                                "${tacStackFlag} && ${baselineTarget}/cfn/waitForResource.sh ${TacStack} ${TacReady} ${AWS::Region} || true",
+                                                {
+                                                    "tacStackFlag": {
+                                                        "Fn::If": [
+                                                            "TacStackCondition",
+                                                            "true",
+                                                            "false"
+                                                        ]
+                                                    },
+                                                    "baselineTarget": {
+                                                        "Fn::FindInMap": [
+                                                            "Talend",
+                                                            "baseline",
+                                                            "baselineTarget"
+                                                        ]
+                                                    },
+                                                    "workDir": {
+                                                        "Fn::FindInMap": [
+                                                            "Talend",
+                                                            "cfn",
+                                                            "workDir"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "echo \"Skipping check for TAC Ready status for DistantRun server\""
+                                    ]
+                                }
+                            },
+                            "03-tac-accessible": {
+                                "command": {
+                                    "Fn::If": [
+                                        "SelfRegisterWithTacCondition",
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    {
+                                                        "Fn::FindInMap": [
+                                                            "Talend",
+                                                            "baseline",
+                                                            "baselineTarget"
+                                                        ]
+                                                    },
+                                                    "/tac/isTACStarted.sh ",
+                                                    { "Ref": "TacHost" }
+                                                ]
+                                            ]
+                                        },
+                                        "echo \"Skipping TAC accessibility check for DistantRun server\""
+                                    ]
+                                }
+                            }
+                        }
+                    },
+					"PostInstall": {
+                        "commands": {
+                            "01-register-jobserver": {
+                                "command": {
+									"Fn::If": [
+										"TacStackCondition",
+										{
+											"Fn::Sub": [
+												"${baselineTarget}/cfn/jobsrvreg.sh ${LoggingHost} ${TacHost} ${TacPassword} ${TacAdmin}",
+												{
+													"baselineTarget": {
+														"Fn::FindInMap": [
+															"Talend",
+															"baseline",
+															"baselineTarget"
+														]
+													},
+													"TacAdmin": {
+														"Fn::FindInMap": [
+															"Talend",
+															"tac",
+															"tacadmin"
+														]
+													}
+												}
+											]
+										},
+										{
+											"Fn::Sub": [
+												"${baselineTarget}/cfn/jobsrvreg.sh ${LoggingHost} ",
+												{
+													"baselineTarget": {
+														"Fn::FindInMap": [
+															"Talend",
+															"baseline",
+															"baselineTarget"
+														]
+													}
+												}
+											]
+										}										
+									]
+								}
+							}
+						}
+					}
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "JobserverAutoscaling": {
+            "Value": { "Ref": "JobserverAutoscaling" },
+            "Description": "Jobserver Autoscaling resource Id",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:JobserverAutoscaling"
+				}
+			}
+        },
+        "JobserverLaunchConfig": {
+            "Value": { "Ref": "JobserverLaunchConfig" },
+            "Description": "Jobserver Launch Configuration resource Id",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:JobserverLaunchConfig"
+				}
+			}
+        }
+    }
+}
