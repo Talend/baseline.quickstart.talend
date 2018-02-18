@@ -280,7 +280,7 @@
             "NoEcho": "true"
         },
         "GitStack": {
-            "Description": "GitStack reference.",
+            "Description": "GitStack reference implies GitLab stack creation rather than use of an external git.",
             "Type": "String",
             "Default": ""
         }
@@ -1054,12 +1054,12 @@
                             "09-git-accessible": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "${gitStackFlag} && ${baselineTarget}/git/isGitStarted.sh ${GitProtocol}://${GitHost}:${GitPort}/${GitRepo} GitLab ${workDir} || true",
+                                        "${gitStackCondition} && ${baselineTarget}/git/isGitStarted.sh ${GitProtocol}://${GitHost}:${GitPort}/${GitRepo} GitLab ${workDir} || true",
                                         {
-                                            "gitStackFlag": {
+                                            "gitStackCondition": {
                                                 "Fn::If": [
                                                     "GitStackCondition",
-                                                    { "Ref": "TalendVersion" },
+                                                    "true",
                                                     "false"
                                                 ]
                                             },
