@@ -4,9 +4,9 @@ set -e
 set -u
 
 
-declare gitUrl="${1:-http://localhost/users/sign_in}"
-declare searchPattern="${2:-GitLab}"
-declare logDir="${3:-/home/ubuntu}"
+declare gitUrl="${1:-}"
+declare logDir="${2:-/home/ubuntu}"
+declare searchPattern="${3:-GitLab}"
 
 [ -z "${gitUrl}" ] && echo "parameter gitUrl required: ${usage}" 1>&2 && exit 1
 

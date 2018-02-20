@@ -335,25 +335,8 @@
             "Type": "String",
             "NoEcho": "true"
         },
-        "GitProtocol": {
-            "Description": "Git protocol.",
-            "Type": "String",
-            "Default": "http"
-        },
-        "GitHost": {
-            "Description": "Git host.",
-            "Type": "String",
-            "Default": ""
-        },
-        "GitPort": {
-            "Description": "Git port.",
-            "Type": "Number",
-            "Default": "80",
-            "MinValue": "1",
-            "MaxValue": "65535"
-        },
-        "GitRepo": {
-            "Description": "Git repository.",
+        "GitUrl": {
+            "Description": "Git repository url, leave this blank to create a new GitLab instance",
             "Type": "String",
             "Default": ""
         },
@@ -410,7 +393,7 @@
             ]
         },
         "CreateGitStackCondition": {
-            "Fn::Equals": [ "", { "Ref": "GitHost" } ]
+            "Fn::Equals": [ "", { "Ref": "GitUrl" } ]
         }
     },
     "Resources": {
@@ -438,8 +421,7 @@
                     "GitAdminEmail": { "Ref": "GitAdminEmail" },
                     "GitTacUserid": { "Ref": "GitTacUserid" },
                     "GitTacPassword": { "Ref": "GitTacPassword" },
-                    "GitTacEmail": { "Ref": "GitTacEmail" },
-                    "GitRepo": { "Ref": "GitRepo" }
+                    "GitTacEmail": { "Ref": "GitTacEmail" }
                 }
             }
         },
@@ -527,22 +509,20 @@
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] },
                     "LoggingTacPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingTacPort" ] },
                     "LoggingKibanaPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingKibanaPort" ] },
-                    "GitHost": {
-                        "Fn::If": [
-                            "CreateGitStackCondition",
-                            { "Fn::GetAtt": [ "GitStack", "Outputs.privateDnsName" ] },
-                            { "Ref": "GitHost" } 
-                        ]
-                    },
-                    "GitProtocol": { "Ref": "GitProtocol" },
-                    "GitPort": { "Ref": "GitPort" },
-                    "GitRepo": { "Ref": "GitRepo" },
+                    "GitUrl": { "Ref": "GitUrl" },
                     "GitAdminUserid": { "Ref": "GitAdminUserid" },
                     "GitAdminPassword": { "Ref": "GitAdminPassword" },
                     "GitStack": {
                         "Fn::If": [
                             "CreateGitStackCondition",
                             { "Ref": "GitStack" },
+                            { "Ref" : "AWS::NoValue"} 
+                        ]
+                    },
+                    "GitLabHost": {
+                        "Fn::If": [
+                            "CreateGitStackCondition",
+                            { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName" ] },
                             { "Ref" : "AWS::NoValue"} 
                         ]
                     }
@@ -666,12 +646,17 @@
 				}
 			}
         },
-        "GitDnsName": {
-		    "Condition": "CreateGitStackCondition",				
-            "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName"] },
-            "Description": "Git DNS name",
+        "GitUrl": {
+            "Value": {
+                "Fn::If": [
+                    "CreateGitCondition",
+                    { "Fn::GetAtt": [ "GitStack", "Outputs.GitUrl" ] },
+                    { "Ref": "GitUrl" } 
+                ]
+            },
+            "Description": "Git repository url",
 			"Export": {
-				"Name": { "Fn::Sub": "${AWS::StackName}:GitDnsName" } 
+				"Name": { "Fn::Sub": "${AWS::StackName}:GitUrl" } 
 			}
         },
         "TacDnsName": {

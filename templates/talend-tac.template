@@ -248,26 +248,10 @@
             "MinValue": "1",
             "MaxValue": "65535"
         },
-        "GitProtocol": {
-            "Description": "Git protocol.",
+        "GitUrl": {
+            "Description": "Git repository url, leave this blank to create a new GitLab instance",
             "Type": "String",
-            "Default": "http"
-        },
-        "GitHost": {
-            "Description": "Git host DNS hostname.",
-            "Type": "String"
-        },
-        "GitPort": {
-            "Description": "Git port.",
-            "Type": "Number",
-            "Default": "443",
-            "MinValue": "1",
-            "MaxValue": "65535"
-        },
-        "GitRepo": {
-            "Description": "Git repository.",
-            "Type": "String",
-            "Default": "talend"
+            "Default": ""
         },
         "GitAdminUserid": {
             "Description": "Git admin user.",
@@ -281,6 +265,11 @@
         },
         "GitStack": {
             "Description": "GitStack reference implies GitLab stack creation rather than use of an external git.",
+            "Type": "String",
+            "Default": ""
+        },
+        "GitLabHost": {
+            "Description": "GitLab Host public DNS if created rather than use of an externa git.",
             "Type": "String",
             "Default": ""
         }
@@ -395,15 +384,8 @@
                 "true"
             ]
         },
-        "GitStackCondition": {
-            "Fn::Not": [
-                { 
-                    "Fn::Equals": [
-                        "",
-                        { "Ref": "GitStack" }
-                    ]
-                }
-            ]
+        "CreateGitStackCondition": {
+            "Fn::Equals": [ "", { "Ref": "GitUrl" } ]
         },
         "CopyToTalendSourceBucketCondition": {
             "Fn::Not": [
@@ -663,12 +645,39 @@
                                             { "Fn::Sub": "export TALEND_LOGGING_HOST=${LoggingHost}" },
                                             { "Fn::Sub": "export TALEND_LOGSTASH_TAC_PORT=${LoggingTacPort}" },
                                             { "Fn::Sub": "export TALEND_LOGSTASH_KIBANA_PORT=${LoggingKibanaPort}" },
-                                            { "Fn::Sub": "export TALEND_GIT_PROTOCOL=${GitProtocol}" },
-                                            { "Fn::Sub": "export TALEND_GIT_HOST=${GitHost}" },
-                                            { "Fn::Sub": "export TALEND_GIT_PORT=${GitPort}" },
-                                            { "Fn::Sub": "export TALEND_GIT_REPO=${GitRepo}.git" },
-                                            { "Fn::Sub": "export TALEND_GIT_USER=${GitAdminUserid}" },
-                                            { "Fn::Sub": "export TALEND_GIT_PASSWORD=${GitAdminPassword}" }
+                                            
+                                            { "Fn::If": [
+                                                    "CreateGitStackCondition",
+                                                    { "Fn::Join": [
+                                                            "\n",
+                                                            [
+                                                                { "Fn::Sub": "export TALEND_GIT_PROTOCOL=http" },
+                                                                { "Fn::Sub": "export TALEND_GIT_HOST=${GitLabHost}" },
+                                                                { "Fn::Sub": "export TALEND_GIT_PORT=80" },
+                                                                { "Fn::Sub": "export TALEND_GIT_REPO=oodlejobs.git" },
+                                                                { "Fn::Sub": "export TALEND_GIT_USER=${GitAdminUserid}" },
+                                                                { "Fn::Sub": "export TALEND_GIT_PASSWORD=${GitAdminPassword}" },
+                                                                { "Fn::Sub": "export TALEND_GIT_URL=$TALEND_GIT_PROTOCOL://$TALEND_GIT_HOST:$TALEND_GIT_PORT/$TALEND_GIT_USER/$TALEND_GIT_REPO" }
+                                                            ]
+                                                        ]
+                                                    },
+                                                    { "Fn::Join": [
+                                                            "\n",
+                                                            [
+                                                                "./parse_git_url '${GitUrl}' git_protocol git_host git_path git_repo",
+                                                                { "Fn::Sub": "export TALEND_GIT_PROTOCOL=$git_protocol" },
+                                                                { "Fn::Sub": "export TALEND_GIT_HOST=$git_host" },
+                                                                { "Fn::Sub": "export TALEND_GIT_PORT=$git_port" },
+                                                                { "Fn::Sub": "export TALEND_GIT_REPO=$git_repo" },
+                                                                
+                                                                { "Fn::Sub": "export TALEND_GIT_USER=${GitAdminUserid}" },
+                                                                { "Fn::Sub": "export TALEND_GIT_PASSWORD=${GitAdminPassword}" },
+                                                                { "Fn::Sub": "export TALEND_GIT_URL=${GitUrl}" }
+                                                            ]
+                                                        ]
+                                                    }
+                                                ]
+                                            }
                                         ]
                                     ]
                                 },
@@ -1025,7 +1034,7 @@
                             "08-git-ready": {
                                 "command": {
                                     "Fn::If": [
-                                        "GitStackCondition",
+                                        "CreateGitStackCondition",
                                         {
                                             "Fn::Sub": [
                                                 "${baselineTarget}/cfn/waitForResource.sh ${GitStack} GitReady ${AWS::Region}",
@@ -1040,7 +1049,7 @@
                                                 }
                                             ]
                                         },
-                                        "echo Skipping waitForResource on GitStack since external GitHost was provided"
+                                        "echo 'Skipping waitForResource on GitStack since external GitUrl '${GitUrl}' was provided'"
                                     ]
                                 },
                                 "cwd": {
@@ -1054,11 +1063,11 @@
                             "09-git-accessible": {
                                 "command": {
                                     "Fn::Sub": [
-                                        "${gitStackCondition} && ${baselineTarget}/git/isGitStarted.sh ${GitProtocol}://${GitHost}:${GitPort}/${GitRepo} GitLab ${workDir} || true",
+                                        "${createGitStackCondition} && ${baselineTarget}/git/isGitStarted.sh '${gitProtocol}://${GitLabHost}/${gitRepo}' '${workDir}' || true",
                                         {
-                                            "gitStackCondition": {
+                                            "createGitStackCondition": {
                                                 "Fn::If": [
-                                                    "GitStackCondition",
+                                                    "CreateGitStackCondition",
                                                     "true",
                                                     "false"
                                                 ]
@@ -1076,7 +1085,9 @@
                                                     { "Ref": "TalendVersion" },
                                                     "workDir"
                                                 ]
-                                            }
+                                            },
+                                            "gitProtocol": "http",
+                                            "gitRepo": "oodlejobs"
                                         }
                                     ]
                                 },
@@ -1108,9 +1119,8 @@
                             "11-load-git": {
                                 "command": {
                                     "Fn::Sub": [
-                                        ". ${baselineTarget}/git/load-git.sh; load_git ${talendRepoDir}/${demoJobsPath} ${workDir} ${GitProtocol} ${GitHost} ${GitAdminUserid} ${GitRepo} ${GitAdminUserid} ${GitAdminPassword}",
+                                        ". ${baselineTarget}/git/load-git.sh; load_git '${talendRepoDir}/${demoJobsPath}' '${workDir}' '${GitUrl}' '${GitLabHost}' '${GitAdminUserid}' '${GitAdminPassword}'",
                                         {
-                                            "skipCondition": "false",
                                             "baselineTarget": {
                                                 "Fn::FindInMap": [
                                                     "Talend",

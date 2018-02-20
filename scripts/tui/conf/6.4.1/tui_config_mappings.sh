@@ -43,12 +43,14 @@ export TUI_CONFIG_tac_database_mysql_username=$TALEND_TAC_DB_USER
 export TUI_CONFIG_tac_database_mysql_password=$TALEND_TAC_DB_PASSWORD
 export TUI_CONFIG_tac_monitoring_kibana_port=$TALEND_LOGSTASH_KIBANA_PORT
 export TUI_CONFIG_tac_logging_logstach_port=$TALEND_LOGSTASH_TAC_PORT
+
+export TUI_CONFIG_tac_git_url=$TALEND_GIT_URL
 export TUI_CONFIG_tac_git_host=$TALEND_GIT_HOST
 export TUI_CONFIG_tac_git_port=$TALEND_GIT_PORT
 export TUI_CONFIG_tac_git_repository=$TALEND_GIT_REPO
 export TUI_CONFIG_tac_git_username=$TALEND_GIT_USER
 export TUI_CONFIG_tac_git_password=$TALEND_GIT_PASSWORD
-export TUI_CONFIG_tac_git_url="${TALEND_GIT_PROTOCOL}://${TALEND_GIT_HOST}:${TALEND_GIT_PORT}/$TALEND_GIT_USER/${TALEND_GIT_REPO}"
+
 export TUI_CONFIG_tac_repository_nexus_host=${TALEND_NEXUS_HOST}
 export TUI_CONFIG_tac_repository_nexus_port=${TALEND_NEXUS_PORT}
 export TUI_CONFIG_tac_repository_nexus_url="http://${TALEND_NEXUS_HOST}:${TALEND_NEXUS_PORT}/nexus"
@@ -125,6 +127,8 @@ echo TUI_CONFIG_tac_database_mysql_username=${TUI_CONFIG_tac_database_mysql_user
 echo TUI_CONFIG_tac_database_mysql_password=${TUI_CONFIG_tac_database_mysql_password}  | tee -a "./tui_config_mapping.txt"
 echo TUI_CONFIG_tac_monitoring_kibana_port=${TUI_CONFIG_tac_monitoring_kibana_port}  | tee -a "./tui_config_mapping.txt"
 echo TUI_CONFIG_tac_logging_logstach_port=${TUI_CONFIG_tac_logging_logstach_port}  | tee -a "./tui_config_mapping.txt"
+
+echo TUI_CONFIG_tac_git_url=${TUI_CONFIG_tac_git_url}  | tee -a "./tui_config_mapping.txt"
 echo TUI_CONFIG_tac_git_host=${TUI_CONFIG_tac_git_host}  | tee -a "./tui_config_mapping.txt"
 echo TUI_CONFIG_tac_git_port=${TUI_CONFIG_tac_git_port}  | tee -a "./tui_config_mapping.txt"
 echo TUI_CONFIG_tac_git_repository=${TUI_CONFIG_tac_git_repository}  | tee -a "./tui_config_mapping.txt"
