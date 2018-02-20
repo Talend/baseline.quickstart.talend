@@ -203,6 +203,7 @@
             }
         },
         "AWSRegionArch2AMI": {
+			"us-west-2": { "HVM64": "ami-eaf67592" }
         }
     },
 	"Conditions": {
