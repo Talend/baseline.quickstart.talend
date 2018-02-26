@@ -209,19 +209,21 @@
                 "workDir": "/home/ec2-user/work",
                 "sparkJarsKeyPrefix": "spark",
                 "sparkJarsTarget": "/var/lib/spark/jars"
-            }
+            },
             "tac": {
                 "tacadmin": "tadmin@talend.com"
             }
         },
-        "AWSRegionArch2AMI": {
-			"6.3.1": {
-				"us-west-2": "ami-eaf67592"
-			},
-			"6.4.1": {
-				"us-west-2": "ami-a99718d1" 
+        "AMI631": {
+			"us-west-2": { 
+				"HVM64": "ami-eaf67592"
 			}
-        }
+		},
+        "AMI641": {
+			"us-west-2": { 
+				"HVM64": "ami-a99718d1"
+			}
+		}
     },
 	"Conditions": {
         "isPrivateSubnet": {
@@ -247,7 +249,10 @@
                     ]
                 }
             ]
-        }
+        },
+		"Talend631": {
+			"Fn::Equals": [{ "Ref": "TalendVersion" }, "6.3.1"]
+		}
 	},
     "Resources": {
         "JobserverAutoscaling": {
@@ -270,11 +275,23 @@
                     "Ref": "InstanceType"
                 },
                 "ImageId": {
-                    "Fn::FindInMap": [
-                        "AWSRegionArch2AMI",
-                        { "Ref": "TalendVersion" },
-						{ "Ref": "AWS::Region" }
-                    ]
+					"Fn::If": [
+						"Talend631",	
+						{
+							"Fn::FindInMap": [
+								"AMI631",
+								{ "Ref": "AWS::Region" },
+								"HVM64"
+							]
+						},
+						{
+							"Fn::FindInMap": [
+								"AMI641",
+								{ "Ref": "AWS::Region" },
+								"HVM64"
+							]
+						}
+					]
                 },
                 "KeyName": { "Ref": "KeyName" },
 				"SecurityGroups": { "Ref": "SecurityGroupIds" },
@@ -359,7 +376,24 @@
                     },
                     "Configure": {
                         "commands": {
-                            "01-load-license": {
+							"01-mkdir-licenseTarget": {
+								"command": {
+									"Fn::Join": [
+										"",
+										[
+											"mkdir -p ",
+											{
+												"Fn::FindInMap": [
+													"Talend",
+													{ "Ref": "TalendVersion" },
+													"licenseTarget"
+												]
+											}
+										]
+									]
+								}
+							},
+                            "02-load-license": {
                                 "command": {
                                     "Fn::Join": [
                                         "",
@@ -368,7 +402,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "baseline",
+                                                    { "Ref": "TalendVersion" },
                                                     "generatedTarget"
                                                 ]
                                             },
@@ -376,7 +410,7 @@
                                             {
                                                 "Fn::FindInMap": [
                                                     "Talend",
-                                                    "license",
+                                                    { "Ref": "TalendVersion" },
                                                     "licenseTarget"
                                                 ]
                                             }

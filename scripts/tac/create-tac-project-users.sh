@@ -8,9 +8,16 @@ script_dir="${script_path%/*}"
 
 declare talend_version="${1:-}"
 declare tac_password="${2:-}"
-declare project_users_file="${3:-${script_dir}/project-users.data}"
+declare user_type="${3:-}"
+declare project_users_file="${4:-${script_dir}/project-users.data}"
 
-declare usage="create-tac-project-users.sh <talend_version> <tac_password> [ <project_users_file> ]"
+#
+# IMPORTANT
+# if the user_type parameter is passed it will override not only the user type for the tadmin user
+# but for all users that are created from the project_users.data file.
+#
+
+declare usage="create-tac-project-users.sh <talend_version> <tac_password> [ <user_type> [ <project_users_file> ] ]"
 
 [ -z "${tac_password}" ] && echo "tac_password required: usage: ${usage}" && exit 1
 
@@ -36,11 +43,11 @@ fi
 
 # create tadmin with password from environment
 
-USER_FNAME="Talend"
-USER_LNAME="Administrator"
-USER_LOGIN="tadmin@talend.com"
-USER_PASSWD="${tac_password}"
-USER_TYPE="DI"
+declare USER_FNAME="Talend"
+declare USER_LNAME="Administrator"
+declare USER_LOGIN="tadmin@talend.com"
+declare USER_PASSWD="${tac_password}"
+declare USER_TYPE="${user_type:-DI}"
 #JSON={"actionName":"createUser","authPass":"admin","authUser":"admin@company.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
 JSON={"actionName":"createUser","authPass":"${default_account_password}","authUser":"${default_account_user}","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["${default_account_roles}"],"userType":"$USER_TYPE"}
 "${metaservlet_path}" --tac-url "${tac_url}" --json-params="${JSON}"
@@ -58,6 +65,8 @@ while read line; do
         USER_LOGIN=`echo $line | awk -F "," '{print $4}'`
         USER_PASSWD=`echo $line | awk -F "," '{print $5}'`
         USER_TYPE=`echo $line | awk -F "," '{print $6}'`
+# if the user_type script parameter is set, it overrides anything read from project_users.data config file
+        USER_TYPE="${user_type:-${USER_TYPE}}"
         JSON={"actionName":"createUser","authPass":"${tac_password}","authUser":"tadmin@talend.com","userFirstName":"$USER_FNAME","userLastName":"$USER_LNAME","userLogin":"$USER_LOGIN","userPassword":"$USER_PASSWD","userRole":["Administrator","Operation Manager","Designer"],"userType":"$USER_TYPE"}
         "${metaservlet_path}" --tac-url "${tac_url}" --json-params="${JSON}"
         echo "${USER_LOGIN} added: result $?"
