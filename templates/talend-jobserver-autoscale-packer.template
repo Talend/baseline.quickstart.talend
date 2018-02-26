@@ -14,12 +14,15 @@
             "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
             "Type": "String"
         },
-        "ScriptBucket": {
-            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$",
-            "ConstraintDescription": "Quick Start script bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Description": "Leave this value unchanged.  It is the S3 bucket name for the Quick Start scripts. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).",
+        "TalendVersion": {
+            "Description": "Talend Product Version",
             "Type": "String",
-            "Default": "oodle.quickstart.talend"
+            "Default": "6.3.1",
+            "AllowedValues": [
+                "6.3.1",
+                "6.4.1"
+            ],
+            "ConstraintDescription": "must be a valid Talend product version."
         },
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
@@ -173,37 +176,51 @@
 	},
     "Mappings": {
         "Talend": {
-            "license": {
-                "licenseTarget": "/home/ec2-user/TUI-4.5.2/licenses/6.3.1"
-            },
-            "baseline": {
+            "6.3.1": {
+                "licenseTarget": "/home/ec2-user/tui/licenses/6.3.1",
                 "baselineTarget": "/home/ec2-user/baseline",
-                "generatedTarget": "/home/ec2-user/generated"
-            },
-            "tui": {
+                "generatedTarget": "/home/ec2-user/generated",
                 "profile": "jobserver",
-                "tuiUrl": "https://s3.amazonaws.com/repo-quickstart-talend/tui/TUI-4.5.2.tar",
-                "tuiTarget": "/home/ec2-user/TUI-4.5.2",
+                "repoTuiPath": "tui/TUI-4.5.2.tar",
+                "repoS3fsPath": "s3fs/v1.82.tar.gz",
+                "tuiTarget": "/home/ec2-user/tui",
+                "s3fsTarget": "/home/ec2-user/s3fs",
+                "tuiConfigMapping": "conf/6.3.1/tui_config_mappings.sh",
+                "tuiConfigOverrideOption": "",
 				"talendRepoDir": "/opt/repo",
-                "tuiRepo": "/opt/tui/repo"
-            },
-            "s3fs": {
-                "s3fsUrl": "https://s3.amazonaws.com/repo-quickstart-talend/s3fs/v1.82.tar.gz",
-                "s3fsTarget": "/home/ec2-user/s3fs-fuse-1.82"
-            },
-            "cfn": {
-                "workDir": "/home/ec2-user/work"
-            },
-            "jobserver": {
+                "tuiRepoDir": "/opt/tui/repo",
+                "workDir": "/home/ec2-user/work",
                 "sparkJarsKeyPrefix": "spark",
                 "sparkJarsTarget": "/var/lib/spark/jars"
             },
+            "6.4.1": {
+                "licenseTarget": "/home/ec2-user/tui/licenses/6.4.1",
+                "baselineTarget": "/home/ec2-user/baseline",
+                "generatedTarget": "/home/ec2-user/generated",
+                "profile": "jobserver",
+                "repoTuiPath": "tui/TUI-5.4.0.tar",
+                "repoS3fsPath": "s3fs/v1.82.tar.gz",
+                "tuiTarget": "/home/ec2-user/tui",
+                "s3fsTarget": "/home/ec2-user/s3fs",
+                "tuiConfigMapping": "conf/6.4.1/tui_config_mappings.sh",
+                "tuiConfigOverrideOption": "-oc",
+				"talendRepoDir": "/opt/repo",
+                "tuiRepoDir": "/opt/tui/repo",
+                "workDir": "/home/ec2-user/work",
+                "sparkJarsKeyPrefix": "spark",
+                "sparkJarsTarget": "/var/lib/spark/jars"
+            }
             "tac": {
                 "tacadmin": "tadmin@talend.com"
             }
         },
         "AWSRegionArch2AMI": {
-			"us-west-2": { "HVM64": "ami-eaf67592" }
+			"6.3.1": {
+				"us-west-2": "ami-eaf67592"
+			},
+			"6.4.1": {
+				"us-west-2": "ami-a99718d1" 
+			}
         }
     },
 	"Conditions": {
@@ -255,18 +272,18 @@
                 "ImageId": {
                     "Fn::FindInMap": [
                         "AWSRegionArch2AMI",
-                        { "Ref": "AWS::Region" },
-                        "HVM64"
+                        { "Ref": "TalendVersion" },
+						{ "Ref": "AWS::Region" }
                     ]
                 },
                 "KeyName": { "Ref": "KeyName" },
 				"SecurityGroups": { "Ref": "SecurityGroupIds" },
                 "IamInstanceProfile": { "Ref": "InstanceProfile" },
                 "BlockDeviceMappings" : [
-                   {
-                      "DeviceName" : "/dev/xvda",
-                      "Ebs" : { "VolumeSize" : "100" }
-                   }
+					{
+						"DeviceName" : "/dev/xvda",
+						"Ebs" : { "VolumeSize" : "100" }
+					}
                 ],
                 "UserData": {
                     "Fn::Base64": {
@@ -389,14 +406,14 @@
                                                     "baselineTarget": {
                                                         "Fn::FindInMap": [
                                                             "Talend",
-                                                            "baseline",
+                                                            { "Ref": "TalendVersion" },
                                                             "baselineTarget"
                                                         ]
                                                     },
                                                     "workDir": {
                                                         "Fn::FindInMap": [
                                                             "Talend",
-                                                            "cfn",
+                                                            { "Ref": "TalendVersion" },
                                                             "workDir"
                                                         ]
                                                     }
@@ -418,7 +435,7 @@
                                                     {
                                                         "Fn::FindInMap": [
                                                             "Talend",
-                                                            "baseline",
+                                                            { "Ref": "TalendVersion" },
                                                             "baselineTarget"
                                                         ]
                                                     },
@@ -446,7 +463,7 @@
 													"baselineTarget": {
 														"Fn::FindInMap": [
 															"Talend",
-															"baseline",
+															{ "Ref": "TalendVersion" },
 															"baselineTarget"
 														]
 													},
@@ -467,7 +484,7 @@
 													"baselineTarget": {
 														"Fn::FindInMap": [
 															"Talend",
-															"baseline",
+															{ "Ref": "TalendVersion" },
 															"baselineTarget"
 														]
 													}
