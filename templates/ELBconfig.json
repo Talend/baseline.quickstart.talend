@@ -13,6 +13,10 @@
             "Description": "Production VPC",
             "Type": "AWS::EC2::VPC::Id"
         },
+			"SecurityGroupIds": {
+            "Description": "Talend Server Security Group.",
+            "Type": "CommaDelimitedList"
+		},
         "pGitServerid": {
             "Description": "id of the git server",
             "Type": "String",
@@ -32,11 +36,6 @@
             "Description": "id of the Log server",
             "Type": "String",
 			"Default": "Null"
-        },
-		"pStudioServerid": {
-            "Description": "id of the Studio server",
-            "Type": "String",
-			"Default": "Null"
         }
     },
     "Resources": {
@@ -53,7 +52,7 @@
                 ],
                 "SecurityGroups": [
                     {
-                        "Ref": "rELBSecurityGroup"
+                        "Ref": "SecurityGroupIds"
                     }
                 ]
             }
@@ -233,68 +232,7 @@
                         "Id": {
                             "Ref": "pTACServerid"
                         },
-                        "Port": 5601
-                    }
-                ]
-            }
-        },	
-        "rStudioListener": {
-            "Type": "AWS::ElasticLoadBalancingV2::Listener",
-            "Properties": {
-                "LoadBalancerArn": {
-                    "Ref": "rTalendServerELB"
-                },
-                "Port": 22,
-                "Protocol": "HTTP",
-                "DefaultActions": [
-                    {
-                        "Type": "forward",
-                        "TargetGroupArn": {
-                            "Ref": "rStudioTG"
-                        }
-                    }
-                ]
-            }
-        },
-        "rStudioTG": {
-            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-            "Properties": {
-                "Port": 22,
-                "Protocol": "HTTP",
-                "VpcId": {
-                    "Ref": "pProductionVPC"
-                },
-                "Targets": [
-                    {
-                        "Id": {
-                            "Ref": "pStudioServerid"
-                        },
-                        "Port": 5601
-                    }
-                ]
-            }
-        },		
-        "rELBSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup",
-            "Properties": {
-                "GroupDescription": "ELB Security Group",
-                "VpcId": {
-                    "Ref": "pProductionVPC"
-                },
-                "SecurityGroupIngress": [
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "0",
-                        "ToPort": "65535",
-                        "CidrIp": "0.0.0.0/0"
-                    }
-                ],
-                "SecurityGroupEgress": [
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "0",
-                        "ToPort": "65535",
-                        "CidrIp": "0.0.0.0/0"
+                        "Port": 8085
                     }
                 ]
             }
