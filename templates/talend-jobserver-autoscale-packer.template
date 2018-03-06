@@ -215,13 +215,31 @@
             }
         },
         "AMI631": {
+			"us-east-1": { 
+				"HVM64": "ami-def408a3"
+			},
+			"us-east-2": { 
+				"HVM64": "ami-cc7741a9"
+			},
+			"us-west-1": { 
+				"HVM64": "ami-029b9162"
+			},
 			"us-west-2": { 
-				"HVM64": "ami-eaf67592"
+				"HVM64": "ami-f1df4b89"
 			}
 		},
         "AMI641": {
+			"us-east-1": { 
+				"HVM64": "ami-78f20e05"
+			},
+			"us-east-2": { 
+				"HVM64": "ami-6872440d"
+			},
+			"us-west-1": { 
+				"HVM64": "ami-949b91f4"
+			},
 			"us-west-2": { 
-				"HVM64": "ami-a99718d1"
+				"HVM64": "ami-f5d84c8d"
 			}
 		}
     },
