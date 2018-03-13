@@ -13,9 +13,9 @@
             "Description": "Production VPC",
             "Type": "AWS::EC2::VPC::Id"
         },
-			"SecurityGroupIds": {
+		"SecurityGroupIds": {
             "Description": "Talend Server Security Group.",
-            "Type": "CommaDelimitedList"
+             "Type": "AWS::EC2::SecurityGroup::Id"
 		},
         "pGitServerid": {
             "Description": "id of the git server",

@@ -664,7 +664,7 @@
         },
         "GitDnsName": {
 		    "Condition": "CreateGitStackCondition",				
-            "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName"] },
+            "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.privateDnsName"] },
             "Description": "Git DNS name",
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:GitDnsName" } 
