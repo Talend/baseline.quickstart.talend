@@ -473,6 +473,15 @@
         }
     },
     "Outputs": {
+	"GitInstanceId": {
+            "Value": { "Ref": "GitInstance" },
+            "Description": "Git EC2 resource Id",
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}:instanceId"
+				}
+			}
+        },
         "publicIp": {
 			"Condition": "isPublicSubnet",
             "Value": { "Fn::GetAtt": [ "GitInstance", "PublicIp" ] },

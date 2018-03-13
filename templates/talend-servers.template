@@ -39,6 +39,10 @@
             "Description": "Talend Server EC2 Instance Profile",
             "Type": "String"
         },
+		"VpcId": {
+            "Description": "ID of the existing VPC where the AWS resources will be deployed through the CloudFormation templates",
+            "Type": "AWS::EC2::VPC::Id"
+        },
         "PublicSubnetId1": {
         	"Description": "Public Subnet 1",
         	"Type": "AWS::EC2::Subnet::Id"
@@ -458,7 +462,7 @@
                     "NexusAdminUserid": { "Ref": "NexusAdminUserid" },
                     "NexusAdminPassword": { "Ref": "NexusAdminPassword" }
 				},
-				"TimeoutInMinutes" : "10"
+				"TimeoutInMinutes" : "30"
 			}
 		},
 		"LogserverStack": {
@@ -479,7 +483,7 @@
                     "PrivateSubnet": "private",
 					"SecurityGroupIds": { "Ref": "LogserverSecurityGroup" }
 				},
-				"TimeoutInMinutes" : "10"
+				"TimeoutInMinutes" : "30"
 			}
 		},
 		"TacStack": {
@@ -540,7 +544,7 @@
                         ]
                     }
 				},
-				"TimeoutInMinutes" : "10"
+				"TimeoutInMinutes" : "30"
 			}
 		},
 		"JobserverAutoscaleStack": {
@@ -570,7 +574,7 @@
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] },
                     "TacStack": { "Ref": "TacStack" }
 				},
-				"TimeoutInMinutes" : "10"
+				"TimeoutInMinutes" : "30"
 			}
 		},
 		"DistantRunStack": {
@@ -600,7 +604,24 @@
                     "LoggingHost": { "Fn::GetAtt": [ "LogserverStack", "Outputs.privateDnsName" ] },
                     "LoggingJobserverPort": { "Fn::GetAtt": [ "LogserverStack", "Outputs.loggingJobserverPort" ] }
 				},
-				"TimeoutInMinutes" : "10"
+				"TimeoutInMinutes" : "30"
+			}
+		},
+		"ELBStack": {
+			"Type" : "AWS::CloudFormation::Stack",
+			"Properties" : {
+                "TemplateURL": { "Fn::Sub": "http://${QSS3BucketName}.${QSS3URL}/${QSS3KeyPrefix}templates/ELBconfig.template" },
+				"Parameters" : {
+		"pDMZSubnetA": {"Ref": "PublicSubnetId1"},
+        "pDMZSubnetB": {"Ref": "PublicSubnetId2"},
+        "pProductionVPC": {"Ref": "VpcId"},
+		"SecurityGroupIds": {"Ref": "TacSecurityGroup"},
+        "pGitServerid": {"Fn::GetAtt": [ "GitStack", "Outputs.GitInstanceId" ]},
+        "pTACServerid": {"Fn::GetAtt": [ "TacStack", "Outputs.TalendServerInstanceId" ]},
+        "pNexusServerid": {"Fn::GetAtt": [ "NexusStack", "Outputs.TalendServerInstanceId" ]},
+        "pLogServerid": { "Fn::GetAtt": [ "LogserverStack", "Outputs.TalendServerInstanceId" ] }
+				},
+				"TimeoutInMinutes" : "30"
 			}
 		}
     },
@@ -641,67 +662,32 @@
 				"Name": { "Fn::Sub": "${AWS::StackName}:GitStack" } 
 				} 
         },
-<<<<<<< HEAD
-        "GitPublicDnsName": {
-		    "Condition": "CreateGitStackCondition",				
-            "Value": "Routed through ELB",
-            "Description": "Git public DNS address",
-=======
-        "NexusDnsName": {
-            "Value": { "Fn::GetAtt": [ "NexusStack", "Outputs.publicDnsName" ] },
-            "Description": "Nexus DNS name",
->>>>>>> 3469b5edc9211ddebad3731fd486d687399ace76
-			"Export": {
-				"Name": {
-					"Fn::Sub": "${AWS::StackName}:NexusDnsName"
-				}
-			}
-        },
-        "LogserverDnsName": {
-            "Value": { "Fn::GetAtt": [ "LogserverStack", "Outputs.publicDnsName" ] },
-            "Description": "Logserver DNS name",
-			"Export": {
-				"Name": {
-					"Fn::Sub": "${AWS::StackName}:LogserverDnsName"
-				}
-			}
-        },
-<<<<<<< HEAD
-        "TacPublicIp": {
-            "Value": "Routed through ELB",
-            "Description": "TAC public IP address",
-=======
         "GitDnsName": {
 		    "Condition": "CreateGitStackCondition",				
             "Value": { "Fn::GetAtt": [ "GitStack", "Outputs.publicDnsName"] },
             "Description": "Git DNS name",
->>>>>>> 3469b5edc9211ddebad3731fd486d687399ace76
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:GitDnsName" } 
 			}
         },
-<<<<<<< HEAD
+		"ELBDnsName": {
+		    "Condition": "CreateGitStackCondition",				
+            "Value": { "Fn::GetAtt": [ "ELBStack", "Outputs.ELBDNS"] },
+            "Description": "ELB DNS name",
+			"Export": {
+				"Name": { "Fn::Sub": "${AWS::StackName}:ELBDnsName" } 
+			}
+        },
         "TacPublicDnsName": {
             "Value": "Routed through ELB",
             "Description": "TAC public DNS",
-=======
-        "TacDnsName": {
-            "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.publicDnsName"] },
-            "Description": "TAC DNS name",
->>>>>>> 3469b5edc9211ddebad3731fd486d687399ace76
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:TacDnsName" } 
 			}
         },
-<<<<<<< HEAD
-        "NexusPublicDnsName": {
-            "Value": "Routed through ELB",
-            "Description": "Talend public DNS",
-=======
         "TacIp": {
             "Value": { "Fn::GetAtt": [ "TacStack", "Outputs.privateIp"] },
             "Description": "TAC IP address",
->>>>>>> 3469b5edc9211ddebad3731fd486d687399ace76
 			"Export": {
 				"Name": { "Fn::Sub": "${AWS::StackName}:TacIp" } 
 			}

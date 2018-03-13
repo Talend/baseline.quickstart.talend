@@ -239,7 +239,7 @@
         }
     },
 	"Outputs": {
-	"rTalendELBDNS": {
+	"ELBDNS": {
 			
             "Value": {
                 "Fn::GetAtt": ["rTalendServerELB","DNSName"]
