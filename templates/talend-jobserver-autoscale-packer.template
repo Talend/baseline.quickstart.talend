@@ -216,30 +216,30 @@
         },
         "AMI631": {
 			"us-east-1": { 
-				"HVM64": "ami-def408a3"
+				"HVM64": "ami-493aee34"
 			},
 			"us-east-2": { 
-				"HVM64": "ami-cc7741a9"
+				"HVM64": "ami-895a6bec"
 			},
 			"us-west-1": { 
-				"HVM64": "ami-029b9162"
+				"HVM64": "ami-edf0e78d"
 			},
 			"us-west-2": { 
-				"HVM64": "ami-f1df4b89"
+				"HVM64": "ami-bf44d8c7"
 			}
 		},
         "AMI641": {
 			"us-east-1": { 
-				"HVM64": "ami-78f20e05"
+				"HVM64": "ami-2e3ce853"
 			},
 			"us-east-2": { 
-				"HVM64": "ami-6872440d"
+				"HVM64": "ami-005b6a65"
 			},
 			"us-west-1": { 
-				"HVM64": "ami-949b91f4"
+				"HVM64": "ami-12f0e772"
 			},
 			"us-west-2": { 
-				"HVM64": "ami-f5d84c8d"
+				"HVM64": "ami-324ed24a"
 			}
 		}
     },
