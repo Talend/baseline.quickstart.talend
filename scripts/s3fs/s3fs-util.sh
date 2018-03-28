@@ -84,20 +84,20 @@ function is_s3fs_installed() {
 #--------------
 
 function get_s3fs() {
-    local _tar_file="${1:-}"
-    local git_token="${2:-}"
-    local s3fs_version="${3:-1.82}"
+    local _tar_file_ref="${1:-}"
+    local s3fs_version="${2:-1.82}"
 
-    required _tar_file git_token s3fs_version
+    required _tar_file_ref s3fs_version
 
     local organization="s3fs-fuse"
     local repo_name="s3fs-fuse"
     local branch="v${s3fs_version}"
     local out_file="${branch}.tar.gz"
-    assign "${_tar_file}" "${out_file}"
+    assign "${_tar_file_ref}" "${out_file}"
 
+# this header is not needed since we do not need to login into git to download a releae
+#        --header="Authorization: token ${git_token}" \
     wget -O "${out_file}" \
-        --header="Authorization: token ${git_token}" \
         --header="Accept:application/vnd.github.v3.raw" \
         "https://api.github.com/repos/${organization}/${repo_name}/tarball/${branch}"
     mkdir -p s3fs
