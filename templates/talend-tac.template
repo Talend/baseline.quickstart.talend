@@ -645,36 +645,20 @@
                                             { "Fn::Sub": "export TALEND_LOGGING_HOST=${LoggingHost}" },
                                             { "Fn::Sub": "export TALEND_LOGSTASH_TAC_PORT=${LoggingTacPort}" },
                                             { "Fn::Sub": "export TALEND_LOGSTASH_KIBANA_PORT=${LoggingKibanaPort}" },
-                                            
-                                            { "Fn::If": [
-                                                    "CreateGitStackCondition",
-                                                    { "Fn::Join": [
-                                                            "\n",
-                                                            [
-                                                                { "Fn::Sub": "export TALEND_GIT_PROTOCOL=http" },
-                                                                { "Fn::Sub": "export TALEND_GIT_HOST=${GitLabHost}" },
-                                                                { "Fn::Sub": "export TALEND_GIT_PORT=80" },
-                                                                { "Fn::Sub": "export TALEND_GIT_REPO=oodlejobs.git" },
-                                                                { "Fn::Sub": "export TALEND_GIT_USER=${GitAdminUserid}" },
-                                                                { "Fn::Sub": "export TALEND_GIT_PASSWORD=${GitAdminPassword}" },
-                                                                { "Fn::Sub": "export TALEND_GIT_URL=$TALEND_GIT_PROTOCOL://$TALEND_GIT_HOST:$TALEND_GIT_PORT/$TALEND_GIT_USER/$TALEND_GIT_REPO" }
+                                            { "Fn::Sub": "export TALEND_GIT_USER=${GitAdminUserid}" },
+                                            { "Fn::Sub": "export TALEND_GIT_PASSWORD=${GitAdminPassword}" },
+                                            { "Fn::Sub": "export TALEND_GIT_URL=${GitUrl}" },
+                                            { "Fn::Sub": 
+                                                [
+                                                    "export TALEND_CREATE_GIT=${createGitStackCondition}",
+                                                    {
+                                                        "createGitStackCondition": {
+                                                            "Fn::If": [
+                                                                "CreateGitStackCondition",
+                                                                "true",
+                                                                "false"
                                                             ]
-                                                        ]
-                                                    },
-                                                    { "Fn::Join": [
-                                                            "\n",
-                                                            [
-                                                                "./parse_git_url '${GitUrl}' git_protocol git_host git_path git_repo",
-                                                                { "Fn::Sub": "export TALEND_GIT_PROTOCOL=$git_protocol" },
-                                                                { "Fn::Sub": "export TALEND_GIT_HOST=$git_host" },
-                                                                { "Fn::Sub": "export TALEND_GIT_PORT=$git_port" },
-                                                                { "Fn::Sub": "export TALEND_GIT_REPO=$git_repo" },
-                                                                
-                                                                { "Fn::Sub": "export TALEND_GIT_USER=${GitAdminUserid}" },
-                                                                { "Fn::Sub": "export TALEND_GIT_PASSWORD=${GitAdminPassword}" },
-                                                                { "Fn::Sub": "export TALEND_GIT_URL=${GitUrl}" }
-                                                            ]
-                                                        ]
+                                                        }
                                                     }
                                                 ]
                                             }
@@ -793,25 +777,18 @@
                                     "Fn::Join": [
                                         "",
                                         [
-                                            {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    { "Ref": "TalendVersion" },
-                                                    "tuiTarget"
-                                                ]
-                                            },
-											"/scripts/create-",
+                                            "source ./setenv.sh; ",
+											"./scripts/create-",
 											{ "Fn::FindInMap": [ "Talend", { "Ref": "TalendVersion" }, "profile" ] },
-											"-env.sh ",
-                                            {
-                                                "Fn::FindInMap": [
-                                                    "Talend",
-                                                    { "Ref": "TalendVersion" },
-                                                    "tuiTarget"
-                                                ]
-                                            },
-											"/server-env.sh"
+											"-env.sh server-env.sh"
                                         ]
+                                    ]
+                                },
+                                "cwd": {
+                                    "Fn::FindInMap": [
+                                        "Talend",
+                                        { "Ref": "TalendVersion" },
+                                        "tuiTarget"
                                     ]
                                 }
                             },

@@ -649,7 +649,7 @@
         "GitUrl": {
             "Value": {
                 "Fn::If": [
-                    "CreateGitCondition",
+                    "CreateGitStackCondition",
                     { "Fn::GetAtt": [ "GitStack", "Outputs.GitUrl" ] },
                     { "Ref": "GitUrl" } 
                 ]
