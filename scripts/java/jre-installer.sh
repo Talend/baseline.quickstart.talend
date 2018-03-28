@@ -109,9 +109,9 @@ usage:
     jre-installer.sh [ <java_type> <java_major_version> <java_minor_version> <java_build> <java_guid> [ <java_repo_dir> [ <java_target_dir> ] ] ]
 
    jre-installer.sh
-   jre-installer.sh jre 8 144 b01 090f390dda5b47b9b721c7dfaa008135
-   jre-installer.sh jre 8 144 b01 090f390dda5b47b9b721c7dfaa008135 /opt/repo/dependencies
-   jre-installer.sh jre 8 144 b01 090f390dda5b47b9b721c7dfaa008135 /opt/repo/dependencies /opt/java
+   jre-installer.sh jre 8 162 b12 0da788060d494f5095bf8624735fa2f1
+   jre-installer.sh jre 8 162 b12 0da788060d494f5095bf8624735fa2f1 /opt/repo/dependencies
+   jre-installer.sh jre 8 162 b12 0da788060d494f5095bf8624735fa2f1 /opt/repo/dependencies /opt/java
 
 if the java tgz file is not found in the repo directory it will attempt to download it from Oracle
 EOF
@@ -124,9 +124,9 @@ function jre_installer_install() {
 
     local java_type="${1:-${java_type:-${TALEND_FACTORY_JAVA_TYPE:-jre}}}"
     local java_major_version="${2:-${java_major_version:-${TALEND_FACTORY_JAVA_MAJOR_VERSION:-8}}}"
-    local java_minor_version="${3:-${java_minor_version:-${TALEND_FACTORY_JAVA_MINOR_VERSION:-144}}}"
-    local java_build="${4:-${java_build:-${TALEND_FACTORY_JAVA_BUILD:-b01}}}"
-    local java_guid="${5:-${java_guid:-${TALEND_FACTORY_JAVA_GUID:-090f390dda5b47b9b721c7dfaa008135}}}"
+    local java_minor_version="${3:-${java_minor_version:-${TALEND_FACTORY_JAVA_MINOR_VERSION:-162}}}"
+    local java_build="${4:-${java_build:-${TALEND_FACTORY_JAVA_BUILD:-b12}}}"
+    local java_guid="${5:-${java_guid:-${TALEND_FACTORY_JAVA_GUID:-0da788060d494f5095bf8624735fa2f1}}}"
     local java_repo_dir="${6:-${java_repo_dir:-${TALEND_FACTORY_JAVA_REPO_DIR:-/opt/repo/dependencies}}}"
     local java_target_dir="${7:-${java_target_dir:-${TALEND_FACTORY_JAVA_TARGET_DIR:-/opt/java}}}"
 
