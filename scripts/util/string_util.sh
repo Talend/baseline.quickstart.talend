@@ -81,3 +81,10 @@ function string_repeat() {
 
     printf -v "${_string}" "%s" "${temp_str:1:${n}}"
 }
+
+
+export -f trim
+export -f lowercase
+export -f string_contains
+export -f string_begins_with
+export -f string_repeat

@@ -282,3 +282,22 @@ function try() {
 
     return 0
 }
+
+
+export -f get_stack
+export -f assign
+export -f indent
+export -f warningLog
+export -f infoStack
+export -f infoLog
+export -f infoVar
+export -f debugStack
+export -f debugLog
+export -f debugVar
+export -f errorMessage
+export -f defined
+export -f required
+export -f validate
+export -f die
+export -f try
+
