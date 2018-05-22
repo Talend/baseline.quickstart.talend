@@ -35,6 +35,15 @@ function get_stack() {
 }
 
 
+function call_stack() {
+
+    local n=0
+    while caller $((n++)); do
+        :
+    done
+}
+
+
 function assign() {
     local _var="${1:-}"
     local value="${2}"
@@ -278,7 +287,7 @@ function try() {
     done
     [ "${#}" -lt 1 ] && die "empty try statement"
 
-    ! "$@" && errorMessage "cannot execute: ${*}" 2 1>&2 && exit 111
+    ! "$@" && errorMessage "cannot execute: ${*}" 2 1>&2 && call_stack && exit 111
 
     return 0
 }
