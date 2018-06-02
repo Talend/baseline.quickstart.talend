@@ -112,7 +112,7 @@ function infoVar() {
 
     if [ -z "${_varname}" ]; then
         get_stack stack 2
-        echo "ERROR: debugVar missing varname argument: ${stack}"
+        echo "ERROR: infoVar missing varname argument: ${stack}"
         return 0
     fi
 
