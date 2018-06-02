@@ -292,6 +292,22 @@ function try() {
     return 0
 }
 
+# usage
+#
+# umask_scope <umask_value> <command> <...>
+
+function umask_scope() {
+
+    local umask_save
+    umask_save=$(umask)
+
+    umask "${1}"
+    shift 1
+
+    "${@}"
+
+    umask "${umask_save}"
+}
 
 export -f get_stack
 export -f assign
@@ -309,4 +325,4 @@ export -f required
 export -f validate
 export -f die
 export -f try
-
+export -f umask_scope
